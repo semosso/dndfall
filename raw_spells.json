@@ -1,48 +1,48 @@
-   [ {
-    "index": 119,
-    "name": "Fireball",
-    "desc": [
-      "A bright streak flashes from your pointing finger to a point you choose within range and then blossoms with a low roar into an explosion of flame. Each creature in a 20-foot-radius sphere centered on that point must make a dexterity saving throw. A target takes 8d6 fire damage on a failed save, or half as much damage on a successful one.",
-      "The fire spreads around corners. It ignites flammable objects in the area that aren't being worn or carried."
-    ],
-    "higher_level": [
-      "When you cast this spell using a spell slot of 4th level or higher, the damage increases by 1d6 for each slot level above 3rd."
-    ],
-    "page": "phb 241",
-    "range": "150 feet",
-    "components": ["V", "S", "M"],
-    "material": "A tiny ball of bat guano and sulfur.",
-    "ritual": false,
-    "duration": "Instantaneous",
-    "concentration": false,
-    "casting_time": "1 action",
-    "level": 3,
-    "school": {
-      "name": "Evocation",
-      "url": "http://www.dnd5eapi.co/api/magic-schools/5"
+    [ {
+      "index": 119,
+      "name": "Fireball",
+      "desc": [
+        "A bright streak flashes from your pointing finger to a point you choose within range and then blossoms with a low roar into an explosion of flame. Each creature in a 20-foot-radius sphere centered on that point must make a dexterity saving throw. A target takes 8d6 fire damage on a failed save, or half as much damage on a successful one.",
+        "The fire spreads around corners. It ignites flammable objects in the area that aren't being worn or carried."
+      ],
+      "higher_level": [
+        "When you cast this spell using a spell slot of 4th level or higher, the damage increases by 1d6 for each slot level above 3rd."
+      ],
+      "page": "phb 241",
+      "range": "150 feet",
+      "components": ["V", "S", "M"],
+      "material": "A tiny ball of bat guano and sulfur.",
+      "ritual": false,
+      "duration": "Instantaneous",
+      "concentration": false,
+      "casting_time": "1 action",
+      "level": 3,
+      "school": {
+        "name": "Evocation",
+        "url": "http://www.dnd5eapi.co/api/magic-schools/5"
+      },
+      "classes": [
+        {
+          "name": "Sorcerer",
+          "url": "http://www.dnd5eapi.co/api/classes/10"
+        },
+        {
+          "name": "Wizard",
+          "url": "http://www.dnd5eapi.co/api/classes/12"
+        }
+      ],
+      "subclasses": [
+        {
+          "name": "Lore",
+          "url": "http://www.dnd5eapi.co/api/subclasses/2"
+        },
+        {
+          "name": "Fiend",
+          "url": "http://www.dnd5eapi.co/api/subclasses/11"
+        }
+      ],
+      "url": "http://www.dnd5eapi.co/api/spells/119"
     },
-    "classes": [
-      {
-        "name": "Sorcerer",
-        "url": "http://www.dnd5eapi.co/api/classes/10"
-      },
-      {
-        "name": "Wizard",
-        "url": "http://www.dnd5eapi.co/api/classes/12"
-      }
-    ],
-    "subclasses": [
-      {
-        "name": "Lore",
-        "url": "http://www.dnd5eapi.co/api/subclasses/2"
-      },
-      {
-        "name": "Fiend",
-        "url": "http://www.dnd5eapi.co/api/subclasses/11"
-      }
-    ],
-    "url": "http://www.dnd5eapi.co/api/spells/119"
-  },
   {
     "index": 159,
     "name": "Hideous Laughter",
@@ -187,4 +187,48 @@
     ],
     "subclasses": [],
     "url": "http://www.dnd5eapi.co/api/spells/228"
+  },
+  {
+    "index": 238,
+    "name": "Raise Dead",
+    "desc": [
+      "You return a dead creature you touch to life, provided that it has been dead no longer than 10 days. If the creature's soul is both willing and at liberty to rejoin the body, the creature returns to life with 1 hit point.",
+      "This spell also neutralizes any poisons and cures nonmagical diseases that affected the creature at the time it died. This spell doesn't, however, remove magical diseases, curses, or similar effects; if these aren't first removed prior to casting the spell, they take effect when the creature returns to life. The spell can't return an undead creature to life.",
+      "This spell closes all mortal wounds, but it doesn't restore missing body parts. If the creature is lacking body parts or organs integral for its survival--its head, for instance--the spell automatically fails.",
+      "Coming back from the dead is an ordeal. The target takes a -4 penalty to all attack rolls, saving throws, and ability checks. Every time the target finishes a long rest, the penalty is reduced by 1 until it disappears."
+    ],
+    "page": "phb 270",
+    "range": "Touch",
+    "components": ["V", "S", "M"],
+    "material": "A diamond worth at least 500gp, which the spell consumes.",
+    "ritual": false,
+    "duration": "Instantaneous",
+    "concentration": false,
+    "casting_time": "1 hour",
+    "level": 5,
+    "school": {
+      "name": "Necromancy",
+      "url": "http://www.dnd5eapi.co/api/magic-schools/7"
+    },
+    "classes": [
+      {
+        "name": "Bard",
+        "url": "http://www.dnd5eapi.co/api/classes/2"
+      },
+      {
+        "name": "Cleric",
+        "url": "http://www.dnd5eapi.co/api/classes/3"
+      },
+      {
+        "name": "Paladin",
+        "url": "http://www.dnd5eapi.co/api/classes/7"
+      }
+    ],
+    "subclasses": [
+      {
+        "name": "Life",
+        "url": "http://www.dnd5eapi.co/api/subclasses/3"
+      }
+    ],
+    "url": "http://www.dnd5eapi.co/api/spells/238"
   }]

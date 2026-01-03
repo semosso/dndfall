@@ -1,12 +1,51 @@
-import json
-import re  # for regex, still unused
+import json  # for data intake from SRD
+import re  # for info extraction
 
-## converts json from external file into list of dicts
+# get JSON data, currently a selected number of spells from a local json
+# todo: API calls to 5e SRD database, see https://5e-bits.github.io/docs/
 with open(file="raw_spells.json", mode="r", encoding="utf-8") as raw_json:
     RAW_SPELLS: list[dict] = json.load(raw_json)
 
-## defines information to track, as separate sets
-## TBD "charmed", tricky
+
+# normalize JSON intake into a list of dicts, with my schema
+# todo: 1, implement schemas for monsters etc.
+# 2, typeddict in the future, to typehint each field
+# 3, lambdas not only but also to avoid aliasing raw <> normalized data
+# (cont) I kept them in non mutables for consistency, but TBD
+def normalize_json(db: list) -> list:
+    FIELDS_TO_KEEP: dict = {
+        "index": lambda x: x,  #
+        "name": lambda x: x,
+        "level": lambda x: x,
+        "concentration": lambda x: x,
+        "ritual": lambda x: x,
+        "school": lambda x: x["name"],
+        "range": lambda x: x,
+        "components": lambda x: list(x),  # do I need this to avoid aliasing?
+        "material": lambda x: x if "GP" in x else None,
+        "duration": lambda x: x,
+        "casting_time": lambda x: x,
+        "classes": lambda x: [c["name"] for c in x],
+        "higher_level": lambda x: (True, x) if x else False,
+        # how could I change this to "description" and still get the data?
+        # printed as \n sometimes, why?
+        "desc": lambda x: "\n".join([s.strip() for s in x]),
+    }
+
+    normalized_db: list[dict] = []
+    for spell in RAW_SPELLS:
+        normalized_spell: dict = {}
+        for key, fn in FIELDS_TO_KEEP.items():
+            if key in spell:
+                normalized_spell[key] = fn(spell[key])
+        normalized_db.append(normalized_spell)
+
+    return normalized_db
+
+
+norm_spells: list[dict] = normalize_json(RAW_SPELLS)
+
+# extracting relevant information (i.e., not in fields)
 CONDITIONS: set[str] = {
     "blinded",
     "charmed",
@@ -15,12 +54,13 @@ CONDITIONS: set[str] = {
     "grappled",
     "incapacitated",
     "invisible",
-    "paralyzed",
+    "paralyzed",  # some of these call on other of these; e.g., incapacitated
+    # maybe get the actual definitions of the status conditions?
     "petrified",
 }
 
-## TBD if I'll have to add non-magical (bludgeoning, slashing, piercing)
-DMG_TYPE: set[str] = {
+DAMAGE_TYPE: set[str] = {
+    ## TBD if I'll have to add non-magical (bludgeoning, slashing, piercing)
     "acid",
     "cold",
     "fire",
@@ -33,52 +73,61 @@ DMG_TYPE: set[str] = {
     "thunder",
 }
 
-## TBD if I care about position in list (e.g., a-z)?
-## tried with sets, but unordered upset me
-FIELDS: tuple = ("name", "level", "casting_time", "concentration")
+TARGET: set[str] = {
+    "area_of_effect",
+    "self",
+    "single_creature",
+    "any_number_of_creatures",
+}
+
+SAVING_THROW: set[str] = {"str", "dex", "con", "wis", "int", "cha"}
+
+REGEX_PATTERNS: dict = {
+    "conditions": [(r"\b{cond}").format(cond=cond) for cond in CONDITIONS],
+    "damage_type": [
+        (r"\b[0-9]+d[0-9]+(\+[0-9]+)? {dmg} damage").format(dmg=dmg)  # melhor \d+ ?
+        for dmg in DAMAGE_TYPE
+    ],
+    "target": [],
+    "saving_throw": [],
+}
 
 
-## helper 1: initial intake of spells, spells=[[spell]=[(key, value)]]
-## now it's fine, for learning purposes, but change it later
-## this shows the point of raw > normalized > curated (currenly mixing 2 and 3)
-def init_spells(data: list = RAW_SPELLS) -> list:
-    # to do:
-    # 1, mutate is fine for initial intake, but beware
-    # 2, adapt for additional spells/conditions only (maybe at JSON level)
-    # 3, make it agnostic for monsters etc.
-    spells: list[list[tuple]] = []
-    for raw_spell in RAW_SPELLS:
-        spell: list[tuple] = []
-        # comprehension got rid of 4 lines; consolidates description into string
-        rev_desc: str = " ".join([e.strip() for e in raw_spell["desc"]])
-        for key in FIELDS:
-            spell.append((f"{key}", raw_spell[key]))
-        for key in CONDITIONS:  # for str in set
-            if key in rev_desc:
-                spell.append(("conditions", key))
-        for key in DMG_TYPE:
-            # to do:
-            # 1, regex for XdX damage, will avoid descriptive language
-            # 2, match regex before going through each dmg_type
-            # (cont): maybe the condition search can do it, and then call this one
-            if key in rev_desc:
-                spell.append(("damage_type", key))
-        spell.append(("description", rev_desc))  # description as last element
-        spells.append(spell)
-
-    return spells
+# loops through spell description, finds info, and creates dict of tags
+def extract_info(spells: list, regex_pattern: dict):
+    matches: dict = {}
+    for spell in spells:
+        spell_keywords: list = []
+        for cond in REGEX_PATTERNS["conditions"]:  # next, expand for all patterns
+            match = re.search(cond, spell["desc"])
+            if match:
+                spell_keywords.append(match.group())
+                matches[spell["name"]] = spell_keywords
+    return matches
 
 
-## helper 2: adding additional key,value pairs and/or spells
-def add_value():
-    # should add only if the spell requires it
-    pass
+print(extract_info(norm_spells, REGEX_PATTERNS))
+# print(extract_info(norm_spells, CONDITIONS))
+
+# # def tagging(spells: list, trackables: set):
+# #     for spell in spells:
 
 
-def add_spell():
-    pass
+# # for con in CONDITIONS:
+# #     print(extract_info(norm_spells, con))
 
+TAG_RULES: dict = {
+    "conditions": (),
+    "damage_type": (),
+    "average_dmg": (),
+    "aoe": (),
+    "saving_throw": (),
+}
 
-spells = init_spells(RAW_SPELLS)
-for e in spells:
-    print(e, "\n")
+# print(TAG_RULES)
+
+# # # for spell in spells:
+# # #     tags:dict = {}
+# # #     for tag, rule in TAG_RULES.items():
+# # #         if rule in spell["desc"]:
+# # #             spell[tag] =
