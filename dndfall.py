@@ -33,7 +33,7 @@ NORMALIZED_SCHEME: dict = {
 }
 
 
-# works on any structure to move it forward; raw to normalized, normalized to curated
+# shifts data, from raw to normalized, per scheme above
 def normalizing_JSON(
     raw_json: list = raw_spells, norm_format: dict = NORMALIZED_SCHEME
 ) -> list:
