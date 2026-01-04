@@ -1,6 +1,4 @@
 # todo: only working on spells for now
-from curses import raw
-
 import json  # for data intake from SRD
 import re  # for info extraction
 
@@ -122,7 +120,7 @@ TAG_RULES: dict = {
 # extract() works on normalized dict, tag() initializes and works on curated one -- seems OK
 # I actually don't care about the return other than for the tag function. maybe nest it there?
 def extract_tags(spell: dict, search_pattern: dict):
-    tags: set = set()
+    tags: set = set()  # if no tag is found, adds a set(), get rid of it
     description: str = spell["desc"].lower()
     for key, rule in TAG_RULES.items():
         for pattern in rule:
