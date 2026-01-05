@@ -4,9 +4,7 @@ import re  # for info extraction
 
 # PART 1, getting JSON data (selected number of spells from local json)
 # todo: API calls to 5e SRD database, see https://5e-bits.github.io/docs/
-with open(
-    file="/home/vinicius/projects/dndfall/raw_spells.json", mode="r", encoding="utf-8"
-) as raw_json:
+with open(file="dndfall/raw_spells.json", mode="r", encoding="utf-8") as raw_json:
     raw_spells: list[dict] = json.load(raw_json)
 
 # PART 2, templating how data should look: raw (JSON above), normalized and finally curated
@@ -23,11 +21,11 @@ NORMALIZED_SCHEME: dict = {
     "school": lambda x: x["name"],
     "range": lambda x: x,
     "components": lambda x: list(x),  # do I need this?
-    "material": lambda x: x if "GP" in x else None,
+    "material": lambda x: x if re.search(r"\b[0-9]+( )?gp\b", x.lower()) else None,
     "duration": lambda x: x,
     "casting_time": lambda x: x,
     "classes": lambda x: [c["name"] for c in x],
-    "higher_level": lambda x: (True, x) if x else False,
+    "higher_level": lambda x: x or None,
     # how could I change this to "description" and still get the data ("desc" in JSON)?
     "desc": lambda x: " ".join([s.strip() for s in x]),
 }
@@ -71,7 +69,7 @@ DAMAGE_TYPE: set[str] = {
     "fire",
     "force",
     "lightning",
-    "necroctic",
+    "necrotic",
     "poison",
     "psychic",
     "radiant",
@@ -99,8 +97,8 @@ TAG_RULES: dict = {
     "conditions": [(r"\b{cond}").format(cond=cond) for cond in CONDITIONS],
     "damage_type": [
         (r"\b[0-9]+d[0-9]+(\+[0-9]+)? {dmg} damage").format(dmg=dmg)
-        # melhor \d+?
-        # just {dmg} damage should do it
+        # melhor \d+? also, "{dmg} damage" should do it
+        # need to find a way to make "{dmg}" appear as tag
         for dmg in DAMAGE_TYPE
     ],
     # "target": [],
@@ -122,10 +120,10 @@ TAG_RULES: dict = {
 def extract_tags(spell: dict, search_pattern: dict):
     tags: set = set()  # if no tag is found, adds a set(), get rid of it
     description: str = spell["desc"].lower()
-    for key, rule in TAG_RULES.items():
+    for key, rule in search_pattern.items():
         for pattern in rule:
             if match := re.search(pattern=pattern, string=description):
-                tags.add((key, match.group()))  # TBD if I want the key
+                tags.add((key, match.group()))
     return tags
 
 
@@ -138,6 +136,7 @@ def curate_spells(normalized_spells: list[dict], patterns: dict):
     curated_spells: list[dict] = []
     for spell in normalized_spells:
         c_spell: dict = {
+            "spell_id": spell["index"],
             "name": spell["name"],
             "level": spell["level"],
             "school": spell["school"],
@@ -147,7 +146,9 @@ def curate_spells(normalized_spells: list[dict], patterns: dict):
     return curated_spells
 
 
+# testing
 norm: list[dict] = normalizing_JSON()
+print(norm)
 print(curate_spells(normalized_spells=norm, patterns=TAG_RULES))
 
 # PART 4, search engine, replicating scryfall's formal syntax idea
