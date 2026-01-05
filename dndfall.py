@@ -1,10 +1,11 @@
 # todo: only working on spells for now
 import json  # for data intake from SRD
 import re  # for info extraction
+from rich import print  # better visualization of data structures
 
 # PART 1, getting JSON data (selected number of spells from local json)
 # todo: API calls to 5e SRD database, see https://5e-bits.github.io/docs/
-with open(file="dndfall/raw_spells.json", mode="r", encoding="utf-8") as raw_json:
+with open(file="data/raw_spells.json", mode="r", encoding="utf-8") as raw_json:
     raw_spells: list[dict] = json.load(raw_json)
 
 # PART 2, templating how data should look: raw (JSON above), normalized and finally curated
@@ -57,7 +58,7 @@ CONDITIONS: set[str] = {
     "incapacitated",
     "invisible",
     "paralyzed",  # some of these call on other of these; e.g., incapacitated
-    # maybe get the actual definitions of the status conditions?
+    # maybe get the actual definitions of the conditions? they have their own json
     "petrified",
 }
 
@@ -94,13 +95,15 @@ SAVING_THROW: set[str] = {
 # and then divide? or better to pull from here?
 
 TAG_RULES: dict = {
-    "conditions": [(r"\b{cond}").format(cond=cond) for cond in CONDITIONS],
-    "damage_type": [
-        (r"\b[0-9]+d[0-9]+(\+[0-9]+)? {dmg} damage").format(dmg=dmg)
-        # melhor \d+? also, "{dmg} damage" should do it
-        # need to find a way to make "{dmg}" appear as tag
-        for dmg in DAMAGE_TYPE
-    ],
+    # "conditions": [(r"\b{cond}").format(cond=cond) for cond in CONDITIONS],
+    "condition": {
+        "values": CONDITIONS,
+        "rule": lambda value: rf"\b{value}\b",
+    },
+    "damage_type": {
+        "values": DAMAGE_TYPE,
+        "rule": lambda value: rf"\b[0-9]+d[0-9]+(\+[0-9]+)? {value} damage",
+    },  # melhor \d+? also, "{dmg} damage" should do it
     # "target": [],
     # "saving_throw": [],
     # "teleport": [],
@@ -114,16 +117,17 @@ TAG_RULES: dict = {
 }
 
 
-# PART 3B: actual extraction mechanism: loops through NORMALIZED spell description, returns tags
-# extract() works on normalized dict, tag() initializes and works on curated one -- seems OK
-# I actually don't care about the return other than for the tag function. maybe nest it there?
-def extract_tags(spell: dict, search_pattern: dict):
-    tags: set = set()  # if no tag is found, adds a set(), get rid of it
+# PART 3B: actual extraction mechanism: loops through NORMALIZED spell description, returns type, tags
+def extract_tags(spell: dict, search_pattern: dict) -> dict:
+    tags: dict = {}  # adds an empty dict if no match; figure out how to change this
     description: str = spell["desc"].lower()
-    for key, rule in search_pattern.items():
-        for pattern in rule:
-            if match := re.search(pattern=pattern, string=description):
-                tags.add((key, match.group()))
+    for tag_key, tag_rules in search_pattern.items():
+        for value in tag_rules["values"]:
+            pattern = tag_rules["rule"](value)
+            if re.search(pattern=pattern, string=description):
+                if tag_key not in tags:  # super verbose; look up better ways
+                    tags[tag_key] = set()
+                tags[tag_key].add(value)
     return tags
 
 
@@ -139,7 +143,6 @@ def curate_spells(normalized_spells: list[dict], patterns: dict):
             "spell_id": spell["index"],
             "name": spell["name"],
             "level": spell["level"],
-            "school": spell["school"],
             "tags": extract_tags(spell, patterns),
         }
         curated_spells.append(c_spell)
@@ -148,7 +151,6 @@ def curate_spells(normalized_spells: list[dict], patterns: dict):
 
 # testing
 norm: list[dict] = normalizing_JSON()
-print(norm)
 print(curate_spells(normalized_spells=norm, patterns=TAG_RULES))
 
 # PART 4, search engine, replicating scryfall's formal syntax idea
