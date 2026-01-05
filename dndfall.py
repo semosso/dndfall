@@ -1,20 +1,20 @@
 # todo: only working on spells for now
 import json  # for data intake from SRD
 import re  # for info extraction
-from rich import print  # better visualization of data structures
+import rich  # better visualization of data structures
 
 # PART 1, getting JSON data (selected number of spells from local json)
 # todo: API calls to 5e SRD database, see https://5e-bits.github.io/docs/
-with open(file="data/raw_spells.json", mode="r", encoding="utf-8") as raw_json:
+with open(file="data/raw_spells.json", mode="r") as raw_json:
     raw_spells: list[dict] = json.load(raw_json)
 
 # PART 2, templating how data should look: raw (JSON above), normalized and finally curated
 # normalized vs. curated: curated is barebones + tags extracted from normalized
 # field information (e.g., school, duration), stays in normalized and should be queriable. TBD if this makes sense.
 # P.s., multiple lambdas not only, but also to avoid aliasing between dicts
-# (cont) I kept them in non mutables for consistency, but TBD
+# (cont) I kept them in non mutables for consistency. TBD what's best
 NORMALIZED_SCHEME: dict = {
-    "index": lambda x: x,  # do I want this?
+    "index": lambda x: x,
     "name": lambda x: x,
     "level": lambda x: x,
     "concentration": lambda x: x,
@@ -27,15 +27,15 @@ NORMALIZED_SCHEME: dict = {
     "casting_time": lambda x: x,
     "classes": lambda x: [c["name"] for c in x],
     "higher_level": lambda x: x or None,
-    # how could I change this to "description" and still get the data ("desc" in JSON)?
+    # how can I change this to "description" and still get the data ("desc" in JSON)?
     "desc": lambda x: " ".join([s.strip() for s in x]),
 }
 
 
-# shifts data, from raw to normalized, per scheme above
+# normalizes data based on the predefined scheme above
 def normalizing_JSON(
     raw_json: list = raw_spells, norm_format: dict = NORMALIZED_SCHEME
-) -> list:
+) -> list[dict]:
     normalized_spells: list[dict] = []
     for spell in raw_json:
         n_spell: dict = {}
@@ -58,7 +58,7 @@ CONDITIONS: set[str] = {
     "incapacitated",
     "invisible",
     "paralyzed",  # some of these call on other of these; e.g., incapacitated
-    # maybe get the actual definitions of the conditions? they have their own json
+    # maybe get the actual definitions of the conditions? they have their own .json
     "petrified",
 }
 
@@ -112,16 +112,15 @@ TAG_RULES: dict = {
     # "debuff": [], # bane-like, "subtracts the number"
     # "restoration": [] # ends disease, condition etc.
     # "adv/disav": [] # gives one or the other
-    # "average_damage": hardcode average
-    #
+    # "average_damage":
 }
 
 
 # PART 3B: actual extraction mechanism: loops through NORMALIZED spell description, returns type, tags
-def extract_tags(spell: dict, search_pattern: dict) -> dict:
+def extract_tags(spell: dict, patterns: dict) -> dict:
     tags: dict = {}  # adds an empty dict if no match; figure out how to change this
     description: str = spell["desc"].lower()
-    for tag_key, tag_rules in search_pattern.items():
+    for tag_key, tag_rules in patterns.items():
         for value in tag_rules["values"]:
             pattern = tag_rules["rule"](value)
             if re.search(pattern=pattern, string=description):
@@ -131,10 +130,10 @@ def extract_tags(spell: dict, search_pattern: dict) -> dict:
     return tags
 
 
-# PART 3C: puts together the curated dict; what should it look like?
-# TBH I don't care. NORMALIZED is the source of truth (actually not, but close)
-# CURATED is opinion based; what matters are my opinions, the tags I think are relevant to index for query
-# all the FACTUAL stuff is still accessible through the normalized (e.g., defined fields)
+# PART 3C: puts together the curated dict; what should it look like? TBH I don't care.
+# NORMALIZED is the source of truth (actually not, but close)
+# CURATED is opinion based, what matters are the tags I think are relevant to index for query
+# all the FACTUAL stuff is still accessible through the NORMALIZED dict (e.g., fields)
 # this can "easily" be used with other categories, monsters etc. (create a pattern for each)
 def curate_spells(normalized_spells: list[dict], patterns: dict):
     curated_spells: list[dict] = []
@@ -149,13 +148,40 @@ def curate_spells(normalized_spells: list[dict], patterns: dict):
     return curated_spells
 
 
-# testing
+# initializing data set
 norm: list[dict] = normalizing_JSON()
-print(curate_spells(normalized_spells=norm, patterns=TAG_RULES))
+curated = curate_spells(normalized_spells=norm, patterns=TAG_RULES)
+rich.print(curated)  # testing
+
 
 # PART 4, search engine, replicating scryfall's formal syntax idea
 # e.g., l:/level: (<, <=, \==, >=, >, !=), c:/condition: (T/F, \==, fuzzy later, !=), etc.
+def has_tag():
+    pass
 
 
-# PART 5, user interface, still a long way away from having to think about this
+def numeric_search():
+    pass
+
+
+def text_search():
+    pass
+
+
+def set_search():
+    pass
+
+
+def match_spell():
+    # will call on the helper ones depending on type
+    # figure out how to create a good syntax
+    # (i.e., how to match user's input to my operatores and helpers)
+    pass
+
+
+# PART 5, test suite, see notes on Obsidian
+# e.g., expand spells and try language not captured by regex
+# e.g., "heals" vs. "regains" HP, "{dmg}" vs. "of {dmg}"
+
+# PART 6, user interface, still a long way away from having to think about this
 # TBD what information will be shown; e.g., list of spells that meet the criteria? links to SRD?
