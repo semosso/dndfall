@@ -1,3 +1,10 @@
 {
-    "python.defaultInterpreterPath": "/home/vinicius/projects/dndfall/.venv/bin/python3"
-} 
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"python.defaultInterpreterPath": "./.venv/bin/python"
+	}
+}
