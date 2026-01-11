@@ -3,10 +3,12 @@ import json  # for data intake from SRD
 import re  # for info extraction
 import rich  # better visualization of data structures
 from collections import defaultdict  # defaultdicts for indices (and more?)
+from typing import TypedDict, NotRequired  # spell scheme validation
+
 
 # PART 1, getting JSON data (selected number of spells from local json)
 # todo: API calls to 5e SRD database, see https://5e-bits.github.io/docs/
-with open(file="data/cop.json", mode="r") as raw_json:
+with open(file="data/spells.json", mode="r") as raw_json:
     raw_spells: list[dict] = json.load(raw_json)
 
 # PART 2, templating how data should look: raw (JSON above), normalized, and curated
@@ -76,13 +78,6 @@ DAMAGE_TYPE: set[str] = {
     "thunder",
 }
 
-TARGET: set[str] = {
-    "area_of_effect",
-    "self",
-    "single_creature",
-    "any_number_of_creatures",
-}
-
 SAVING_THROW: set[str] = {
     "strength",
     "dexterity",
@@ -100,37 +95,35 @@ TAG_RULES: dict = {
         for value in DAMAGE_TYPE
         # eventually, separate dice and type into groups, for average damage calculation
     },
-    "damage_no_dice": {
-        f"{value} no dice": re.compile(pattern=rf"[^0-9] {value} damage")
+    # how can I add this second case of values to the same dict above?
+    # remove the "alternative" eventually, just for testing now
+    "alternative_damage_type": {
+        f"{value} (alternative)": re.compile(pattern=rf"\btake(s)? {value} damage")
         for value in DAMAGE_TYPE
-        ## "{dmg} damage" by itself matches several things it shouldn't (e.g., resistance to)
-        ## SPIRITUAL WEAPON, "takes force damage equal to 1d8 + your spellcasting ability modifier"
-        ## FORBIDDANCE, "5d10 radiant or necrotic damage" (search for similar patterns)
-        ## ETHEREALNESS, "take force damage equal to twice the number of feet you moved"
-        ## DELAYED FIREBALL, "a creature takes fire damage equal to", "the spell's base damage is 12d6"
+        # captureed everything; only missing FORBIDDANCE, "5d10 radiant or necrotic damage"
+        ## could itertools, but taking 3000 checks (10*10 dmg types * 300 spells) is absurd
     },
     # half damage? sort of intersection between DMG and ST
     "saving_throw": {
         value: re.compile(
-            pattern=rf"(make(s)?|succeed on)\s+(a|another)\s+(DC [0-9]+\s+)?(new|successful)?\s*{value} saving throw"
+            pattern=rf"\b(make(s)?|succeed on)\s+(a|another)\s+(DC [0-9]+\s+)?(new|successful)?\s*{value} saving throw"
         )
         for value in SAVING_THROW
-        ## ignores certain spells on purpose, focus is on forcing a ST (add as note on platform)
-        ## (e.g., Resurrection (-4 penalty to ST), Bless (+ 1d4 to ST), Heroes' Feast (adv. on ST)
+        # ignores certain spells on purpose, focus is on things that force ST (add as note)
+        # (e.g., Resurrection (-4 penalty), Bless (+ 1d4), Heroes' Feast (advantage)
     },
     "fuck you SRD": {
-        value: re.compile(
-            pattern=rf"saving throw of {value}"
-            ## SRD description is diff, "make a saving throw of Wisdom" (HOLD MONSTER, CONFUSION)
-            ## add to notes on platform
-        )
+        value: re.compile(pattern=rf"\bsaving throw of {value}")
         for value in SAVING_THROW
+        # SRD description for HOLD MONSTER, CONFUSION: "make a saving throw of Wisdom"
+        ## CONFUSION still has regular language on top of it; HOLD MONSTER doesn't
+        ## add to notes on platform
     },
     "Contact Other Plane": {
         "intelligence": re.compile(
-            pattern=r"make a DC 15 intelligence saving throw"
-            ## Contact Other Plane, "when you cast this spell, make a DC intelligence 15 saving throw"
-            ## I cannot get this to work at all
+            pattern=r"\bmake a DC 15 intelligence saving throw"
+            # Contact Other Plane, "when you cast this spell, make a DC intelligence 15 saving throw"
+            # I cannot get this to work at all
         )
     },
 }
@@ -151,36 +144,75 @@ def extract_tags(spell_dict: dict, tag_rules: dict = TAG_RULES) -> dict:
     return dict(tags_dict)
 
 
-# PART 3C: puts together the curated dict; TBD, maybe I add all fields from normalized + tags
-def curate_spells(normalized_spells: list[dict], patterns: dict) -> dict:
-    curated_spells: dict[str, dict] = {}
+# PART 3C: puts together the curated dict
+# I might make it all fields from normalized + tags
+
+
+# trying out TypedDict, I already have some structure
+class CuratedSpell(TypedDict):
+    spell_id: int
+    name: str
+    level: int
+    description: str
+    tags: NotRequired[dict[str, dict[str, list[str]]]]
+
+
+def curate_spells(
+    normalized_spells: list[dict], patterns: dict
+) -> dict[str, CuratedSpell]:
+    curated_spells: dict[str, CuratedSpell] = {}
     for spell in normalized_spells:
-        c_spell: dict = {
+        c_spell: CuratedSpell = {
             "spell_id": spell["index"],
             "name": spell["name"],
             "level": spell["level"],
-            "tags": extract_tags(spell_dict=spell, tag_rules=patterns),
             "description": spell["desc"],
+            "tags": extract_tags(spell_dict=spell, tag_rules=patterns),
         }  # can leave this empty, call extract, add to those that have it
-        key: str = c_spell["name"]
-        curated_spells[key] = (
-            c_spell  # why does this work, w/o flagging that the key is missing?
-        )
+        curated_spells[c_spell["name"]] = c_spell
     return curated_spells
 
 
-# initializing data set
+# initializing data set, move this to main guard at some point
 norm: list[dict] = normalizing_JSON()
-spells: dict[str, dict] = curate_spells(normalized_spells=norm, patterns=TAG_RULES)
-rich.print(spells)  # testing
+spells: dict[str, CuratedSpell] = curate_spells(
+    normalized_spells=norm, patterns=TAG_RULES
+)
+# for v in spells.values():  # testing
+#     rich.print(v["name"])
+#     rich.print(v["tags"])
+## key "False Life" prints as type False, figure it out
+## same for "True" in Polymorph etc.
 
-# with open(file="data/cop2.json", mode="w") as cop_test:
-#     cop_test.write(spells["Contact Other Plane"]["description"])
-# cop_test.close()
+
+# PART 4, indexing, query and search engine
+# replicate scryfall's formal syntax (e.g., l:/level: (<, <=, \==, >=, >, !=),
+# c:/condit ion: (T/F, \==, fuzzy later, !=))
+def create_indices(spells: dict[str, CuratedSpell]) -> dict:
+    # it should look someting like this
+    indices: defaultdict = defaultdict(list)
+
+    # it should look something like this:
+    {
+        "level": {
+            0: [spell, spell],
+            1: [spell, spell],
+        },
+        "condition": {
+            "blinded": [spell, spell],
+        },
+        "damage_type": {
+            "fire": [spell, spell],
+            "cold": [spell, spell],
+        },
+        "saving_throw": {
+            "strength": [spell, spell],
+            "dexterity": [spell, spell],
+        },
+    }
+    pass
 
 
-# PART 4, search engine, replicating scryfall's formal syntax idea
-# e.g., l:/level: (<, <=, \==, >=, >, !=), c:/condit ion: (T/F, \==, fuzzy later, !=), etc.
 def has_tag():
     pass
 
