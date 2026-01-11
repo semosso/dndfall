@@ -1,4 +1,3 @@
-from concurrent.interpreters import create
 import json  # for data intake from SRD
 import rich  # better visualization of data structures
 
@@ -50,7 +49,7 @@ def main():
         (indices["saving_throw"]["dexterity"])
     ):
         print(spell)
-    print(spells["Web"])
+    rich.print(spells["Web"])
 
 
 if __name__ == "__main__":
