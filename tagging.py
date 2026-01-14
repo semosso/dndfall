@@ -43,66 +43,90 @@ SAVING_THROW: set[str] = {
 # each CATEGORY has PATTERNS for creating its or its Types' REGEX
 TAG_RULES: dict = {
     # K are tag_values, V are tag_patterns
-    "condition": {value: re.compile(pattern=rf"\b{value}\b") for value in CONDITION},
+    "condition": {
+        "source": "description",
+        "patterns": {cond: re.compile(pattern=rf"\b{cond}\b") for cond in CONDITION},
+    },
     "damage_type": {
         # eventually, separate dice and type into groups, for average damage
-        value: [
-            re.compile(
-                pattern=rf"\b[0-9]+\s?d\s?[0-9]+\s?(\+[0-9]+)? {value} damage",
-                flags=re.IGNORECASE,
-            ),
-            re.compile(pattern=rf"\btake(s)? {value} damage", flags=re.IGNORECASE),
-        ]
-        + (
-            [  # specific to FORBIDDANCE, which has this weird language
-                re.compile(pattern=r"5d10 radiant or necrotic", flags=re.IGNORECASE)
+        "source": "description",
+        "patterns": {
+            dmg_type: [
+                re.compile(
+                    pattern=rf"\b[0-9]+\s?d\s?[0-9]+\s?(\+[0-9]+)? {dmg_type} damage",
+                    flags=re.IGNORECASE,
+                ),
+                re.compile(
+                    pattern=rf"\btake(s)? {dmg_type} damage", flags=re.IGNORECASE
+                ),
             ]
-            if value in ["radiant", "necrotic"]
-            else []
-        )
-        for value in DAMAGE_TYPE
-        # match half damage? sort of intersection between DMG and ST
+            + (
+                [  # specific to FORBIDDANCE, which has this weird language
+                    re.compile(pattern=r"5d10 radiant or necrotic", flags=re.IGNORECASE)
+                ]
+                if dmg_type in ["radiant", "necrotic"]
+                else []
+            )
+            for dmg_type in DAMAGE_TYPE
+        },
     },
     "saving_throw": {
-        value: [
-            # ignores certain spells on purpose, focus is on things that force ST
-            # e.g., Resurrection (-4 penalty), Bless (+ 1d4), Heroes' Feast (advantage)
-            re.compile(
-                pattern=rf"\b(make(s)?|succeed on)\s+(a|another)\s+(DC [0-9]+\s+)?(new|successful)?\s*{value} saving throw",
-                flags=re.IGNORECASE,
-            ),
-            # HOLD MONSTER and CONFUSION in SRD: "make a saving throw of Wisdom"
-            ## add to notes on platform
-            re.compile(pattern=rf"\bsaving throw of {value}", flags=re.IGNORECASE),
-            # Contact Other Plane, "make a DC 15 intelligence saving throw"
-            re.compile(
-                pattern=rf"make\s+a\s+DC\s+15\s+{value}\s+saving\s+throw",
-                flags=re.IGNORECASE,
-            ),
-        ]
-        for value in SAVING_THROW
+        "source": "description",
+        "patterns": {
+            ability: [
+                # ignores certain spells on purpose, focus is on things that force ST
+                # e.g., Resurrection (-4 penalty), Bless (+ 1d4), Heroes' Feast (advantage)
+                re.compile(
+                    pattern=rf"\b(make(s)?|succeed on)\s+(a|another)\s+(DC [0-9]+\s+)?(new|successful)?\s*{ability} saving throw",
+                    flags=re.IGNORECASE,
+                ),
+                # HOLD MONSTER and CONFUSION in SRD: "make a saving throw of Wisdom"
+                ## add to notes on platform
+                re.compile(
+                    pattern=rf"\bsaving throw of {ability}", flags=re.IGNORECASE
+                ),
+                # Contact Other Plane, "make a DC 15 intelligence saving throw"
+                re.compile(
+                    pattern=rf"make\s+a\s+DC\s+15\s+{ability}\s+saving\s+throw",
+                    flags=re.IGNORECASE,
+                ),
+            ]
+            for ability in SAVING_THROW
+        },
+    },
+    # not in description, so had to change extract_tags(), add source to each category etc.
+    "material": {
+        "source": "material",
+        "patterns": {
+            "GP_cost": re.compile(pattern=r"\b[0-9]+\s?gp\b", flags=re.IGNORECASE)
+        },
     },
 }
 
 
-# material:  if re.search(r"\b[0-9]+( )?gp\b", x.lower()) else None
-# "higher_level": lambda x: x or None
-
-
-# loops through NORMALIZED spell description, returns tags (category: type)
-# 11/1, 5pm: expects to receive a dict of patterns, so it doesn't work with other rules
-def extract_tags(spell_description: str, rules: dict = TAG_RULES) -> dict:
+def extract_tags(spell, rules: dict = TAG_RULES) -> dict[str, list[str] | bool]:
     tags: dict[str, list[str] | bool] = {}
-
-    for category, patterns in rules.items():  # for condition, REGEX patterns dict
+    # for condition (category), values (source or patterns) in tag_rules
+    for category, values in rules.items():
         found_tag: list[str] = []
-        for tag, regexes in patterns.items():  # for "blinded", "\bblinded\b"
+        source_value: str | None = getattr(spell, values["source"], None)
+
+        if not isinstance(source_value, str):
+            continue  # some spells don't have material
+
+        # for pattern in key patterns
+        for tag, regexes in values["patterns"].items():
             # if regexes is a list, proceed; if not, make and use a list
             regex_list: list = regexes if isinstance(regexes, list) else [regexes]
-            if any(regex.search(string=spell_description) for regex in regex_list):
-                found_tag.append(tag)  # found_tag = ["blinded"]
-        if found_tag:
-            tags[category] = found_tag  # tags = {"condition": "blinded"}
-        tags["no_damage"] = "damage_type" not in tags
 
+            if any(regex.search(string=source_value) for regex in regex_list):
+                # found_tag = ["blinded"]
+                found_tag.append(tag)
+
+        if found_tag:
+            # tags = {"condition": "blinded"}
+            tags[category] = found_tag
+        # specific T/F cases from tags
+        tags["no_damage"] = "damage_type" not in tags
+        tags["no_saving_throw"] = "saving_throw" not in tags
     return tags

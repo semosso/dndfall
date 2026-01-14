@@ -1,29 +1,54 @@
-# scheme that I want for my base, normalized, spells dict
-NORMALIZED_SCHEME: dict = {
-    "index": lambda x: x["index"],
-    "name": lambda x: x["name"],
-    "level": lambda x: x["level"],
-    "concentration": lambda x: x["concentration"],
-    "ritual": lambda x: x["ritual"],
-    "school": lambda x: x["school"]["name"],
-    "range": lambda x: x["range"],
-    "components": lambda x: x["components"],
-    "material": lambda x: x.get("material"),
-    "duration": lambda x: x["duration"],
-    "casting_time": lambda x: x["casting_time"],
-    "classes": lambda x: [c["name"] for c in x["classes"]],
-    "higher_level": lambda x: x.get("higher_level"),
-    # joins all str in list, splits on any whitespace, joins on single space
-    "description": lambda x: " ".join(" ".join(x["desc"]).split()),
-}
+from dataclasses import dataclass, field
+
+from tagging import extract_tags
 
 
-# goes over dict created from raw JSON data, normalizes it based on the scheme above
-def normalizing_spells(source: list, scheme: dict = NORMALIZED_SCHEME):
-    normalized_spells: dict[str, dict] = {}
-    for spell in source:  # for Fireball (spell, dict) in list of spells (source)
-        normalized: dict = {}
-        for key, operation in scheme.items():  # for "name", lambda in scheme above
-            normalized[key] = operation(spell)
-        normalized_spells[spell["name"]] = normalized
-    return normalized_spells
+@dataclass
+class NormalizedSpell:
+    name: str
+    level: int
+    concentration: bool
+    ritual: bool
+    school: str
+    range_: str  # range is a reserved/built-in term
+    components: list[str]  # easier to loop through, I think
+    material: str | None
+    duration: str
+    casting_time: str
+    classes: list[str]
+    higher_level: bool | tuple[bool, str]  # could be just bool | str, TBH
+    description: str
+
+    # derived from the others, so...
+    tags: dict[str, list[str] | bool] = field(init=False, default_factory=dict)
+
+
+# goes over dict created from JSON, casts entries as NormalizedSpell objects
+def normalizing_spells(database: list):
+    spells: dict[str, NormalizedSpell] = {}
+    # for spell (dict) in list of raw spells
+    for sp in database:
+        spell: NormalizedSpell = NormalizedSpell(
+            name=sp["name"],
+            level=sp["level"],
+            concentration=sp["concentration"],
+            ritual=sp["ritual"],
+            school=sp["school"]["name"],
+            range_=sp["range"],
+            components=sp["components"],
+            material=sp.get("material"),  # capture "gp" through tags later
+            duration=sp["duration"],
+            casting_time=sp["casting_time"],
+            classes=[c["name"] for c in sp["classes"]],
+            higher_level=False
+            if "higher_level" not in sp
+            else (
+                True,
+                " ".join(" ".join(sp["higher_level"]).split()),
+            ),  # could be just the text, tbh
+            description=" ".join(" ".join(sp["desc"]).split()),
+        )
+        spell.tags: dict[str, list[str] | bool] = extract_tags(spell)
+        spells[spell.name] = spell
+
+    return spells
