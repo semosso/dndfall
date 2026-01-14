@@ -98,7 +98,7 @@ TAG_RULES: dict = {
     "material": {
         "source": "material",
         "patterns": {
-            "GP_cost": re.compile(pattern=r"\b[0-9]+\s?gp\b", flags=re.IGNORECASE)
+            "GP_cost": re.compile(pattern=r"\b[0-9]+\s?[Gg][Pp]\b", flags=re.IGNORECASE)
         },
     },
 }
