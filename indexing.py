@@ -1,36 +1,28 @@
 from collections import defaultdict
+from dndspecs import TAG_CATEGORIES
 
 
 # creates helpful indices to expedite search (loops over appropriate index vs. all spells)
-def create_indices(spells: dict) -> dict:
+def create_indices(spells: dict) -> dict[str, defaultdict]:
     indices: dict = {
         "level": defaultdict(list),  # all spells have it
         "school": defaultdict(list),  # all spells have it
         "condition": defaultdict(list),  # only add if tags exist
         "damage_type": defaultdict(list),  # only add if tags exist
         "saving_throw": defaultdict(list),  # only add if tags exist
-        "no_damage": [],  # TBD, just an idea for now
-                          # normalize all to dicts
+        # "no_damage": defaultdict(list),  # TBD, just an idea for now
+        # normalize all to dicts
     }
 
-    for spell_name, spell_info in spells.items():
+    for name, spell in spells.items():
         # all spells have it
-        indices["level"][spell_info["level"]].append(spell_name)
-        indices["school"][spell_info["school"]].append(spell_name)
-        
+        indices["level"][spell.level].append(name)
+        indices["school"][spell.school].append(name)
+
         # only add if tags exist
-        for cond in spell_info["tags"].get("condition", set()):
-            # set() because you need a default return that can be subject to the
-            # same operations as the intended one (e.g., append, merge, iteration)
-            indices["condition"][cond].append(spell_name)
-        for dmg_type in spell_info["tags"].get("damage_type", set()):
-            indices["damage_type"][dmg_type].append(spell_name)
-        if spell_info["tags"][
-            "no_damage"
-        ]:  # same for no conditions? think and consolidate
-            indices["no_damage"].append(spell_name)
-        for st_ability in spell_info["tags"].get("saving_throw", set()):
-            indices["saving_throw"][st_ability].append(spell_name)
+        for category in TAG_CATEGORIES:
+            for tag in spell.tags.get(category.name, set()):
+                indices[category.name][tag].append(name)
 
     return indices
 

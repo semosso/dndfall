@@ -19,11 +19,15 @@ class NormalizedSpell:
     higher_level: bool | tuple[bool, str]  # could be just bool | str, TBH
     description: str
 
-    # derived from the others, so...
+    # derived from init attributes
     tags: dict[str, list[str] | bool] = field(init=False, default_factory=dict)
 
+    # easier visualization of tags; called with specific (T/F) or none (all)
+    def get_tag(self, tag=False):
+        pass
 
-# goes over dict created from JSON, casts entries as NormalizedSpell objects
+
+# goes over dict created from JSON, casts spells as NormalizedSpell objects
 def normalizing_spells(database: list):
     spells: dict[str, NormalizedSpell] = {}
     # for spell (dict) in list of raw spells

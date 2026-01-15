@@ -3,6 +3,7 @@ import rich  # better visualization of data structures
 
 # my modules
 from normalization import normalizing_spells
+from indexing import create_indices
 
 
 # initializes the dict of curated spells
@@ -21,9 +22,10 @@ def main():
     rich.print(spells["Prismatic Spray"])
     rich.print(spells["Fireball"])
 
-    for spell in spells.values():
-        if "GP_cost" in spell.tags.get("material", []):
-            rich.print(spell.name, "\n", spell.material)
+    sorted_indices: dict = create_indices(spells)
+    for k in sorted_indices:
+        sorted_indices[k]: dict = dict(sorted(sorted_indices[k].items()))
+    rich.print(sorted_indices)
 
 
 if __name__ == "__main__":

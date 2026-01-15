@@ -4,12 +4,12 @@ from dataclasses import dataclass
 
 @dataclass
 class Commands:
+    
     pass
 
 
 class QueryParser:
-    """Parses through user input per my syntax rules,
-    turning str into query objects"""
+    """Receives user input, returns query objects"""
 
     # WHAT DATA REPRESENTS THESE OBJECTS?
     # A:
@@ -20,8 +20,8 @@ class QueryParser:
 
 
 class SearchLogic:
-    """Contains all search logic based on my syntax. Based on query objects,
-    determines the applicable search operations"""
+    """Contains all search logic based on app syntax.
+    Receives query objects, returns search commands"""
 
     # WHAT DATA REPRESENTS THESE OBJECTS?
     # A:
@@ -34,8 +34,8 @@ class SearchLogic:
 
 
 class SearchEngine:
-    """Applies commands from search logic to spell indexes or
-    NormalizedSpell objects, as needed"""
+    """Receives search commands, returns search results over
+    indexes or NormalizedSpell objects"""
 
     # WHAT DATA REPRESENTS THESE OBJECTS?
     # A:
