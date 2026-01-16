@@ -25,10 +25,11 @@ def extract_tags(
             tags[category.name] = found_tag
 
     # e.g., no_damage, no_saving_throw etc., which derive from tag extraction
+    # maybe I should un/de-nest this? nested to return a single dic, once
     def place_derivation_tags(tags):
         for k, v in dndspecs.DERIVATION_TAGS.items():
             if v not in tags:
-                tags[k] = True
+                tags[k] = [True]
 
     place_derivation_tags(tags)
     return tags

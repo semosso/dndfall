@@ -69,7 +69,7 @@ DAMAGE_TYPE: TagCategory = TagCategory(
     },
     source="description",
     patterns=[
-        r"\b[0-9]+\s?d\s?[0-9]+\s?(\+[0-9]+)? {value} damage\b",
+        r"\b[0-9]+\s?d\s?[0-9]+\s?(\+\s?[0-9]+)?\s?{value} damage\b",
         r"\btake(s)? {value} damage\b",
     ],
 )
@@ -87,7 +87,7 @@ SAVING_THROW: TagCategory = TagCategory(
     },
     source="description",
     patterns=[
-        r"\b(make(s)?|succeed on)\s+(a|another)\s+(DC [0-9]+\s+)?(new|successful)?\s*{value} saving throw",
+        r"\b(make(s)?|succeed(s)? on|fail(s)?)\s?(a|an|another)?\s?(DC [0-9]+\s?)?(new|successful)?\s*{value} saving throw(s)?",
         r"\bsaving throw of {value}\b",
         r"make\s+a\s+DC\s+15\s+{value}\s+saving\s+throw",
     ],
@@ -101,8 +101,16 @@ MATERIAL: TagCategory = TagCategory(
     patterns=[r"\b[0-9]+\s?[Gg][Pp]\b"],
 )
 
+# FIELDS_CATEGORIES: list = [
+#     NormalizedSpell.level,
+#     NormalizedSpell.concentration,
+#     NormalizedSpell.ritual,
+#     NormalizedSpell.school,
+#     NormalizedSpell.classes,
+# ]
+
 TAG_CATEGORIES: list[TagCategory] = [CONDITION, DAMAGE_TYPE, SAVING_THROW]
-# removed MATERIAL to make it work
+# removed MATERIAL to make indexing work; messes up tagging
 
 DERIVATION_TAGS: dict = {
     "no_damage": DAMAGE_TYPE.name,

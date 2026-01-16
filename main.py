@@ -16,16 +16,12 @@ def main():
     spells: dict[str, dict] = normalizing_spells(raw_spells)
 
     # testing
-    rich.print(spells["Cone of Cold"].level)
-    rich.print(spells["Bless"])
+    rich.print(spells["Faerie Fire"])
     rich.print(spells["Raise Dead"])
     rich.print(spells["Prismatic Spray"])
-    rich.print(spells["Fireball"])
 
     sorted_indices: dict = create_indices(spells)
-    for k in sorted_indices:
-        sorted_indices[k]: dict = dict(sorted(sorted_indices[k].items()))
-    rich.print(sorted_indices)
+    rich.print(sorted_indices["saving_throw"])
 
 
 if __name__ == "__main__":

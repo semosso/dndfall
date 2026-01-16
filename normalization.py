@@ -22,10 +22,6 @@ class NormalizedSpell:
     # derived from init attributes
     tags: dict[str, list[str] | bool] = field(init=False, default_factory=dict)
 
-    # easier visualization of tags; called with specific (T/F) or none (all)
-    def get_tag(self, tag=False):
-        pass
-
 
 # goes over dict created from JSON, casts spells as NormalizedSpell objects
 def normalizing_spells(database: list):
@@ -46,10 +42,7 @@ def normalizing_spells(database: list):
             classes=[c["name"] for c in sp["classes"]],
             higher_level=False
             if "higher_level" not in sp
-            else (
-                True,
-                " ".join(" ".join(sp["higher_level"]).split()),
-            ),  # could be just the text, tbh
+            else (True, " ".join(" ".join(sp["higher_level"]).split())),
             description=" ".join(" ".join(sp["desc"]).split()),
         )
         spell.tags: dict[str, list[str] | bool] = extract_tags(spell)
