@@ -10,7 +10,7 @@ operators: dict = {
 }
 
 
-# @dataclass
+# @dataclass | or class?
 # class SearchCommand:
 #     # [level, l], [saving_throw, st], [damage_type, dt]; should it be tuple?
 #     command: list
@@ -18,7 +18,7 @@ operators: dict = {
 #     operators: list
 
 
-# @dataclass
+# @dataclass | or class?
 # class LevelSearch(SearchCommand):
 #     command: list = ["l", "level"]
 #     operators: list = [operators["equality"], [operators["comparison"]]]

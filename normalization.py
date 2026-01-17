@@ -18,9 +18,10 @@ class NormalizedSpell:
     classes: list[str]
     higher_level: bool | tuple[bool, str]  # could be just bool | str, TBH
     description: str
+    tags: dict[str, list[str] | bool] = field(init=False)
 
-    # derived from init attributes
-    tags: dict[str, list[str] | bool] = field(init=False, default_factory=dict)
+    def __post_init__(self):
+        self.tags: dict[str, list[str] | bool] = extract_tags(spell=self)
 
 
 # goes over dict created from JSON, casts spells as NormalizedSpell objects
@@ -45,7 +46,6 @@ def normalizing_spells(database: list):
             else (True, " ".join(" ".join(sp["higher_level"]).split())),
             description=" ".join(" ".join(sp["desc"]).split()),
         )
-        spell.tags: dict[str, list[str] | bool] = extract_tags(spell)
         spells[spell.name] = spell
 
     return spells
