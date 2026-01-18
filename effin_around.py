@@ -1,4 +1,5 @@
 # setting up
+from types import GeneratorType
 import re
 import rich
 import json
@@ -92,12 +93,20 @@ operators = []
 values = []
 
 # think of whitespaces, separators, error messages, .lower for str, int for int
+# for u_i in user_input:
+#     parsed: list = re.split(pattern=r"(<|<=|:|>=|>|!=)", string=u_i)
+#     rich.print(parsed)
+#     fields.append(parsed[0])
+#     operators.append(parsed[1])
+#     values.append(parsed[2])
+
+# alt_query_parsing using listcomp
+parsed_input = []
 for u_i in user_input:
-    parsed: list = re.split(pattern=r"(<|<=|:|>=|>|!=)", string=u_i)
-    rich.print(parsed)
-    fields.append(parsed[0])
-    operators.append(parsed[1])
-    values.append(parsed[2])
+    fields.append(re.split(pattern=r"(<|<=|:|>=|>|!=)", string=u_i))
+    alt_commands: GeneratorType = (command for command in fields)
+rich.print(alt_commands)
+
 
 # MVP for composing the command
 commands = list(zip(fields, operators, values))
