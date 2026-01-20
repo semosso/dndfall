@@ -30,29 +30,3 @@ def create_indices(spells: dict) -> dict[str, defaultdict]:
         #         indices[category][tag].append(name)
 
     return indices
-
-
-def has_tag():
-    # is spell in tag index?
-    # intersection of spells in multiple indices
-    pass
-
-
-def numeric_search():
-    pass
-
-
-def text_search():
-    pass
-
-
-def set_search():
-    pass
-
-
-def match_spell():
-    # will call on the helper ones depending on type
-    # figure out the formal synta, how to match user's input to my operatores and helpers)
-    # replicate scryfall's formal syntax (e.g., l:/level: (<, <=, \==, >=, >, !=),
-    # c:/condit ion: (T/F, \==, fuzzy later, !=))
-    pass
