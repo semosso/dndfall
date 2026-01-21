@@ -16,14 +16,7 @@ def main():
 
     # calls "normalization" to normalizes JSON data into dataclass objects
     spells: dict[str, dict] = normalizing_spells(raw_spells)
-
-    # # testing
-    # rich.print(spells["Faerie Fire"])
-    # rich.print(spells["Raise Dead"])
-    # rich.print(spells["Prismatic Spray"])
-
     indices: dict = create_indices(spells)
-    # rich.print(sorted_indices["saving_throw"])
 
     user_input: list = [
         "level>=8", # how to print per level?
@@ -37,18 +30,16 @@ def main():
     ]
 
     for u_i in user_input:
-        p_q: searching.ParsedQuery = searching.query_parser(u_i)
-        v_q: bool | searching.SearchCommand = searching.query_validator(pq=p_q)
-        if isinstance(v_q, searching.SearchCommand):
-            for k, v in indices[v_q.field].items():
-                # rich.print(v_q)
-                    calculation = v_q.operator.operation(v_q.values[0]) # flatten later
-                    if calculation(k):
-                        rich.print(f"with query {u_i}, the result is:\n{v}")
+        pq: searching.ParsedQuery = searching.query_parser(u_i)
+        vq: bool | searching.SearchCommand = searching.query_validator(pq)
+        if isinstance(vq, searching.SearchCommand):
+            for k, v in indices[vq.field].items():
+                # flatten later
+                if vq.operator.operation(vq.values[0])(k):
+                    rich.print(f"for query {u_i}, the result is:\n{v}")
 
 if __name__ == "__main__":
     main()
-
 
 # PART 5, test suite, see notes on Obsidian
 # e.g., expand spells and try language not captured by regex

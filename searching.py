@@ -33,8 +33,8 @@ class TextOp(StrEnum):
 
     def operation(self, user_value):
         txt_operations: dict = {
-            TextOp.IS: lambda x: x.lower() == user_value.lower(),
-            TextOp.N_IS: lambda x: x.lower() != user_value.lower(),
+            TextOp.IS: lambda x: x.lower() == user_value,
+            TextOp.N_IS: lambda x: x.lower() != user_value,
         }
         return txt_operations[self]
 
@@ -83,14 +83,14 @@ class ParsedQuery:
 class SearchCommand:
     field: str
     operator: NumericOp | TextOp
-    values: list[str]
+    values: list[str] # flatten here, maybe?
 
 def query_parser(user_input: str) -> ParsedQuery:
-    # think of whitespaces, separators, error messages, .lower str, int user_input
+    # think of separators, error messages
     # "value" can have multiple values, keep in mind when composing command
     components: list = re.split(pattern=r"\s*(<=|>=|!=|<|>|:)\s*", string=user_input)
     f, o, *vs = components
-    values_list = [v.strip() for v in "".join(vs).split(",")]
+    values_list = [v.strip().lower() for v in "".join(vs).split(",")]
     return ParsedQuery(field=f.strip().lower(), operator=o, values=values_list)
 
 
@@ -121,12 +121,3 @@ def query_validator(pq: ParsedQuery) -> bool | SearchCommand:
 #     # if level, match the operator to the NumOperator operation
 #     # if others, match the operator to the TxtOperator operation
 #     return command
-
-# def search_indices():
-#     # for command in parsed_ui:
-#     #     for k, v in indices[command[0]].items():
-#     #         calculation = apply_command(operator=command[1], value_user=command[2])
-#     #         if calculation(k):
-#     #             rich.print(f"with query {command}, the result is:\n{v}")
-
-#     pass
