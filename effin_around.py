@@ -1,5 +1,4 @@
 # setting up
-from types import GeneratorType, NoneType
 import re
 import rich
 import json
@@ -39,6 +38,9 @@ def apply_command(operator, value_user):
         elif operator == "!=":
             return lambda value_ind: value_ind.lower() != value_user.lower()
     elif type(value_user) is int:
+        # doesn't work, it always comes as strings
+        # so either "if level, int(value_user)" at some point
+        # or consolidate several fields which rely on numerical, and have them all cast as ints
         if operator == "<":
             return lambda value_ind: value_ind < int(value_user)
         elif operator == "<=":
@@ -51,6 +53,7 @@ def apply_command(operator, value_user):
             return lambda value_ind: value_ind > int(value_user)
         elif operator == "!=":
             return lambda value_ind: value_ind != int(value_user)
+        raise ValueError(f"Unsupported operator {operator} for value {value_user!r}")
 
 
 ## 1, MVP of parser: takes user input, breaks it into [field, operator, value]
@@ -90,58 +93,11 @@ def parsing_query(user_input: list) -> list:
 
 parsed_ui: list = parsing_query(user_input)
 
-
-## 2, MVP for composing the command
-fields: list = [p_ui[0] for p_ui in parsed_ui]
-operators: list = [p_ui[1] for p_ui in parsed_ui]
-values: list = [p_ui[2:] for p_ui in parsed_ui]  # there could be more than 1
-
-
-def validating_input(field, operator):
-    # first, field
-    try:
-        field in valid_fields.values()
-    except:
-        print(f"{field} is not a valid search field")
-        ind = fields.index(field)
-        fields.pop(ind), operators.pop(ind), values.pop(ind)
-    # second, operator, based on field
-    if field in valid_fields["level"]:
-        try:
-            operator in valid_operators["numeric"]
-        except:
-            print(f"{operator} is not a valid operator for field 'level'")
-            ind = operators.index(operator)
-            fields.pop(ind), operators.pop(ind), values.pop(ind)
-    else:
-        try:
-            operator in valid_operators.values()
-        except:
-            print(f"{operator} is not a valid operator for field {field}")
-            ind = operators.index(operator)
-            fields.pop(ind), operators.pop(ind), values.pop(ind)
-
-
-for f, o, _ in parsed_ui:
-    validating_input(f, o)
-
-commands = list(zip(fields, operators, values))
-
 # MVP, applying the command to levels
 # commands[0][0] is levels, so k=1, 2, 3, 4, 5, 6, 7, 8, 9, and v=list of spells
 # concers: int() values
-for command in commands:
+for command in parsed_ui:
     for k, v in indices[command[0]].items():
         calculation = apply_command(operator=command[1], value_user=command[2])
-        if k is None:
-            rich.print("no match")
-        elif k is not NoneType and calculation(k):
+        if calculation(k):
             rich.print(f"with query {command}, the result is:\n{v}")
-
-# MVP, applying the command to school
-# commands[2][0] is school, so k=Evo, Transf, Necro, etc., and v=list of spells
-# # concerns .lower() values; have to change operator behavior, but works
-# for k, v in indices[commands[2][0]].items():
-#     calculation = apply_command(operator=commands[2][1], value_user=commands[2][2])
-#     if calculation(k):
-#         rich.print(f"with query {commands[2]}, the result is:\n{v}")
