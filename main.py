@@ -29,6 +29,8 @@ def main():
         "damage_type>cold",  # checking wrong operator
     ]
 
+    # this works, but very inefficiently
+    # e.g., doesn't accommodate specifics, doesn't leverage index properly
     for u_i in user_input:
         pq: searching.ParsedQuery = searching.query_parser(u_i)
         vq: bool | searching.SearchCommand = searching.query_validator(pq)
