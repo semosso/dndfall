@@ -1,4 +1,3 @@
-
 import re
 from enum import StrEnum
 from dataclasses import dataclass
@@ -7,6 +6,7 @@ from dataclasses import dataclass
 import json
 from normalization import normalizing_spells
 from indexing import create_indices
+import rich
 
 
 # gets JSON data, will evolve to API calls to 5e SRD database
@@ -26,10 +26,12 @@ class NumericOp(StrEnum):
     GT = ">"
     LT_E = "<="
     LT = "<"
+    value_error_msg = "be numeric (e.g., 3, not three)"
 
 class TextOp(StrEnum):
     IS = ":"
     N_IS = "!="
+    value_error_msg = "follow formal syntax (e.g., 'fire' for damage_type)"
 
 class BoolOp(StrEnum):
     IS = "=="
@@ -38,31 +40,42 @@ class BoolOp(StrEnum):
 
 ## strategy classes
 class SearchStrategy():
-    # # should operator be here?
-    # def __init__(self, field: str, value: list[str], indices: dict[str, defaultdict]):
-    #     self.field = field
+
     @classmethod
     # will be overriden by specific strategies
-    def execute(self, field, value):
+    def execute(cls, field, op, value):
         pass
 
 class DirectLookupStrategy(SearchStrategy):
-    # consolidate init in super class later on
-    # def __init__(self):
-    #     pass
 
     @classmethod
-    def execute(cls, field, value):
+    def execute(cls, field, op, value):
         # empty set or list, TBD
-        return [[f"{field} {v}:", INDICES[field].get(v, set())] for v in value]
+        # list of tuples?
+        # verbose for testing
+        return [(f"QUERY= field: '{field}', operator: '{op}', value: '{v}'",
+                 INDICES[field].get(v, set())) for v in value]
 
 
 class ExclusionStrategy(SearchStrategy):
 
     @classmethod
-    def execute(cls, field, value):
+    def execute(cls, field, op, value):
         # put this inside LEVEL, or adapt it here (e.g., if level)
-        return [[f"{field} {nv}:", INDICES[field].get(nv, set())] for nv in range(0,10) if nv not in value]
+        if field == "level":
+            # try:
+            return [[f"QUERY= field: '{field}', operator: '{op}', value: '{value}'",
+                     INDICES[field].get(not_v, set())]
+                    for not_v in range(0,10) if not_v not in value]
+        else:
+            # tyr to make this into a list comprehension
+            not_v_list: list = [f"QUERY= field: '{field}', operator: '{op}', value: '{value}'",]
+            for not_v in INDICES[field]:
+                # this if works, but might be doing more work than needed
+                if not_v not in value and not_v not in not_v_list:
+                    not_v_list.append((not_v, INDICES[field][not_v]))
+            return not_v_list
+            pass
 
 
 ## command classes
@@ -85,78 +98,98 @@ class SearchCommand():
     
 
     @classmethod
-    def initial_validation(cls, pq: ParsedQuery) -> bool | type[SearchCommand]:
+    def initial_validation(cls, pq: ParsedQuery) -> SearchCommand:
         """Validates field and operator from ParsedQuery.
         Input: a ParsedQuery object
         Return: False if validation fails, else a <field> SearchCommand object"""
 
         validation_dict = cls.validation_lookup()
         if pq.field not in validation_dict:
-            print(f"'{pq.field}' is not a valid field")
-            return False
+            raise ValueError(
+                f"'{pq.field}' is not a valid field")
         elif pq.operator not in validation_dict[pq.field][1]:
-            print(f"'{pq.operator}' is not a valid operator for field '{pq.field}'")
-            return False
+            raise ValueError(
+                f"'{pq.operator}' is not a valid operator for field '{pq.field}'")
         else:
-            return validation_dict[pq.field][0](pq.operator, pq.values)
+            return validation_dict[pq.field][0](pq.field, pq.operator, pq.values)
 
-
-    def __init__(self, op: StrEnum, values: list):
+    def __init__(self, field: str, op: StrEnum, values: list, strat = None):
+        self.field: str = field
         self.operator: StrEnum = op
         self.values: list = values
 
+    # is this efficient? does this look at all subs declared or instantiated?
     def __init_subclass__(cls, **kwargs):
         super().__init_subclass__(**kwargs)
         SearchCommand.SEARCH_COMMANDS.append(cls)
 
+    # repeated for all commands. should be at class level?
+    # need int() in level (and other cases?); "if level, int, else ..."? TBD
+    def value_extraction(self):
+        return self.values
+
+    def validate_values(self, values):
+        pass
+
+    def apply_command(self):
+        values = self.value_extraction()
+        self.validate_values(values)
+    # if False, don't even call strategy, so no error handling there
+        if values: 
+            return self.strategy.execute(field=self.field, 
+                                        op=self.operator,
+                                        value=values)
+        
 
 class Level(SearchCommand):
 
-    SUPPORTED_COMMANDS: list = ["level", "l"]
-    SUPPORTED_OPERATORS: list = [op for op in NumericOp]
+    SUPPORTED_COMMANDS: set = {"level", "l"}
+    SUPPORTED_OPERATORS: set = {op for op in NumericOp}
     # add strategies
-    OP_TO_STRATEGY: dict[str, type[SearchStrategy]] = {
+    SUPPORTED_STRATEGIES: dict[str, type[SearchStrategy]] = {
         NumericOp.EQ: DirectLookupStrategy,
         NumericOp.N_EQ: ExclusionStrategy,
     }
     
-    def __init__(self, op: StrEnum, values: list, strat = None):
-        super().__init__(op, values)
+    def __init__(self, field: str, op: StrEnum, values: list, strat = None):
+        super().__init__(field, op, values)
         # can I tie "field" to NormalizedSpell object (for fields), or TAG_CATEGORIES
         # (for tag information)? avoids typos, single source of truth etc.
         self.field: str = "level"
-        self.strategy: SearchStrategy = self.OP_TO_STRATEGY[op]
+        self.strategy: SearchStrategy = self.SUPPORTED_STRATEGIES[op]
 
-    # this must be repeated for every command (ie, could be at class level)
-    # but I need to account for int() in level and there might be other cases
-    # maybe "if level, int, else just pass the levels?" TBD
     def value_extraction(self):
         try:
             return [int(v) for v in self.values]
         except ValueError:
-            print("all values for field 'level' must be numeric (e.g., 3, not three)")
-
-    def apply_command(self):
-        return self.strategy.execute(field=self.field, value=self.value_extraction())
-    
+            raise ValueError(
+                f"All values for field '{self.field}' must {NumericOp.value_error_msg}"
+            )
         
 
 class DamageType(SearchCommand):
 
-    SUPPORTED_COMMANDS: list = ["damage_type", "dt"]
-    SUPPORTED_OPERATORS: list = [op for op in TextOp]
-    
-    # is value str or list?
-    def __init__(self, op: StrEnum, values: list, strat = None):
-        super().__init__(op, values)
+    SUPPORTED_COMMANDS: set = {"damage_type", "dt"}
+    SUPPORTED_OPERATORS: set = {op for op in TextOp}
+    # add strategies
+    SUPPORTED_STRATEGIES: dict[str, type[SearchStrategy]] = {
+        TextOp.IS: DirectLookupStrategy,
+        TextOp.N_IS: ExclusionStrategy,
+    }
+
+    def __init__(self, field: str, op: StrEnum, values: list, strat = None):
+        super().__init__(field, op, values)
+        self.field: str = "damage_type"
+        self.strategy: SearchStrategy = self.SUPPORTED_STRATEGIES[op]
 
 
-print(NumericOp.EQ)
-# print([c for c in NormalizedSpell.__dataclass_fields__])
-# print(SearchCommand.SEARCH_COMMANDS)
-print(SearchCommand.validation_lookup())
-
-
+    def validate_values(self, values):
+        invalid_v = [v for v in values if v not in INDICES[self.field]]
+        if invalid_v:
+            raise ValueError(
+                    f"Invalid values: {invalid_v}.\
+                    Values for field '{self.field}' must {TextOp.value_error_msg}"
+                )
 
 ## search engine
 @dataclass
@@ -168,25 +201,35 @@ class ParsedQuery:
 
 class SearchEngine():
     
-    def query_parser(user_input: str) -> ParsedQuery:
+    def query_parser(user_input: str) -> ParsedQuery | None:
         """Parses user input into field, operator and value. Static syntax check.
         Input: user query
         Return: a ParsedQuery object, ready for context validation"""
 
         # think of separators, error messages (pure static syntax for now)
         # "value" can have multiple values, keep in mind when composing command
-        parts: list = re.split(pattern=r"\s*(<=|>=|!=|<|>|:)\s*", string=user_input)
-        f, o, *vs = parts # MOBRAL * 
-        values_list: list[str] = [v.strip().lower() for v in "".join(vs).split(",")]
-        return ParsedQuery(field=f.strip().lower(), operator=o, values=values_list)
-    
+        # "\s*(<=|>=|!=|<|>|:)\s*"
+        # only works for a single field search for now
+        parts: list = re.split(pattern=r"(<=|>=|!=|<|>|:)", string=user_input)
+        # this doesn't work 100% like I want it to
+        try:
+            f, o, *vs = parts
+            values_list: list[str] = [v.strip().lower() for v in "".join(vs).split(",")]
+            return ParsedQuery(field=f.strip().lower(), operator=o, values=values_list)
+        except ValueError:
+            raise ValueError(
+                "no valid operator in query, must be one of ':', '!=', '<=', '<', '>=', or '>'")
 
 # testing
-u_i = "level!=3,4"
+# print(NumericOp.EQ)
+# print([c for c in NormalizedSpell.__dataclass_fields__])
+# print(SearchCommand.SEARCH_COMMANDS)
+# print(SearchCommand.validation_lookup())
+u_i = "dt!=fire, acid, poison, cold"
 qp = SearchEngine.query_parser(u_i)
-print(qp)
-print(type(SearchCommand.initial_validation(qp)))
+# print(qp)
+# print(type(SearchCommand.initial_validation(qp)))
 vqp = SearchCommand.initial_validation(qp)
-print(type(vqp))
-print(vqp.value_extraction())
-print(vqp.apply_command())
+# print(type(vqp))
+# print(vqp.value_extraction())
+rich.print(vqp.apply_command())
