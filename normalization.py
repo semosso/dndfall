@@ -1,9 +1,11 @@
 from dndspecs import NormalizedSpell
-from tagging import extract_tags
+from indexing import extract_tags
 
 
-# goes over dict created from JSON, casts spells as NormalizedSpell objects
 def normalizing_spells(database: list):
+    """Casts spells from JSON into NormalizedSpell instances.
+    Input: list of spells, each a dictionary.
+    Return: dicionary of spell names and spells (as NormalizedSpell instances)."""
     spells: dict[str, NormalizedSpell] = {}
     # for spell (dict) in list of raw spells
     for sp in database:

@@ -228,10 +228,6 @@ class DerivedField(SpellField):
         ]
         return regexes
 
-    # def __init_subclass__(cls, **kwargs):
-    #     super().__init_subclass__(**kwargs)
-    #     DerivedField.DERIVED_FIELDS.append(cls)
-
 
 CONDITION: DerivedField = DerivedField(
     name="condition",
@@ -309,7 +305,7 @@ SAVING_THROW: DerivedField = DerivedField(
                 # r"\b(make(s)?|succeed(s)? on|fail(s)?)\s?(a|an|another)?\s?(DC [0-9]+\s?)?(new|successful)?\s*{value} saving throw(s)?"
                 r"\b(make(s)?|succeed(s)? on|fail(s)?)\s?.*{value} saving throw(s)?",
                 r"\bsaving throw of {value}\b",
-                r"make\s+a\s+DC\s+15\s+{value}\s+saving\s+throw",
+                # r"make\s+a\s+DC\s+15\s+{value}\s+saving\s+throw",
             ],
             "source": "description",
             "operator": TextOp,
@@ -362,10 +358,9 @@ MATERIAL: DerivedField = DerivedField(
 # HIGHER_LEVEL: DirectField = DirectField()
 
 
-# fix later, testing only now
-# TAG_CATEGORIES: list[DerivedField] = [AREA_OF_EFFECT]
-
+# automate this at some point, either with an _init_ hook or something else
 DERIVED_FIELDS: list = [CONDITION, DAMAGE, SAVING_THROW]
+DIRECT_FIELDS: list = [LEVEL]  # , CONCENTRATION, RITUAL, SCHOOL, CLASSES
 
 # DERIVATION_TAGS: dict = {
 #     "no_damage": DAMAGE_TYPE.name,
