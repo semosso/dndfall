@@ -1,27 +1,5 @@
-from dataclasses import dataclass, field
-
+from dndspecs import NormalizedSpell
 from tagging import extract_tags
-
-
-@dataclass
-class NormalizedSpell:
-    name: str
-    level: int
-    concentration: bool
-    ritual: bool
-    school: str
-    range_: str  # range is a reserved/built-in term
-    components: list[str]  # easier to loop through, I think
-    material: str | None
-    duration: str
-    casting_time: str
-    classes: list[str]
-    higher_level: bool | tuple[bool, str]  # could be just bool | str, TBH
-    description: str
-    tags: dict[str, list[str] | bool] = field(init=False)
-
-    def __post_init__(self):
-        self.tags: dict[str, list[str] | bool] = extract_tags(spell=self)
 
 
 # goes over dict created from JSON, casts spells as NormalizedSpell objects
@@ -45,7 +23,9 @@ def normalizing_spells(database: list):
             if "higher_level" not in sp
             else (True, " ".join(" ".join(sp["higher_level"]).split())),
             description=" ".join(" ".join(sp["desc"]).split()),
+            url=sp["url"],
         )
+        spell.tags = extract_tags(spell=spell)
         spells[spell.name] = spell
 
     return spells
