@@ -1,3 +1,4 @@
+from pygments.lexers.dotnet import BooLexer
 import re
 from enum import StrEnum
 from dataclasses import dataclass, field
@@ -104,8 +105,8 @@ class BooleanOp(StrEnum):
 
     def operation(self, user_value):
         bool_operations: dict = {
-            BooleanOp.IS: lambda x: x.lower() is user_value,
-            BooleanOp.IS_N: lambda x: x.lower() is not user_value,
+            BooleanOp.IS: lambda x: x is user_value,
+            BooleanOp.IS_N: lambda x: x is not user_value,
         }
         return bool_operations[self]
 
@@ -144,41 +145,42 @@ class TagRule:
 # this class is for validation purposes by the query/validate functions
 class SpellField:
     name: str
+    aliases: set[str]
 
 
 @dataclass
 class DirectField(SpellField):
-    aliases: set[str]
-    values: list  # TBD
+    values: set[str | str | range | type[bool]]
     operator: type[StrEnum]
 
 
 LEVEL: DirectField = DirectField(
     name="level",
     aliases={"level", "l"},
-    values=[range(0, 10)],  # list? does this have to be ordered? why not set?
     operator=NumericOp,  # this was a list when I had multiple op per value
+    values={range(0, 10)},  # list? does this have to be ordered? why not set?
 )
 
 
 CONCENTRATION: DirectField = DirectField(
     name="concentration",
     aliases={"concentration", "conc"},
-    values=[bool],
     operator=BooleanOp,
+    values={bool},
 )
 
 
 # not all spells have this, query/validator must account for this
 RITUAL: DirectField = DirectField(
-    name="ritual", aliases={"ritual", "r"}, values=[bool], operator=BooleanOp
+    name="ritual", aliases={"ritual", "r"}, operator=BooleanOp, values={bool}
 )
 
 
 SCHOOL: DirectField = DirectField(
     name="school",
     aliases={"school", "sch"},
-    values=[
+    operator=TextOp,
+    values={
         "Abjuration",
         "Conjuration",
         "Divination",
@@ -187,15 +189,15 @@ SCHOOL: DirectField = DirectField(
         "Illusion",
         "Necromancy",
         "Transmutation",
-    ],
-    operator=TextOp,
+    },
 )
 
 
 CLASSES: DirectField = DirectField(
     name="classes",
     aliases={"classes", "cls"},
-    values=[
+    operator=TextOp,
+    values={
         "Wizard",
         "Sorcerer",
         "Cleric",
@@ -204,17 +206,24 @@ CLASSES: DirectField = DirectField(
         "Bard",
         "Druid",
         "Warlock",
-    ],
-    operator=TextOp,
+    },
 )
 
 
 @dataclass
 class DerivedField(SpellField):
-    values: dict[str, dict]  # add additional structure validation?
+    values: list[DerivedValue]
 
-    @classmethod  # TBD
-    def derive_patterns(cls, value: dict):
+
+@dataclass
+class DerivedValue:
+    name: str
+    source: str
+    operator: type[StrEnum]
+    subvalues: set[str] = field(default_factory=set)
+    patterns: set[str] = field(default_factory=set)
+
+    def derive_patterns(self):
         regexes: list = [
             (
                 subvalue,
@@ -223,135 +232,134 @@ class DerivedField(SpellField):
                     flags=re.IGNORECASE,
                 ),
             )
-            for subvalue in value["subvalues"]
-            for template in value["patterns"]
+            for subvalue in self.subvalues
+            for template in self.patterns
         ]
         return regexes
 
 
+CONDITION_VALUE: DerivedValue = DerivedValue(
+    name="condition",
+    source="description",
+    operator=TextOp,
+    subvalues={
+        "blinded",
+        "charmed",
+        "deafened",
+        "frightened",
+        "grappled",
+        "incapacitated",
+        "invisible",
+        "paralyzed",
+        "petrified",
+    },
+    patterns={r"\b{value}\b"},
+)
+
 CONDITION: DerivedField = DerivedField(
     name="condition",
-    values={
-        "condition": {
-            "aliases": {"condition", "cond", "c"},
-            # set or list? do I need to enforce order here or in caller function?
-            "subvalues": {
-                "blinded",
-                "charmed",
-                "deafened",
-                "frightened",
-                "grappled",
-                "incapacitated",
-                "invisible",
-                "paralyzed",
-                "petrified",
-            },
-            "patterns": [r"\b{value}\b"],
-            "source": "description",
-            "operator": TextOp,
-        }
+    aliases={"condition", "cond"},
+    values=[CONDITION_VALUE],
+)
+
+
+DAMAGE_TYPE: DerivedValue = DerivedValue(
+    name="damage_type",
+    source="description",
+    operator=TextOp,
+    subvalues={
+        "acid",
+        "cold",
+        "fire",
+        "force",
+        "lightning",
+        "necrotic",
+        "poison",
+        "psychic",
+        "radiant",
+        "thunder",
+    },
+    patterns={
+        r"\b[0-9]+\s?d\s?[0-9]+\s?(\+\s?[0-9]+)?\s?{value} damage\b",
+        r"\btake(s)? {value} damage\b",
     },
 )
+
+
+DAMAGE_AMOUNT: DerivedValue = DerivedValue(
+    name="damage_amount",
+    source="description",
+    operator=NumericOp,
+    subvalues={"8d6"},
+    patterns={r"\b8d6\b"},  # is this where I call on the building blocks?
+)
+
 
 DAMAGE: DerivedField = DerivedField(
     name="damage",
-    values={
-        "damage_type": {
-            "aliases": {"damage_type", "dt"},
-            "subvalues": {
-                "acid",
-                "cold",
-                "fire",
-                "force",
-                "lightning",
-                "necrotic",
-                "poison",
-                "psychic",
-                "radiant",
-                "thunder",
-            },
-            "patterns": [
-                r"\b[0-9]+\s?d\s?[0-9]+\s?(\+\s?[0-9]+)?\s?{value} damage\b",
-                r"\btake(s)? {value} damage\b",
-            ],
-            "source": "description",
-            "operator": TextOp,
-        },
-        "damage_amount": {
-            "aliases": {"damage_amount", "da"},
-            "subvalues": {"8d6"},
-            "patterns": [r"\b8d6\b"],  # is this where I call on the building blocks?
-            "source": "description",
-            "operator": NumericOp,
-        },
-    },
+    aliases={"damage", "dmg"},
+    values=[DAMAGE_TYPE, DAMAGE_AMOUNT],
 )
+
 
 # should allow a search for any ST (i.e., catch any attributes)
+SAVING_THROW_VALUE: DerivedValue = DerivedValue(
+    name="saving_throw",
+    source="description",
+    operator=TextOp,
+    subvalues={
+        "strength",
+        "dexterity",
+        "constitution",
+        "wisdom",
+        "intelligence",
+        "charisma",
+    },
+    patterns={
+        # r"\b(make(s)?|succeed(s)? on|fail(s)?)\s?(a|an|another)?\s?(DC [0-9]+\s?)?(new|successful)?\s*{value} saving throw(s)?"
+        # r"make\s+a\s+DC\s+15\s+{value}\s+saving\s+throw",
+        r"\b(make(s)?|succeed(s)? on|fail(s)?)\s?.*{value} saving throw(s)?",
+        r"\bsaving throw of {value}\b",
+    },
+)
+
+
 SAVING_THROW: DerivedField = DerivedField(
     name="saving_throw",
-    values={
-        "saving_throw": {
-            "aliases": {"saving_throw", "st"},
-            "subvalues": {
-                "strength",
-                "dexterity",
-                "constitution",
-                "wisdom",
-                "intelligence",
-                "charisma",
-            },
-            "patterns": [
-                # r"\b(make(s)?|succeed(s)? on|fail(s)?)\s?(a|an|another)?\s?(DC [0-9]+\s?)?(new|successful)?\s*{value} saving throw(s)?"
-                r"\b(make(s)?|succeed(s)? on|fail(s)?)\s?.*{value} saving throw(s)?",
-                r"\bsaving throw of {value}\b",
-                # r"make\s+a\s+DC\s+15\s+{value}\s+saving\s+throw",
-            ],
-            "source": "description",
-            "operator": TextOp,
-        }
-    },
-)
-
-# feet comes in different places in desc; I can work on them, or just display
-# e.g., a spell says 10ft and 50ft, for different things and effects
-AREA_OF_EFFECT: DerivedField = DerivedField(
-    name="area_of_effect",
-    values={
-        "shape": {
-            "aliases": {"area_of_effct", "aoe"},
-            "subvalues": {},  # reference the shape_units,
-            "patterns": [],  # is this different than the shape_units pattern?
-            "source": [],
-            "operator": TextOp,
-        }
-    },
+    aliases={"saving_throw", "st"},
+    values=[SAVING_THROW_VALUE],
 )
 
 
-# need to group the GP_cost; want to add the tag + do comparisons
-# this is not it yet, just an idea
+MATERIAL_GP_COST: DerivedValue = DerivedValue(
+    name="GP_cost",
+    source="material",
+    operator=NumericOp,
+    subvalues={"GP_cost"},
+    patterns={r"\b[0-9]+\s?[Gg][Pp]\b"},
+)
+
+
 MATERIAL: DerivedField = DerivedField(
-    name="material",
-    values={
-        "GP_cost_text": {
-            "aliases": {"gp_cost", "gp"},
-            "subvalues": {},
-            "patterns": [r"\b[0-9]+\s?[Gg][Pp]\b"],
-            "source": [],
-            "operator": TextOp,
-        },
-        "GP_cost_num": {
-            "aliases": {"gp_cost", "gp"},
-            "subvalues": {},
-            "patterns": [r"\b[0-9]+\s?[Gg][Pp]\b"],
-            "source": [],
-            "operator": NumericOp,
-        },
-    },
+    name="material", aliases={"material", "gp_cost", "gp"}, values=[MATERIAL_GP_COST]
 )
+
 
 # # additional derived fields, with mixed txt/op/bool values
+# feet comes in different places in desc; I can work on them, or just display
+# e.g., a spell says 10ft and 50ft, for different things and effects
+# AREA_OF_EFFECT: DerivedField = DerivedField(
+#     name="area_of_effect",
+#     values={
+#         "shape": {
+#             "aliases": {"area_of_effct", "aoe"},
+#             "subvalues": {},  # reference the shape_units,
+#             "patterns": [],  # is this different than the shape_units pattern?
+#             "source": [],
+#             "operator": TextOp,
+#         }
+#     },
+# )
 # RANGE_: DerivedField = DerivedField()
 # DURATION: DerivedField = DerivedField()
 # CASTING_TIME: DirectField = DirectField()
@@ -359,17 +367,10 @@ MATERIAL: DerivedField = DerivedField(
 
 
 # automate this at some point, either with an _init_ hook or something else
-DERIVED_FIELDS: list = [CONDITION, DAMAGE, SAVING_THROW]
+DERIVED_FIELDS: list = [CONDITION, DAMAGE, SAVING_THROW, MATERIAL]
 DIRECT_FIELDS: list = [LEVEL]  # , CONCENTRATION, RITUAL, SCHOOL, CLASSES
 
 # DERIVATION_TAGS: dict = {
 #     "no_damage": DAMAGE_TYPE.name,
 #     "no_saving_throw": SAVING_THROW.name,
-# }
-
-
-# reference only
-# derived_field_schema: dict = {
-#     "<subtype1>": {"subvalue": "", "pattern": "", "source": "", "operator": ""},
-#     "<subtype2>": {"subvalue": "", "pattern": "", "source": "", "operator": ""},
 # }

@@ -15,7 +15,7 @@ def main():
 
     # calls "normalization" to normalizes JSON data into dataclass objects
     spells: dict[str, NormalizedSpell] = normalizing_spells(raw_spells)
-    # indices: dict = create_indices(spells)
+    indices: dict = create_indices(spells)
 
     rich.print(spells["Prismatic Spray"])
     rich.print(spells["Fireball"])
