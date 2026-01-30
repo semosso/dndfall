@@ -1,6 +1,9 @@
-from dndspecs import NormalizedSpell
-import json  # for data intake from SRD
-import rich  # better visualization of data structures
+import json
+import rich
+
+# both because of type hints only
+from collections import defaultdict
+from dndspecs import NormalizedSpell, DERIVED_FIELDS, DIRECT_FIELDS
 
 # my modules
 from normalization import normalizing_spells
@@ -9,17 +12,14 @@ from indexing import create_indices
 
 # initializes the dict of curated spells
 def main():
-    # gets JSON data, will evolve to API calls to 5e SRD database
     with open(file="data/spells.json", mode="r") as raw_source:
         raw_spells: list[dict] = json.load(raw_source)
 
-    # calls "normalization" to normalizes JSON data into dataclass objects
     spells: dict[str, NormalizedSpell] = normalizing_spells(raw_spells)
-    indices: dict = create_indices(spells)
-
-    rich.print(spells["Prismatic Spray"])
-    rich.print(spells["Fireball"])
-    rich.print(create_indices(spells))
+    indices: dict[str, defaultdict] = create_indices(
+        spells=spells, direct_f=DIRECT_FIELDS, derived_f=DERIVED_FIELDS
+    )
+    rich.print(indices)
 
 
 if __name__ == "__main__":

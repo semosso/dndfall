@@ -1,5 +1,5 @@
-from dndspecs import NormalizedSpell
-from indexing import extract_tags
+from dndspecs import NormalizedSpell, DERIVED_FIELDS
+from indexing import add_tags
 
 
 def normalizing_spells(database: list):
@@ -20,14 +20,14 @@ def normalizing_spells(database: list):
             material=sp.get("material"),  # capture "gp" through tags later
             duration=sp["duration"],
             casting_time=sp["casting_time"],
-            classes=[c["name"] for c in sp["classes"]],
+            classes=" ".join([c["name"] for c in sp["classes"]]),
             higher_level=False
             if "higher_level" not in sp
             else (True, " ".join(" ".join(sp["higher_level"]).split())),
             description=" ".join(" ".join(sp["desc"]).split()),
             url=sp["url"],
         )
-        spell.tags = extract_tags(spell=spell)
+        spell.tags = add_tags(spell=spell, derived_f=DERIVED_FIELDS)
         spells[spell.name] = spell
 
     return spells

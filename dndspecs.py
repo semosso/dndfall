@@ -1,4 +1,3 @@
-from pygments.lexers.dotnet import BooLexer
 import re
 from enum import StrEnum
 from dataclasses import dataclass, field
@@ -64,7 +63,7 @@ SIZE_UNIT: dict = {
     # tiny, small, large, huge, gargantuan and how they interact (i.e., < or >)
 }
 
-DIE_UNIT: dict = {}  # type, amount? average rolls with high enough sample size?
+DICE_UNIT: dict = {}  # type, amount? average rolls with high enough sample size?
 
 
 class NumericOp(StrEnum):
@@ -193,23 +192,6 @@ SCHOOL: DirectField = DirectField(
 )
 
 
-CLASSES: DirectField = DirectField(
-    name="classes",
-    aliases={"classes", "cls"},
-    operator=TextOp,
-    values={
-        "Wizard",
-        "Sorcerer",
-        "Cleric",
-        "Paladin",
-        "Ranger",
-        "Bard",
-        "Druid",
-        "Warlock",
-    },
-)
-
-
 @dataclass
 class DerivedField(SpellField):
     values: list[DerivedValue]
@@ -224,6 +206,9 @@ class DerivedValue:
     patterns: set[str] = field(default_factory=set)
 
     def derive_patterns(self):
+        """Compiles regex patterns based on the DerivedValue instance's subvalues
+        and search patterns.
+        Returns a list of (subvalue, regex object) tuples."""
         regexes: list = [
             (
                 subvalue,
@@ -236,6 +221,21 @@ class DerivedValue:
             for template in self.patterns
         ]
         return regexes
+
+    def derive_tags(self, spell: NormalizedSpell):
+        """Given a spell (NormalizedSpell instance), extracts tags based on the
+        DerivedValue instance.
+        Returns a list of tags."""
+        matches: list[str] = []
+        source_text: str | bool = getattr(spell, self.source)
+        if not isinstance(source_text, str):
+            return []
+
+        for subvalue, regex in self.derive_patterns():
+            if regex.search(string=source_text):
+                matches.append(subvalue)
+
+        return matches
 
 
 CONDITION_VALUE: DerivedValue = DerivedValue(
@@ -345,10 +345,31 @@ MATERIAL: DerivedField = DerivedField(
 )
 
 
-# # additional derived fields, with mixed txt/op/bool values
+CLASS_VALUE: DerivedValue = DerivedValue(
+    name="class",
+    source="classes",
+    operator=TextOp,
+    subvalues={
+        "Wizard",
+        "Sorcerer",
+        "Cleric",
+        "Paladin",
+        "Ranger",
+        "Bard",
+        "Druid",
+        "Warlock",
+    },
+    patterns={r"\b{value}\b"},
+)
+
+
+CLASS_: DerivedField = DerivedField(
+    name="class", aliases={"classes", "cls"}, values=[CLASS_VALUE]
+)
+
+# AREA_OF_EFFECT: DerivedField = DerivedField(
 # feet comes in different places in desc; I can work on them, or just display
 # e.g., a spell says 10ft and 50ft, for different things and effects
-# AREA_OF_EFFECT: DerivedField = DerivedField(
 #     name="area_of_effect",
 #     values={
 #         "shape": {
@@ -360,6 +381,7 @@ MATERIAL: DerivedField = DerivedField(
 #         }
 #     },
 # )
+
 # RANGE_: DerivedField = DerivedField()
 # DURATION: DerivedField = DerivedField()
 # CASTING_TIME: DirectField = DirectField()
@@ -367,8 +389,8 @@ MATERIAL: DerivedField = DerivedField(
 
 
 # automate this at some point, either with an _init_ hook or something else
-DERIVED_FIELDS: list = [CONDITION, DAMAGE, SAVING_THROW, MATERIAL]
-DIRECT_FIELDS: list = [LEVEL]  # , CONCENTRATION, RITUAL, SCHOOL, CLASSES
+DERIVED_FIELDS: list = [CONDITION, DAMAGE, SAVING_THROW, MATERIAL, CLASS_]
+DIRECT_FIELDS: list = [LEVEL, CONCENTRATION, RITUAL, SCHOOL]
 
 # DERIVATION_TAGS: dict = {
 #     "no_damage": DAMAGE_TYPE.name,
