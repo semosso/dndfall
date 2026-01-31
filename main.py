@@ -3,7 +3,7 @@ import rich
 
 # both because of type hints only
 from collections import defaultdict
-from dndspecs import NormalizedSpell, DERIVED_FIELDS, DIRECT_FIELDS
+from dndspecs import NormalizedSpell, DERIVED_FIELDS, SCALAR_FIELDS
 
 # my modules
 from normalization import normalizing_spells
@@ -17,7 +17,7 @@ def main():
 
     spells: dict[str, NormalizedSpell] = normalizing_spells(raw_spells)
     indices: dict[str, defaultdict] = create_indices(
-        spells=spells, direct_f=DIRECT_FIELDS, derived_f=DERIVED_FIELDS
+        spells=spells, scalar_f=SCALAR_FIELDS, derived_f=DERIVED_FIELDS
     )
     rich.print(indices)
 
