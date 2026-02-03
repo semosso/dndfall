@@ -4,13 +4,15 @@ Scryfall-like D&D app. If that doesn't make much sense to you, read on.
 
 [Scryfall](https://scryfall.com/) is a powerful and popular search plaform for Magic: the Gathering. Its [extensive syntax guide](https://scryfall.com/docs/syntax) allows users to perform highly detailed and customizable searches over virtually every piece of information on MTG's 100,000+ cards.
 
-This project aims to replicate (some) of Scryfall's functionalities for Dungeons & Dragons 5th edition, specifically the [5th Edition System Reference Document (SRD)](https://www.dndbeyond.com/srd). See here for the [5e SRD API](https://www.dnd5eapi.co/), the consolidated source of truth for this project.
+This project aims to replicate Scryfall's functionalities for Dungeons & Dragons 5th edition, specifically the [5th Edition System Reference Document (SRD)](https://www.dndbeyond.com/srd). Think of the SRD as essentially the "open-source" core of the D&D, including basic mechanics, classes, races, spells, and monsters. Its primary purpose is to allow third-party creators to develop their own content (adventures, monsters, etc.), including tools like this one, without infringing on copyright.
+
+See here for the [5e SRD API](https://www.dnd5eapi.co/), and think of it as the consolidated source of truth for this project.
 
 This WILL NOT be a NLP/fuzzy matching search engine, which makes little sense given how ubiquitous D&D information is online.
 
-The value proposition is: users will be able to search for information that is not easily available. Say you're a DM preparing for a special encounter, you'll be able to [...]. Or if you're player preparing for your next level up or a special encounter, [...]. And that's just with spells! 
+The value proposition is: users will be able to search for information that is not easily available. Say you're a DM preparing for a special encounter, you'll be able to filter for every spell that deals Psychic damage and requires a Wisdom saving throw to challenge your party's high-AC tank. Or if you're player preparing for your next level up or a special encounter, you'll be able to find spells that fit your playstyle, by filtering for non-concentration, utility, types and amounts of damage, in seconds.
 
-By using dndfall and sticking to its formal syntax, you'll get that info in no time. 
+By using dndfall and sticking to its formal syntax, you'll get that info in no time. And that's just with spells! 
 
 # motivation
 
