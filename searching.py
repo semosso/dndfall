@@ -6,8 +6,7 @@ import dndspecs
 
 ## initialization for easier testing
 import json
-from normalization import normalizing_spells
-from indexing import create_indices
+from normalization import normalizing_spells, create_indices
 import rich
 
 

@@ -109,8 +109,8 @@ class NormalizedSpell:
 
 @dataclass
 class TagRule:
-    ## edge cases as specific TagRules that have to be handled in addition to regex
-    # FORBIDDANCE: damage_type, r"\b5d10 radiant or necrotic
+    # for edge cases that have to be handled in addition to regex
+    # FORBIDDANCE's damage_type (r"\b5d10 radiant or necrotic)
     # edge_rules: list[TagRule] | None = None
     pass
 

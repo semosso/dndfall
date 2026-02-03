@@ -1,15 +1,16 @@
-from dndspecs import NormalizedSpell, DERIVED_FIELDS
-from indexing import add_tags
+from collections import defaultdict
+
+import dndspecs
 
 
 def normalizing_spells(database: list):
     """Casts spells from JSON into NormalizedSpell instances.
     Input: list of spells, each a dictionary.
     Return: dicionary of spell names and spells (as NormalizedSpell instances)."""
-    spells: dict[str, NormalizedSpell] = {}
-    # for spell (dict) in list of raw spells
+    spells: dict[str, dndspecs.NormalizedSpell] = {}
+
     for sp in database:
-        spell: NormalizedSpell = NormalizedSpell(
+        spell: dndspecs.NormalizedSpell = dndspecs.NormalizedSpell(
             name=sp["name"],
             level=sp["level"],
             concentration=sp["concentration"],
@@ -17,19 +18,64 @@ def normalizing_spells(database: list):
             school=sp["school"]["name"],
             range_=sp["range"],
             components=sp["components"],
-            material=sp.get("material"),  # capture "gp" through tags later
+            material=sp.get("material"),
             duration=sp["duration"],
             casting_time=sp["casting_time"],
             classes=" ".join([c["name"] for c in sp["classes"]]),
-            # classes=", ".join([c["name"] for c in sp["classes"]]),
             higher_level=False
-            # do I need both "".join? go over JSON again
             if "higher_level" not in sp
             else (True, " ".join(" ".join(sp["higher_level"]).split())),
             description=" ".join(" ".join(sp["desc"]).split()),
             url=sp["url"],
         )
-        spell.tags = add_tags(spell=spell, derived_f=DERIVED_FIELDS)
+        spell.tags = add_tags(spell=spell, derived_f=dndspecs.DERIVED_FIELDS)
         spells[spell.name] = spell
 
     return spells
+
+
+def add_tags(
+    spell: dndspecs.NormalizedSpell, derived_f: list[dndspecs.DerivedField]
+) -> dict[str, list[str] | bool]:
+    """Orchestrates tag extraction using DerivedValues methods.
+    Input: a NormalizedSpell instance and a list of DerivedField dataclasses.
+    Return: a dictionary with tags for the spell, organized by field."""
+    tags: dict[str, list[str] | bool] = {}
+
+    for field in derived_f:
+        matches: list = []
+        matches.extend(field.derive_tags(spell))
+        if matches:
+            tags[field.name] = matches
+
+    return tags
+
+
+def create_indices(
+    spells: dict,
+    scalar_f: list,
+    derived_f: list,
+) -> dict[str, defaultdict]:
+    """Creates reverse indices from spell attributes, including tags.
+    Input: a NormalizedSpell object, lists of spell attributes (scalar and derived).
+    Return: reverse lookup indices dictionary"""
+    indices: dict = {field.name: defaultdict(set) for field in scalar_f} | {
+        field.name: defaultdict(set) for field in derived_f
+    }
+
+    for spell_name, spell in spells.items():
+        # scalar fields
+        for field in scalar_f:
+            field_value = getattr(spell, field.name)
+            if isinstance(field_value, bool):
+                if field_value:
+                    indices[field.name][True].add(spell_name)
+            else:
+                indices[field.name][field_value].add(spell_name)
+
+        # derived fields, i.e., tags
+        for field in derived_f:
+            for tag in spell.tags.get(field.name, []):
+                indices[field.name][tag].add(spell_name)
+
+    return indices
