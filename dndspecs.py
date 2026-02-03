@@ -1,7 +1,6 @@
 import re
 from enum import StrEnum
 from dataclasses import dataclass, field
-import rich
 
 ## helper schema: distance, shape and time blocks, dice types, operators etc.
 
@@ -74,44 +73,16 @@ class NumericOp(StrEnum):
     GT = ">"
     LT_E = "<="
     LT = "<"
-    value_error_msg = "be numeric (e.g., 3, not three)"
-
-    def operation(self, user_value):
-        num_operations: dict = {
-            NumericOp.EQ: lambda x: x == int(user_value),
-            NumericOp.N_EQ: lambda x: x != int(user_value),
-            NumericOp.GT_E: lambda x: x >= int(user_value),
-            NumericOp.GT: lambda x: x > int(user_value),
-            NumericOp.LT_E: lambda x: x <= int(user_value),
-            NumericOp.LT: lambda x: x < int(user_value),
-        }
-        return num_operations[self]
 
 
 class TextOp(StrEnum):
-    IS = ":"
-    N_IS = "!="
-    value_error_msg = "follow formal syntax (e.g., 'fire' for damage_type)"
-
-    def operation(self, user_value):
-        txt_operations: dict = {
-            TextOp.IS: lambda x: x.lower() == user_value,
-            TextOp.N_IS: lambda x: x.lower() != user_value,
-        }
-        return txt_operations[self]
+    EQ = ":"
+    N_EQ = "!="
 
 
 class BooleanOp(StrEnum):
     IS = ":"
     N_IS = "!="
-    pass
-
-    def operation(self, user_value):
-        bool_operations: dict = {
-            BooleanOp.IS: lambda x: x is user_value,
-            BooleanOp.N_IS: lambda x: x is not user_value,
-        }
-        return bool_operations[self]
 
 
 ## spell and field classes
@@ -144,24 +115,25 @@ class TagRule:
     pass
 
 
-@dataclass
+@dataclass(kw_only=True)
 # this class is for validation purposes by the query/validate functions
 class SpellField:
     name: str
+    aliases: set[str]
+    operator: type[StrEnum]
+    values: set[str | type[bool]] | range
 
 
 @dataclass
 class ScalarField(SpellField):
-    aliases: set[str]
-    values: set[str | str | range | type[bool]]
-    operator: type[StrEnum]
+    pass
 
 
 LEVEL: ScalarField = ScalarField(
     name="level",
     aliases={"level", "l"},
     operator=NumericOp,  # this was a list when I had multiple op per value
-    values={range(0, 10)},  # list? does this have to be ordered? why not set?
+    values=range(0, 10),  # list? does this have to be ordered? why not set?
 )
 
 
@@ -196,19 +168,11 @@ SCHOOL: ScalarField = ScalarField(
 )
 
 
-@dataclass
+@dataclass(kw_only=True)
 class DerivedField(SpellField):
-    values: list[DerivedValue]
-
-
-@dataclass
-class DerivedValue:
-    name: str
-    aliases: set[str]
     source: str
-    operator: type[StrEnum]
-    subvalues: set[str] = field(default_factory=set)
     patterns: set[str] = field(default_factory=set)
+    values: set[str] = field(default_factory=set)
 
     def derive_patterns(self):
         """Compiles regex patterns based on the DerivedValue instance's subvalues
@@ -216,13 +180,13 @@ class DerivedValue:
         Returns a list of (subvalue, regex object) tuples."""
         regexes: list = [
             (
-                subvalue,
+                value,
                 re.compile(
-                    pattern=template.format(value=re.escape(pattern=subvalue)),
+                    pattern=template.format(value=re.escape(pattern=value)),
                     flags=re.IGNORECASE,
                 ),
             )
-            for subvalue in self.subvalues
+            for value in self.values
             for template in self.patterns
         ]
         return regexes
@@ -236,19 +200,18 @@ class DerivedValue:
         if not isinstance(source_text, str):
             return []
 
-        for subvalue, regex in self.derive_patterns():
+        for value, regex in self.derive_patterns():
             if regex.search(string=source_text):
-                matches.append(subvalue)
+                matches.append(value)
 
         return matches
 
 
-CONDITION_VALUE: DerivedValue = DerivedValue(
+CONDITION: DerivedField = DerivedField(
     name="condition",
     aliases={"condition", "cond"},
-    source="description",
     operator=TextOp,
-    subvalues={
+    values={
         "blinded",
         "charmed",
         "deafened",
@@ -259,21 +222,16 @@ CONDITION_VALUE: DerivedValue = DerivedValue(
         "paralyzed",
         "petrified",
     },
+    source="description",
     patterns={r"\b{value}\b"},
 )
 
-CONDITION: DerivedField = DerivedField(
-    name="condition",
-    values=[CONDITION_VALUE],
-)
 
-
-DAMAGE_TYPE: DerivedValue = DerivedValue(
+DAMAGE_TYPE: DerivedField = DerivedField(
     name="damage_type",
     aliases={"damage_type", "dmg_type", "dt"},
-    source="description",
     operator=TextOp,
-    subvalues={
+    values={
         "acid",
         "cold",
         "fire",
@@ -285,6 +243,7 @@ DAMAGE_TYPE: DerivedValue = DerivedValue(
         "radiant",
         "thunder",
     },
+    source="description",
     patterns={
         r"\b[0-9]+\s?d\s?[0-9]+\s?(\+\s?[0-9]+)?\s?{value} damage\b",
         r"\btake(s)? {value} damage\b",
@@ -292,29 +251,22 @@ DAMAGE_TYPE: DerivedValue = DerivedValue(
 )
 
 
-DAMAGE_AMOUNT: DerivedValue = DerivedValue(
+DAMAGE_AMOUNT: DerivedField = DerivedField(
     name="damage_amount",
     aliases={"damage_amount", "dmg_amt", "da"},
-    source="description",
     operator=NumericOp,
-    subvalues={"8d6"},
+    values={"8d6"},
+    source="description",
     patterns={r"\b8d6\b"},  # is this where I call on the building blocks?
 )
 
 
-DAMAGE: DerivedField = DerivedField(
-    name="damage",
-    values=[DAMAGE_TYPE, DAMAGE_AMOUNT],
-)
-
-
 # should allow a search for any ST (i.e., catch any attributes)
-SAVING_THROW_VALUE: DerivedValue = DerivedValue(
+SAVING_THROW: DerivedField = DerivedField(
     name="saving_throw",
     aliases={"saving_throw", "st"},
-    source="description",
     operator=TextOp,
-    subvalues={
+    values={
         "strength",
         "dexterity",
         "constitution",
@@ -322,6 +274,7 @@ SAVING_THROW_VALUE: DerivedValue = DerivedValue(
         "intelligence",
         "charisma",
     },
+    source="description",
     patterns={
         # r"\b(make(s)?|succeed(s)? on|fail(s)?)\s?(a|an|another)?\s?(DC [0-9]+\s?)?(new|successful)?\s*{value} saving throw(s)?"
         # r"make\s+a\s+DC\s+15\s+{value}\s+saving\s+throw",
@@ -331,31 +284,21 @@ SAVING_THROW_VALUE: DerivedValue = DerivedValue(
 )
 
 
-SAVING_THROW: DerivedField = DerivedField(
-    name="saving_throw",
-    values=[SAVING_THROW_VALUE],
-)
-
-
-MATERIAL_GP_COST: DerivedValue = DerivedValue(
+MATERIAL: DerivedField = DerivedField(
     name="GP_cost",
     aliases={"material", "gp_cost", "gp"},
-    source="material",
     operator=NumericOp,
-    subvalues={"GP_cost"},
+    values={"GP_cost"},
+    source="material",
     patterns={r"\b[0-9]+\s?[Gg][Pp]\b"},
 )
 
 
-MATERIAL: DerivedField = DerivedField(name="material", values=[MATERIAL_GP_COST])
-
-
-CLASS_VALUE: DerivedValue = DerivedValue(
+CLASS_: DerivedField = DerivedField(
     name="class",
     aliases={"classes", "cls"},
-    source="classes",
     operator=TextOp,
-    subvalues={
+    values={
         "Wizard",
         "Sorcerer",
         "Cleric",
@@ -365,11 +308,10 @@ CLASS_VALUE: DerivedValue = DerivedValue(
         "Druid",
         "Warlock",
     },
+    source="classes",
     patterns={r"\b{value}\b"},
 )
 
-
-CLASS_: DerivedField = DerivedField(name="class", values=[CLASS_VALUE])
 
 # AREA_OF_EFFECT: DerivedField = DerivedField(
 # feet comes in different places in desc; I can work on them, or just display
@@ -392,19 +334,26 @@ CLASS_: DerivedField = DerivedField(name="class", values=[CLASS_VALUE])
 # HIGHER_LEVEL: ScalarField = ScalarField()
 
 
+# REFERENCES for other modules
 # automate this at some point, either with an _init_ hook or something else
-DERIVED_FIELDS: list = [CONDITION, DAMAGE, SAVING_THROW, MATERIAL, CLASS_]
+DERIVED_FIELDS: list = [
+    CONDITION,
+    DAMAGE_AMOUNT,
+    DAMAGE_TYPE,
+    SAVING_THROW,
+    MATERIAL,
+    CLASS_,
+]
 SCALAR_FIELDS: list = [LEVEL, CONCENTRATION, RITUAL, SCHOOL]
 
 
 def build_field_by_alias():
     """Generates lookup dict for searching functions."""
     return {
-        alias: value
-        for field in DERIVED_FIELDS
-        for value in field.values
-        for alias in value.aliases
-    } | {alias: field for field in SCALAR_FIELDS for alias in field.aliases}
+        alias: field
+        for field in DERIVED_FIELDS + SCALAR_FIELDS
+        for alias in field.aliases
+    }
 
 
 FIELD_BY_ALIAS: dict = build_field_by_alias()

@@ -1,7 +1,10 @@
+import dndspecs
 from collections import defaultdict
 
 
-def add_tags(spell, derived_f) -> dict[str, list[str] | bool]:
+def add_tags(
+    spell: dndspecs.NormalizedSpell, derived_f: list[dndspecs.DerivedField]
+) -> dict[str, list[str] | bool]:
     """Orchestrates tag extraction using DerivedValues methods.
     Input: a NormalizedSpell instance and a list of DerivedField dataclasses.
     Return: a dictionary with tags for the spell, organized by field."""
@@ -9,8 +12,7 @@ def add_tags(spell, derived_f) -> dict[str, list[str] | bool]:
 
     for field in derived_f:
         matches: list = []
-        for d_value in field.values:
-            matches.extend(d_value.derive_tags(spell))
+        matches.extend(field.derive_tags(spell))
         if matches:
             tags[field.name] = matches
 

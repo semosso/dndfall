@@ -21,7 +21,9 @@ def normalizing_spells(database: list):
             duration=sp["duration"],
             casting_time=sp["casting_time"],
             classes=" ".join([c["name"] for c in sp["classes"]]),
+            # classes=", ".join([c["name"] for c in sp["classes"]]),
             higher_level=False
+            # do I need both "".join? go over JSON again
             if "higher_level" not in sp
             else (True, " ".join(" ".join(sp["higher_level"]).split())),
             description=" ".join(" ".join(sp["desc"]).split()),

@@ -23,159 +23,21 @@ INDICES: dict = create_indices(
 
 
 ## strategy classes
-class SearchStrategy:
-    VALID_STRATEGIES: list = []
-
-    def __init_subclass__(cls, **kwargs):
-        super().__init_subclass__(**kwargs)
-        SearchStrategy.VALID_STRATEGIES.append(cls)
-
-    # @classmethod
-    # def build_strategy_by_operator():
-    #     """Generates lookup dict matching operator and strategies."""
-    #     return {
-    #         alias: value
-    #         for field in DERIVED_FIELDS
-    #         for value in field.values
-    #         for alias in value.aliases
-    #     } | {alias: field for field in SCALAR_FIELDS for alias in field.aliases}
-    #     pass
-
-    @classmethod
-    # will be overriden by specific strategies
-    def execute(cls, field, op, value):
-        pass
-
-
-class DirectLookupStrategy(SearchStrategy):
-    @classmethod
-    def execute(cls, field, op, value):
-        # empty set or list, TBD
-        # list of tuples?
-        # verbose for testing
-        return [
-            (
-                f"QUERY= field: '{field}', operator: '{op}', value: '{v}'",
-                INDICES[field].get(v, set()),
-            )
-            for v in value
-        ]
-
-
-class ExclusionStrategy(SearchStrategy):
-    @classmethod
-    def execute(cls, field, op, value):
-        # put this inside LEVEL, or adapt it here (e.g., if level)
-        if field == "level":
-            # try:
-            return [
-                [
-                    f"QUERY= field: '{field}', operator: '{op}', value: '{value}'",
-                    INDICES[field].get(not_v, set()),
-                ]
-                for not_v in range(0, 10)
-                if not_v not in value
-            ]
-        else:
-            # tyr to make this into a list comprehension
-            not_v_list: list = [
-                f"QUERY= field: '{field}', operator: '{op}', value: '{value}'",
-            ]
-            for not_v in INDICES[field]:
-                # this if works, but might be doing more work than needed
-                if not_v not in value and not_v not in not_v_list:
-                    not_v_list.append((not_v, INDICES[field][not_v]))
-            return not_v_list
-
-
-## search engine
 @dataclass
 class ParsedQuery:
-    field: str
-    operator: str
-    values: list[str]
-
-
-class SearchCommand:
-    def __init__(self, parsed_q: ParsedQuery):
-        self.field: str = parsed_q.field
-        self.operator: StrEnum = parsed_q.operator
-        self.values: list = parsed_q.values
-
-    def value_extraction(self):
-        return self.values
-
-    def validate_values(self, values):
-        pass
-
-
-class ScalarFieldCommand(SearchCommand):
-    # TBD the best home for this
-    # SUPPORTED_STRATEGIES: dict[str, type[SearchStrategy]] = {
-    #     NumericOp.EQ: DirectLookupStrategy,
-    #     NumericOp.N_EQ: ExclusionStrategy,
-    # }
-
-    def __init__(self, parsed_q: ParsedQuery, strat=None):
-        super().__init__(parsed_q)
-        # self.strategy: SearchStrategy = self.SUPPORTED_STRATEGIES[op]
-
-    def value_extraction(self):
-        try:
-            return [int(v) for v in self.values]
-        except ValueError:
-            raise ValueError(
-                f"All values for field '{self.field}' must {NumericOp.value_error_msg}"
-            )
-
-    def apply_command(self):
-        values = self.value_extraction()
-        self.validate_values(values)
-        # if False, don't even call strategy, so no error handling there
-        if values:
-            return self.strategy.execute(
-                field=self.field, op=self.operator, value=values
-            )
-
-
-class DerivedFieldCommand(SearchCommand):
-    # TBD the best home for this
-    # SUPPORTED_STRATEGIES: dict[str, type[SearchStrategy]] = {
-    #     TextOp.IS: DirectLookupStrategy,
-    #     TextOp.N_IS: ExclusionStrategy,
-    # }
-
-    def __init__(self, parsed_q: ParsedQuery, strat=None):
-        super().__init__(parsed_q)
-        self.strategy: SearchStrategy = self.SUPPORTED_STRATEGIES[op]
-
-    def validate_values(self, values):
-        invalid_v = [v for v in values if v not in INDICES[self.field]]
-        if invalid_v:
-            raise ValueError(
-                f"Invalid values: {invalid_v}.\
-                    Values for field '{self.field}' must {TextOp.value_error_msg}"
-            )
-
-    def apply_command(self):
-        values = self.value_extraction()
-        self.validate_values(values)
-        # if False, don't even call strategy, so no error handling there
-        if values:
-            return self.strategy.execute(
-                field=self.field, op=self.operator, value=values
-            )
+    p_field: str
+    p_operator: str
+    p_values: list[str]
 
 
 class SearchEngine:
+    # add repr or str
     def __init__(self, user_input):
         self.user_input: str = user_input
 
-    # think of separators, error messages (pure static syntax for now)
-    # "value" can have multiple values, keep in mind when composing command
-    # only works for a single field search for now
-
-    def parse_query(self) -> ParsedQuery:
+    # think of separators, error messages, etc. also only works for a single field
+    # is parse_query doing too much? TBD
+    def parse_query(self) -> SearchCommand:
         """Parses user input into field, operator and value parts.
         Input: user query
         Return: a ParsedQuery object"""
@@ -186,31 +48,107 @@ class SearchEngine:
         else:
             f_, o_, *v_ = parts
             values_list: list[str] = [v.strip().lower() for v in "".join(v_).split(",")]
-            return ParsedQuery(
-                field=f_.strip().lower(), operator=o_.strip(), values=values_list
+        field_rules: str = dndspecs.FIELD_BY_ALIAS.get(f_, "")
+        match field_rules:
+            case dndspecs.SpellField():
+                parsed_input = ParsedQuery(
+                    p_field=f_, p_operator=o_, p_values=values_list
+                )
+                return SearchCommand(
+                    parsed_input,
+                    field_rules=field_rules,
+                )
+            case _:
+                raise ValueError("no valid field in query")
+
+
+class SearchCommand:
+    def __init__(self, p_query: ParsedQuery, field_rules: dndspecs.SpellField):
+        self.field: str = p_query.p_field
+        self.operator: StrEnum = p_query.p_operator
+        self.values: list = p_query.p_values
+        self.field_rules: dndspecs.SpellField = field_rules
+
+    def validate_operator(self):
+        try:
+            self.field_rules.operator(self.operator)
+        except ValueError:
+            raise ValueError(
+                f"'{self.operator}' is not a valid operator for '{self.field}'"
+            )
+        return True
+
+    def validate_values(self):
+        for value in self.values:
+            try:
+                val_check: int | str = (
+                    int(value)
+                    if self.field_rules.operator == dndspecs.NumericOp
+                    else value
+                )
+            except ValueError:
+                raise ValueError(
+                    f"Value for {self.field} must be a number (e.g., 3, not three)"
+                )
+            if val_check not in self.field_rules.values:
+                raise ValueError(
+                    f"Invalid value ('{val_check}') for field '{self.field}'"
+                )
+        return True
+
+    def compose_command(self):
+        command_field: str = self.field_rules.name
+        command_operator: StrEnum = self.operator
+        command_values: set = {
+            int(value) if self.operator in dndspecs.NumericOp else value
+            for value in self.values
+        }
+        if self.validate_operator() and self.validate_values():
+            return SearchExecution(
+                field=command_field, operator=command_operator, values=command_values
             )
 
-    def validate_field(self, parsed_q):
-        """Validates a query's field, operator and value.
-        Input: a ParsedQuery object
-        Return: raise error if validation fails, else returns a SearchCommand object"""
 
-        field_: str = dndspecs.FIELD_BY_ALIAS.get(parsed_q.field)
+class SearchExecution:
+    # TBD how this looks when I no longer have "indices" initiated in the same module
+    STRATEGY_MAPPINGS: dict[str, str] = {
+        dndspecs.NumericOp.EQ: "direct_lookup",
+        dndspecs.NumericOp.N_EQ: "exclusion_lookup",
+    }
 
-        match field_:
-            case dndspecs.ScalarField():
-                return ScalarFieldCommand(parsed_q)
-            case dndspecs.DerivedField():
-                return DerivedFieldCommand(parsed_q)
-            case _:
-                raise ValueError(f"no valid field in query ('{parsed_q.field}')")
+    def __init__(self, field, operator, values):
+        self.c_field = field
+        self.c_operator = operator
+        self.c_values = values
+
+    def execute(self):
+        method_name = self.STRATEGY_MAPPINGS.get(self.c_operator, "")
+        strategy = getattr(self, method_name)
+        return strategy()
+
+    # do I want to return something ordered? additional info around it?
+    # TBD, update() works for testing, not really for visualization
+    def direct_lookup(self):
+        results = set()
+        for value in self.c_values:
+            results.update(INDICES[self.c_field][value])
+        return results
+
+    # def exclusion_lookup(self):
+    #     not_v_list: set = set()
+    #     # this works, but might be doing more work than needed
+    #     for not_v in INDICES[self.c_field]:
+    #         if not_v not in self.c_values and not_v not in not_v_list:
+    #             not_v_list.add((not_v, INDICES[self.c_field][not_v]))
+    #     return not_v_list
 
 
-# testing
-# print(NumericOp.EQ)
-# print([c for c in NormalizedSpell.__dataclass_fields__])
-# print(SearchCommand.SEARCH_COMMANDS)
-# print(SearchCommand.validation_lookup())
-u_i = SearchEngine(user_input="school>fire")
-pq = u_i.parse_query()
-u_i.validate_field(pq)
+## testing things
+
+user_input = "l:3"
+search_command = SearchEngine(user_input).parse_query()
+rich.print(search_command)
+composing_command = search_command.compose_command()
+rich.print(composing_command)
+executing_search = composing_command.execute()
+rich.print(executing_search)
