@@ -172,24 +172,30 @@ SCHOOL: ScalarField = ScalarField(
 class DerivedField(SpellField):
     source: str
     patterns: set[str] = field(default_factory=set)
-    values: set[str] = field(default_factory=set)
+    values: set[str] | range = field(default_factory=set)
+    use_capture: bool = False
 
     def derive_patterns(self):
         """Compiles regex patterns based on the DerivedValue instance's subvalues
         and search patterns.
         Returns a list of (subvalue, regex object) tuples."""
-        regexes: list = [
-            (
-                value,
-                re.compile(
-                    pattern=template.format(value=re.escape(pattern=value)),
-                    flags=re.IGNORECASE,
-                ),
-            )
-            for value in self.values
-            for template in self.patterns
-        ]
-        return regexes
+        if self.use_capture:
+            return [
+                (None, re.compile(pattern=pattern, flags=re.IGNORECASE))
+                for pattern in self.patterns
+            ]
+        else:
+            return [
+                (
+                    value,
+                    re.compile(
+                        pattern=template.format(value=re.escape(pattern=value)),
+                        flags=re.IGNORECASE,
+                    ),
+                )
+                for value in self.values
+                for template in self.patterns
+            ]
 
     def derive_tags(self, spell: NormalizedSpell):
         """Given a spell (NormalizedSpell instance), extracts tags based on the
@@ -201,8 +207,13 @@ class DerivedField(SpellField):
             return []
 
         for value, regex in self.derive_patterns():
-            if regex.search(string=source_text):
-                matches.append(value)
+            if self.use_capture:
+                for match in regex.finditer(string=source_text):
+                    if match.groups():
+                        matches.append(match.group(1).replace(",", ""))
+            else:
+                if regex.search(string=source_text):
+                    matches.append(value)
 
         return matches
 
@@ -276,21 +287,22 @@ SAVING_THROW: DerivedField = DerivedField(
     },
     source="description",
     patterns={
-        # r"\b(make(s)?|succeed(s)? on|fail(s)?)\s?(a|an|another)?\s?(DC [0-9]+\s?)?(new|successful)?\s*{value} saving throw(s)?"
+        # r"\b(make(s)?|succeed(s)? on|fail(s)?)\s+(?:a|an|another)?\s*(?:DC [0-9]+\s*)?(?:new|successful)?\s*{value} saving throw(s)?"
         # r"make\s+a\s+DC\s+15\s+{value}\s+saving\s+throw",
-        r"\b(make(s)?|succeed(s)? on|fail(s)?)\s?.*{value} saving throw(s)?",
+        r"\b(make(s)?|succeed(s)? on|fail(s)?)\s+(?!all\s).*?\b{value} saving throw(s)?",
         r"\bsaving throw of {value}\b",
     },
 )
 
 
-MATERIAL: DerivedField = DerivedField(
-    name="GP_cost",
+MATERIAL_GP_COST: DerivedField = DerivedField(
+    name="gp_cost",
     aliases={"material", "gp_cost", "gp"},
     operator=NumericOp,
-    values={"GP_cost"},
+    values=range(0, 100000000),
     source="material",
-    patterns={r"\b[0-9]+\s?[Gg][Pp]\b"},
+    patterns={r"\b([0-9]+(,[0-9]+)?)\s?[Gg][Pp]\b"},
+    use_capture=True,
 )
 
 
@@ -341,7 +353,7 @@ DERIVED_FIELDS: list = [
     DAMAGE_AMOUNT,
     DAMAGE_TYPE,
     SAVING_THROW,
-    MATERIAL,
+    MATERIAL_GP_COST,
     CLASS_,
 ]
 SCALAR_FIELDS: list = [LEVEL, CONCENTRATION, RITUAL, SCHOOL]
