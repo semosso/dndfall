@@ -99,10 +99,11 @@ class SearchCommand:
         command_field: str = self.field_rules.name
         command_operator: StrEnum = self.operator
         command_values: set = {
-            int(value) if self.operator in dndspecs.NumericOp else value
+            int(value) if self.field_rules.operator is dndspecs.NumericOp else value
             for value in self.values
         }
         if self.validate_operator() and self.validate_values():
+            # each different command must be instantiated separately
             return SearchExecution(
                 field=command_field, operator=command_operator, values=command_values
             )
@@ -110,9 +111,27 @@ class SearchCommand:
 
 class SearchExecution:
     # TBD how this looks when I no longer have "indices" initiated in the same module
-    STRATEGY_MAPPINGS: dict[str, str] = {
-        dndspecs.NumericOp.EQ: "direct_lookup",
-        dndspecs.NumericOp.N_EQ: "exclusion_lookup",
+    op_by_strategy: dict = {
+        "direct_lookup": {
+            dndspecs.NumericOp.EQ,
+            dndspecs.TextOp.EQ,
+            dndspecs.BooleanOp.IS,
+        },
+        "exclusion_lookup": {
+            dndspecs.NumericOp.N_EQ,
+            dndspecs.TextOp.N_EQ,
+            dndspecs.BooleanOp.N_IS,
+        },
+        "range_lookup": {
+            dndspecs.NumericOp.GT_E,
+            dndspecs.NumericOp.GT,
+            dndspecs.NumericOp.LT_E,
+            dndspecs.NumericOp.LT,
+        },
+    }
+
+    STRATEGY_MAPPINGS: dict = {
+        op: strategy for strategy, ops in op_by_strategy.items() for op in ops
     }
 
     def __init__(self, field, operator, values):
@@ -120,31 +139,64 @@ class SearchExecution:
         self.c_operator = operator
         self.c_values = values
 
+    # change the lookups to subclasses? and use execute() and wrap_results()
+    # to get additional context info, sort of like a wrapper function
+    # i.e., they can perform the searches and record information one by one
+    # i.e., orchestrator to processes results and show a customer friendly version
     def execute(self):
         method_name = self.STRATEGY_MAPPINGS.get(self.c_operator, "")
         strategy = getattr(self, method_name)
         return strategy()
 
-    # do I want to return something ordered? additional info around it?
-    # TBD, update() works for testing, not really for visualization
-    def direct_lookup(self):
-        results = set()
-        for value in self.c_values:
-            results.update(INDICES[self.c_field][value])
-        return results
+    def wrap_results(self, results):
+        return {
+            "field": f"{self.c_field}",
+            "operator": f"{self.c_operator}",
+            "values": f"{self.c_values}",
+            "results": results,
+        }
 
-    # def exclusion_lookup(self):
-    #     not_v_list: set = set()
-    #     # this works, but might be doing more work than needed
-    #     for not_v in INDICES[self.c_field]:
-    #         if not_v not in self.c_values and not_v not in not_v_list:
-    #             not_v_list.add((not_v, INDICES[self.c_field][not_v]))
-    #     return not_v_list
+    def direct_lookup(self):
+        return set().union(*(INDICES[self.c_field][v] for v in self.c_values))
+
+    def exclusion_lookup(self):
+        # sets_to_merge: list = [
+        #     INDICES[self.c_field][not_value]
+        #     for not_value in INDICES[self.c_field]
+        #     if not_value not in self.c_values
+        # ]
+        # if not sets_to_merge:
+        #     return set()
+        # return set().union(*sets_to_merge)
+        return set(SPELLS.keys()) - set().union(
+            *(INDICES[self.c_field][v] for v in self.c_values)
+        )
+
+    def range_lookup(self):
+        # level is the only one I have today, but soon casting time, duration,
+        # range, material cost etc.
+        target = next(iter(self.c_values))
+        op: dict = {
+            dndspecs.NumericOp.GT_E: lambda x: x >= target,
+            dndspecs.NumericOp.GT: lambda x: x > target,
+            dndspecs.NumericOp.LT_E: lambda x: x <= target,
+            dndspecs.NumericOp.LT: lambda x: x < target,
+        }
+        match_keys: list = [
+            k for k in INDICES[self.c_field].keys() if op[self.c_operator](k)
+        ]
+        return set().union(*(INDICES[self.c_field][k] for k in match_keys))
+        # matching = set()
+        # for k in INDICES[self.c_field].keys():
+        #     for v in self.c_values:
+        #         if op[self.c_operator](k, v):
+        #             matching.update(INDICES[self.c_field][k])
+        # return matching
 
 
 ## testing things
 
-user_input = "l:3"
+user_input = "level<4"
 search_command = SearchEngine(user_input).parse_query()
 rich.print(search_command)
 composing_command = search_command.compose_command()

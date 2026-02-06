@@ -6,8 +6,7 @@ from collections import defaultdict
 from dndspecs import NormalizedSpell, DERIVED_FIELDS, SCALAR_FIELDS
 
 # my modules
-from normalization import normalizing_spells
-from indexing import create_indices
+from normalization import normalizing_spells, create_indices
 
 
 # initializes the dict of curated spells
@@ -19,7 +18,7 @@ def main():
     indices: dict[str, defaultdict] = create_indices(
         spells=spells, scalar_f=SCALAR_FIELDS, derived_f=DERIVED_FIELDS
     )
-    rich.print(indices)
+    rich.print(indices["level"])
 
 
 if __name__ == "__main__":

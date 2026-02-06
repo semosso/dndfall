@@ -51,6 +51,7 @@ def add_tags(
     return tags
 
 
+# very inefficient, but can change this later
 def create_indices(
     spells: dict,
     scalar_f: list,

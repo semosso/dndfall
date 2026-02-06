@@ -48,7 +48,7 @@ I'm taking this personal project on as a Python and related tools (e.g., FastAPI
 - better testing routines, ASAP
 - move away from local source file for intake, should be easy enough
 - lots to improve on "create_indices"
-- more search strategies (and fix exclusion, I know if doesn't work after latest changes, it did at a prior iteration)
+- [DONE] more search strategies (and fix exclusion, I know if doesn't work after latest changes, it did at a prior iteration)
 - dnd improvements (in addition to adding monsters, etc.): many more derived fields to come, e.g., immunity/resistance, AOE, range, healing, support effects, debuff effects, average damage
 - start working on the front end (ideally starting with python friendly and moving to React)
 
