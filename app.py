@@ -24,20 +24,59 @@ def load_spells():
 
 SPELLS, INDICES = load_spells()
 
-st.title("dndfall\nan advanced D&D search tool")
+st.title("dndfall", text_alignment="center")
+st.subheader("an advanced D&D search tool", text_alignment="center", anchor=False)
+
 
 # help, autocomplete, on_change, args, kwargs, icon, width
 query = st.text_input(
     "Search",
-    placeholder="level:3 dt:fire",
+    placeholder="e.g., level:3 dt:fire",
     label_visibility="hidden",
 )
+
+# examples = [
+#     ("Fire damage 3rd level", ":violet-badge[level:3] :orange-badge[dmg_type:fire]"),
+#     ("Bonus action spells", "cast:bonus action"),
+#     ("Concentration 1+ hour", "conc:true cd>=3600"),
+#     ("AOE no concentration", "targets:aoe conc:false"),
+
+col_text, col_link = st.columns([4, 1])
+with col_text:
+    st.text(
+        "Check the syntax guide for an overview of the keywords and operators that will\
+ supercharge your D&D searches."
+    )
+with col_link:
+    st.page_link("pages/syntax_guide.py", label="syntax guide", icon="📖")
+
+
+st.subheader("Examples")
+st.markdown(
+    "Fire damage, 3rd level: :violet-badge[level:3] :orange-badge[dmg_type:fire]"
+)
+
 if query:
-    try:
-        results = orchestrate_search(query)
-        for name in sorted(results):
-            spell = SPELLS[name]
-            with st.expander(f"{spell.name} (Level {spell.level})"):
-                st.write(spell.description)
-    except ValueError as e:
-        st.error(str(e))
+    st.session_state.query = query
+    st.switch_page("pages/search_results.py")
+    # try:
+    #     results: set = orchestrate_search(query)
+    # except ValueError as e:
+    #     st.error(str(e))
+    # else:
+    #     st.success(f"Found {len(results)} matches!")
+    #     if not results:
+    #         st.warning(f"no matches for '{query}'")
+    #     else:
+    #         for name in sorted(results):
+    #             spell = SPELLS[name]
+    #             with st.expander(
+    #                 f"**{spell.name}** _(Level {spell.level} {spell.school})_"
+    #             ):
+    #                 st.write(f"""**Casting Time:** {spell.casting_time}
+    #                          **Range:** {spell.range_}
+    #                          **Components:** {spell.components}
+    #                          **Duration:** {spell.duration}
+    #                          **Classes:** {spell.classes}""")
+    #                 st.write(spell.description)
+    #                 st.write("**View it in SRD:**", spell.url)

@@ -17,11 +17,11 @@ def normalizing_spells(database: list):
             ritual=sp["ritual"],
             school=sp["school"]["name"],
             range_=sp["range"],
-            components=sp["components"],
+            components=", ".join(sp["components"]),
             material=sp.get("material"),
             duration=sp["duration"],
             casting_time=sp["casting_time"],
-            classes=" ".join([c["name"] for c in sp["classes"]]),
+            classes=", ".join([c["name"] for c in sp["classes"]]),
             higher_level=False
             if "higher_level" not in sp
             else (True, " ".join(" ".join(sp["higher_level"]).split())),

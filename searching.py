@@ -197,3 +197,4 @@ def orchestrate_search(query: str):
 user_input = "gp>500 st:wisdom"
 rich.print(orchestrate_search(user_input))
 rich.print(INDICES["gp_cost"])
+rich.print(SPELLS["Fireball"])

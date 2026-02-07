@@ -96,7 +96,7 @@ class NormalizedSpell:
     ritual: bool
     school: str
     range_: str
-    components: list[str]  # I only care for material with GP cost, but sure
+    components: str  # I only care for material with GP cost, but sure
     material: str | None
     duration: str
     casting_time: str
