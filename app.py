@@ -4,7 +4,6 @@ import json
 
 from dndspecs import NormalizedSpell, DERIVED_FIELDS, SCALAR_FIELDS
 from normalization import normalizing_spells, create_indices
-from searching import orchestrate_search
 
 st.set_page_config(page_title="dndfall")
 
@@ -28,55 +27,40 @@ st.title("dndfall", text_alignment="center")
 st.subheader("an advanced D&D search tool", text_alignment="center", anchor=False)
 
 
-# help, autocomplete, on_change, args, kwargs, icon, width
+# with st.form("search_form", clear_on_submit=False, border=False):
 query = st.text_input(
     "Search",
     placeholder="e.g., level:3 dt:fire",
     label_visibility="hidden",
 )
+# submitted = st.form_submit_button()
 
-# examples = [
-#     ("Fire damage 3rd level", ":violet-badge[level:3] :orange-badge[dmg_type:fire]"),
-#     ("Bonus action spells", "cast:bonus action"),
-#     ("Concentration 1+ hour", "conc:true cd>=3600"),
-#     ("AOE no concentration", "targets:aoe conc:false"),
-
-col_text, col_link = st.columns([4, 1])
-with col_text:
-    st.text(
-        "Check the syntax guide for an overview of the keywords and operators that will\
- supercharge your D&D searches."
-    )
-with col_link:
-    st.page_link("pages/syntax_guide.py", label="syntax guide", icon="📖")
-
-
-st.subheader("Examples")
-st.markdown(
-    "Fire damage, 3rd level: :violet-badge[level:3] :orange-badge[dmg_type:fire]"
+col_guide, col_feedback, col_github = st.columns(
+    3, vertical_alignment="center", border=True
 )
+with col_guide:
+    st.page_link("pages/syntax_guide.py", label="syntax guide", icon="📖")
+with col_feedback:
+    st.page_link(
+        "https://forms.gle/hiVD5N5gQ45pAQBV7",
+        label="feedback form",
+        icon=":material/feedback:",
+    )
+with col_github:
+    st.page_link(
+        "https://github.com/semosso/dndfall", label="GitHub", icon=":material/code:"
+    )
+
+st.markdown("""
+### about dndfall
+            
+Inspired by the amazing [Scryfall](https://scryfall.com/), **dndfall** is a search tool that understands how D&D is actually played,
+allowing players and DMs to mix and match criteria to form powerful commands, cut through the noise, and quickly find what they need.
+
+[SRD source]
+            
+**v. 0.1:** dndfall is in beta and currently supports all [SRD](https://www.dndbeyond.com/srd) spells, with additional functionality to follow soon (monsters, class abilities, features etc.).""")
 
 if query:
     st.session_state.query = query
     st.switch_page("pages/search_results.py")
-    # try:
-    #     results: set = orchestrate_search(query)
-    # except ValueError as e:
-    #     st.error(str(e))
-    # else:
-    #     st.success(f"Found {len(results)} matches!")
-    #     if not results:
-    #         st.warning(f"no matches for '{query}'")
-    #     else:
-    #         for name in sorted(results):
-    #             spell = SPELLS[name]
-    #             with st.expander(
-    #                 f"**{spell.name}** _(Level {spell.level} {spell.school})_"
-    #             ):
-    #                 st.write(f"""**Casting Time:** {spell.casting_time}
-    #                          **Range:** {spell.range_}
-    #                          **Components:** {spell.components}
-    #                          **Duration:** {spell.duration}
-    #                          **Classes:** {spell.classes}""")
-    #                 st.write(spell.description)
-    #                 st.write("**View it in SRD:**", spell.url)

@@ -12,10 +12,10 @@ if "query" in st.session_state:
     except ValueError as e:
         st.error(str(e))
     else:
-        st.success(f"Found {len(results)} matches!")
         if not results:
             st.warning(f"no matches for '{query}'")
         else:
+            st.success(f"Found {len(results)} matches for query '{query}'")
             for name in sorted(results):
                 spell = SPELLS[name]
                 st.subheader(f"**{spell.name}** _(Level {spell.level} {spell.school})_")
