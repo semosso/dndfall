@@ -3,22 +3,7 @@ from enum import StrEnum
 from dataclasses import dataclass
 
 import dndspecs
-
-## initialization for easier testing
-import json
-from normalization import normalizing_spells, create_indices
-import rich
-
-
-# gets JSON data, will evolve to API calls to 5e SRD database
-with open(file="data/spells.json", mode="r") as raw_source:
-    raw_spells: list[dict] = json.load(raw_source)
-
-# calls "normalization" to normalizes JSON data into dataclass objects
-SPELLS: dict[str, dict] = normalizing_spells(database=raw_spells)
-INDICES: dict = create_indices(
-    spells=SPELLS, scalar_f=dndspecs.SCALAR_FIELDS, derived_f=dndspecs.DERIVED_FIELDS
-)
+from st_data import SPELLS, INDICES
 
 
 ## strategy classes
@@ -122,7 +107,6 @@ class SearchCommand:
 
 
 class SearchExecution:
-    # TBD how this looks when I no longer have "indices" initiated in the same module
     OP_BY_STRAT: dict = {
         "direct_lookup": {
             dndspecs.NumericOp.EQ,

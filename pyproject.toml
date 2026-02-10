@@ -1,9 +1,9 @@
 [project]
 name = "dndfall"
 version = "0.1.0"
-description = "Add your description here"
+description = "Scryfall for D&D"
 readme = "README.md"
-requires-python = ">=3.14"
+requires-python = ">=3.13"
 dependencies = [
     "rich>=14.2.0",
     "ruff>=0.14.10",

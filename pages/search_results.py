@@ -7,7 +7,7 @@ SPELLS, _ = load_spells()
 
 st.title("search results")
 
-st.page_link("app.py", label="<< Back to Search")
+st.page_link("dndfall.py", label="<< Back to Search")
 
 if "query" in st.session_state:
     query = st.session_state.query

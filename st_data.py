@@ -19,3 +19,6 @@ def load_spells():
     )
 
     return spells, indices
+
+
+SPELLS, INDICES = load_spells()
