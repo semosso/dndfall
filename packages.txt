@@ -3,11 +3,3 @@ build-essential
 zlib1g-dev
 libjpeg-dev
 libpng-dev
-libfreetype6-dev
-liblcms2-dev
-libopenjp2-7-dev
-libtiff-dev
-libwebp-dev
-libarrow-dev
-libparquet-dev
-libboost-all-dev

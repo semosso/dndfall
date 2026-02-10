@@ -1,3 +1,4 @@
 dndfall.code-workspace
 __pycache__
 .vscode/
+pyproject.toml
