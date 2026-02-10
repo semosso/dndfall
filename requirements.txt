@@ -1,3 +1,4 @@
-pillow==10.4.0
 streamlit==1.40.0
-
+pillow==10.4.0
+rich>=14.2.0
+ty>=0.0.8
