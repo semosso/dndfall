@@ -19,7 +19,7 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     --mount=type=bind,source=uv.lock,target=uv.lock \
     --mount=type=bind,source=pyproject.toml,target=pyproject.toml \
     uv sync --locked --no-install-project
-COPY . /dndfall
+COPY . .
 RUN --mount=type=cache,target=/root/.cache/uv \
     uv sync --locked
 
@@ -46,5 +46,6 @@ USER nonroot
 # Use `/app` as the working directory
 WORKDIR /dndfall
 
-# Run the FastAPI application by default
-CMD ["fastapi", "run", "--host", "0.0.0.0", "dndfall"]
+# Run streamlit by default
+EXPOSE 8501
+CMD ["sh", "-c", "streamlit run dndfall.py --server.port=${PORT:-8501} --server.address=0.0.0.0 --server.headless=true --server.enableCORS=false --server.enableXsrfProtection=false"]

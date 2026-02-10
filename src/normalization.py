@@ -1,6 +1,6 @@
 from collections import defaultdict
 
-import dndspecs
+from src import dndspecs
 
 
 def normalizing_spells(database: list):
@@ -51,7 +51,7 @@ def add_tags(
     return tags
 
 
-# very inefficient, but can change this later
+# very inefficient, I can change this later; fine for cached indices
 def create_indices(
     spells: dict,
     scalar_f: list,

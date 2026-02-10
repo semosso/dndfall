@@ -4,19 +4,17 @@ st.title("dndfall", text_alignment="center")
 st.subheader("an advanced D&D search tool", text_alignment="center", anchor=False)
 
 
-# with st.form("search_form", clear_on_submit=False, border=False):
 query = st.text_input(
     "Search",
     placeholder="e.g., level:3 dt:fire",
     label_visibility="hidden",
 )
-# submitted = st.form_submit_button()
 
 col_guide, col_feedback, col_github = st.columns(
     3, vertical_alignment="center", border=True
 )
 with col_guide:
-    st.page_link("src/pages/syntax_guide.py", label="syntax guide", icon="📖")
+    st.page_link("pages/syntax_guide.py", label="syntax guide", icon="📖")
 with col_feedback:
     st.page_link(
         "https://forms.gle/hiVD5N5gQ45pAQBV7",
@@ -44,5 +42,5 @@ relies on the [D&D 5e API](https://www.dnd5eapi.co/) for source data.
 
 if query:
     st.session_state.query = query
-    st.switch_page("src/pages/search_results.py")
-    st.stop()
+    st.switch_page("pages/search_results.py")
+    st.query_params["q"] = query

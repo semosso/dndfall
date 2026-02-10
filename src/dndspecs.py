@@ -85,39 +85,6 @@ class BooleanOp(StrEnum):
     N_IS = "!="
 
 
-## spell classes
-
-
-@dataclass
-class NormalizedSpell:
-    name: str
-    level: int
-    concentration: bool
-    ritual: bool
-    school: str
-    range_: str
-    components: str  # I only care for material with GP cost, but sure
-    material: str | None
-    duration: str
-    casting_time: str
-    classes: list[str]
-    higher_level: bool | tuple[bool, str]  # could be just bool | str, TBH
-    description: list
-    url: str
-    tags: dict[str, list[str] | bool] = field(init=False)
-
-
-@dataclass
-class TagRule:
-    # for edge cases that have to be handled in addition to regex
-    # FORBIDDANCE's damage_type (r"\b5d10 radiant or necrotic)
-    # edge_rules: list[TagRule] | None = None
-    pass
-
-
-## helper functions
-
-
 class DiceRoll:
     DICE_UNITS: dict = {
         "d4": 2.5,
@@ -142,11 +109,40 @@ class DiceRoll:
         return (self.DICE_UNITS[self.die] * int(self.amount)) + int(self.modifier)
 
 
+## spell classes
+
+
+@dataclass
+class NormalizedSpell:
+    name: str
+    level: int
+    concentration: bool
+    ritual: bool
+    school: str
+    range_: str
+    components: str
+    material: str | None
+    duration: str
+    casting_time: str
+    classes: list[str]
+    higher_level: bool | tuple[bool, str]
+    description: list
+    url: str
+    tags: dict[str, list[str] | bool] = field(init=False)
+
+
+@dataclass
+class TagRule:
+    # for edge cases that have to be handled in addition to regex
+    # FORBIDDANCE's damage_type (r"\b5d10 radiant or necrotic)
+    # edge_rules: list[TagRule] | None = None
+    pass
+
+
 ## field classes
 
 
 @dataclass(kw_only=True)
-# this class is for validation purposes by the query/validate functions
 class SpellField:
     name: str
     aliases: set[str]
@@ -162,8 +158,8 @@ class ScalarField(SpellField):
 LEVEL: ScalarField = ScalarField(
     name="level",
     aliases={"level", "l"},
-    operator=NumericOp,  # this was a list when I had multiple op per value
-    values=range(0, 10),  # list? does this have to be ordered? why not set?
+    operator=NumericOp,
+    values=range(0, 10),
 )
 
 
@@ -175,7 +171,6 @@ CONCENTRATION: ScalarField = ScalarField(
 )
 
 
-# not all spells have this, query/validator must account for this
 RITUAL: ScalarField = ScalarField(
     name="ritual", aliases={"ritual", "r"}, operator=BooleanOp, values={bool}
 )
@@ -238,9 +233,6 @@ class DerivedField(SpellField):
                             final_value = self.transform(match.group(0))
                             if final_value:
                                 matches.append(final_value)
-                        # # not sure that else will ever be needed
-                        # else:
-                        #     matches.append("".join(g for g in match.group(0) if g))
             else:
                 if regex.search(string=source_str):
                     matches.append(value)
@@ -307,7 +299,6 @@ DAMAGE_AMOUNT: DerivedField = DerivedField(
 )
 
 
-# should allow a search for any ST (i.e., catch any attributes)
 SAVING_THROW: DerivedField = DerivedField(
     name="saving_throw",
     aliases={"saving_throw", "st"},
@@ -398,8 +389,7 @@ SCHOOL: DerivedField = DerivedField(
 # HIGHER_LEVEL: ScalarField = ScalarField()
 
 
-# REFERENCES for other modules
-# automate this at some point, either with an _init_ hook or something else
+# REFERENCES for other modules, automate this at some point
 DERIVED_FIELDS: list = [
     CONDITION,
     DAMAGE_AMOUNT,
@@ -426,8 +416,3 @@ def build_field_by_alias():
 
 
 FIELD_BY_ALIAS: dict = build_field_by_alias()
-
-# DERIVATION_TAGS: dict = {
-#     "no_damage": DAMAGE_TYPE.name,
-#     "no_saving_throw": SAVING_THROW.name,
-# }

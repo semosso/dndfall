@@ -3,11 +3,10 @@ import re
 from enum import StrEnum
 from dataclasses import dataclass
 
-import dndspecs
+from src import dndspecs
 from pages.cached_data import SPELLS, INDICES
 
 
-## strategy classes
 class SearchEngine:
     def __init__(self, user_input: str):
         self.user_input: str = user_input

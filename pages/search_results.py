@@ -1,14 +1,29 @@
 import streamlit as st
 
 from pages.cached_data import SPELLS
-from dndfall.searching import orchestrate_search
+from src.searching import orchestrate_search
 
 st.title("search results")
-
 st.page_link("dndfall.py", label="<< Back to Search")
 
-if "query" in st.session_state:
-    query = st.session_state.query
+query_from_params = st.query_params.get("q", "")
+
+input_query = st.text_input(
+    "Search",
+    placeholder="e.g., level:3 dt:fire",
+    label_visibility="hidden",
+    value=query_from_params,
+)
+
+st.page_link("pages/syntax_guide.py", label="syntax guide", icon="📖")
+
+query = input_query if input_query else query_from_params
+
+if input_query and input_query != query_from_params:
+    st.query_params["q"] = input_query
+    st.rerun()
+
+if query:
     try:
         results: set = orchestrate_search(query)
     except ValueError as e:
