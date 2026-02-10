@@ -2,6 +2,7 @@ from __future__ import annotations
 import re
 from enum import StrEnum
 from dataclasses import dataclass
+import rich
 
 from src import dndspecs
 from pages.cached_data import SPELLS, INDICES
@@ -90,7 +91,7 @@ class SearchCommand:
             # think about this (avoids duplication in compose_command())
             else:
                 validated_values.add(val_check)
-            if val_check not in self.field_rules.values:
+            if self.field_rules.values and val_check not in self.field_rules.values:
                 raise ValueError(
                     f"Invalid value ('{val_check}') for field '{self.sc_field}'"
                 )
@@ -172,3 +173,9 @@ def orchestrate_search(query: str):
     for pq in parsed_queries:
         results.append(pq.validate_field().compose_command().execute())
     return set.intersection(*results)
+
+
+rich.print(INDICES["aoe_shape"])
+rich.print(INDICES["aoe_size"])
+rich.print(INDICES["range"])
+rich.print(SPELLS["Fireball"])

@@ -94,7 +94,12 @@ range_examples = [
         "Are you a low level caster wanting to take advantage of dumb enemies? Say no more.",
     ),
     (
-        [("blue", "range:120"), ("green", "st:dexterity"), ("orange", "dt:fire")],
+        [
+            ("blue", "range>=150"),
+            ("green", "st:dexterity"),
+            ("yellow", "aoe_sz:20"),
+            ("yellow", "aoe_sh:sphere"),
+        ],
         "Guess who's back? Yep, good ole' **Fireball**!",
     ),
 ]

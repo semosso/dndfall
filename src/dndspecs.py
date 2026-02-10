@@ -9,13 +9,19 @@ from dataclasses import dataclass, field
 LENGTH_UNIT: dict = {
     "foot": {
         "aliases": ["foot", "feet", "ft", "ft."],
-        "pattern": [r"\b{value}\b"],
         "ratio": 1.0,
     },
     "mile": {
         "aliases": ["mile", "miles", "mi", "mi."],
-        "pattern": [r"\b{value}\b"],
         "ratio": 5280.0,
+    },
+    "rad": {
+        "aliases": ["radius"],
+        "ratio": 2.0,
+    },
+    "diam": {
+        "aliases": ["diameter"],
+        "ratio": 1.0,
     },
 }
 
@@ -53,16 +59,20 @@ TIME_UNIT: dict = {
 }
 
 SHAPE_UNIT: dict = {  # diff than units is gonna bite me in the ass, TBAdjusted
-    "shapes": {
-        "values": ["cone", "cube", "cylinder", "line", "sphere"],
-        "pattern": [r"\b{value}\b"],
-        # diameter vs radius?
-        "ratios": "",  # TBD
-    },
+    "shapes": ["cone", "cube", "cylinder", "line", "sphere"],
 }
 
 SIZE_UNIT: dict = {
     # tiny, small, large, huge, gargantuan and how they interact (i.e., < or >)
+}
+
+DICE_UNITS: dict = {
+    "d4": 2.5,
+    "d6": 3.5,
+    "d8": 4.5,
+    "d10": 5.5,
+    "d12": 6.5,
+    "d20": 10.5,
 }
 
 
@@ -86,19 +96,10 @@ class BooleanOp(StrEnum):
 
 
 class DiceRoll:
-    DICE_UNITS: dict = {
-        "d4": 2.5,
-        "d6": 3.5,
-        "d8": 4.5,
-        "d10": 5.5,
-        "d12": 6.5,
-        "d20": 10.5,
-    }
-
     def __init__(self, match):
         self.match = match
         self.amount, self.die, self.modifier = "", "", ""
-        pattern = r"\b([0-9]+)(d[0-9]+)\s?(?:\+\s?([0-9]+))?\s*\w+\s*damage"
+        pattern = next(iter(DAMAGE_AMOUNT.patterns))
         result = re.search(pattern, self.match)
         if result:
             self.amount = result.group(1)
@@ -106,7 +107,140 @@ class DiceRoll:
             self.modifier = result.group(3) if result.group(3) else 0
 
     def avg_damage(self):
-        return (self.DICE_UNITS[self.die] * int(self.amount)) + int(self.modifier)
+        return (DICE_UNITS[self.die] * int(self.amount)) + int(self.modifier)
+
+    def max_damage(self):
+        pass
+
+
+class AreaOfEffect:
+    def generate_aoe_patterns():
+        foot_aliases = "|".join(LENGTH_UNIT["foot"]["aliases"])
+        mile_aliases = "|".join(LENGTH_UNIT["mile"]["aliases"])
+        rad_aliases = "|".join(LENGTH_UNIT["rad"]["aliases"])
+        diam_aliases = "|".join(LENGTH_UNIT["diam"]["aliases"])
+        shapes = "|".join(SHAPE_UNIT["shapes"])
+
+        pattern = {
+            # cone, sphere, cube (most)
+            rf"""(?x)
+        \b(?P<number>[0-9]+)\s*-?\s*
+        (?P<unit>{foot_aliases}|{mile_aliases})\s*-?\s*
+        (?P<rad_diam>{rad_aliases}|{diam_aliases})?\s*-?\s*
+        (?P<shape>{shapes})
+        """,
+            # cylinder after radius, I won't track height
+            # 10-foot-radius, 40-foot-high cylinder
+            rf"""(?x)
+        \b(?P<number>[0-9]+)\s*-?\s*
+        (?P<unit>{foot_aliases}|{mile_aliases})\s*-?\s*
+        (?P<modifier>{rad_aliases}|{diam_aliases})\s*-?\s*.*
+        (?P<shape>cylinder)
+        """,
+            # cylinder before radius, I won't track height
+            rf"""(?x)
+        \b(?P<shape>cylinder)\s+.*?
+        (?P<number>[0-9]+)\s*-?\s*
+        (?P<unit>{foot_aliases}|{mile_aliases})\s*-?\s*.*
+        (?P<modifier>{rad_aliases}|{diam_aliases})
+        """,
+            # line after long
+            rf"""(?x)
+        \b(?P<number>[0-9]+)\s*-?\s*
+        (?P<unit>{foot_aliases}|{mile_aliases})\s*-?\s*
+        (?:\w+\s+)?
+        (?P<shape>line)
+        """,
+            # line before long
+            rf"""(?x)
+        \b(?P<shape>line)\s+.*
+        (?P<number>[0-9]+)\s+
+        (?P<unit>{foot_aliases}|{mile_aliases})
+        (?:\s+long)?
+        """,
+            # walls are also lines
+            rf"""(?x)
+        \b(?P<shape>wall)\s+.*
+        (?P<number>[0-9]+)\s+
+        (?P<unit>{foot_aliases}|{mile_aliases})
+        (?:\s+long)?
+            """,
+        }
+
+        return pattern
+
+    def __init__(self, match):
+        self.match = match
+        self.number, self.unit, self.rad_diam, self.shape = "", "", "", ""
+
+        for pattern in AREA_OF_EFFECT_SHAPE.patterns:
+            result = re.search(pattern, self.match)
+            if result:
+                groups = result.groupdict()
+
+                self.number = groups.get("number") or ""
+                self.unit = groups.get("unit") or ""
+                self.rad_diam = groups.get("rad_diam")
+                self.shape = groups.get("shape") or ""
+
+            if self.number:
+                break
+
+    def get_size(self):
+        if not self.number:
+            return None
+
+        def find_ratio(value, categories):
+            for category in categories:
+                if value in LENGTH_UNIT[category]["aliases"]:
+                    return LENGTH_UNIT[category]["ratio"]
+            return 1.0  # base case
+
+        unit_ratio = find_ratio(self.unit, ["foot", "mile"])
+        rad_diam_ratio = (
+            find_ratio(self.rad_diam, ["rad", "diam"]) if self.rad_diam else 1.0
+        )
+
+        return int(self.number) * unit_ratio * rad_diam_ratio
+
+    def get_shape(self):
+        if self.shape == "wall":
+            return "line"
+        return self.shape
+
+
+class Range_:
+    def generate_range_pattern():
+        foot_aliases = "|".join(LENGTH_UNIT["foot"]["aliases"])
+        mile_aliases = "|".join(LENGTH_UNIT["mile"]["aliases"])
+
+        pattern = rf"""(?x)
+        \b([0-9]+)\s*-?\s*
+        ({foot_aliases}|{mile_aliases})*
+        """
+
+        return {pattern}
+
+    def __init__(self, match):
+        self.match = match
+        self.number, self.unit = "", ""
+        pattern = next(iter(RANGE_.patterns))
+        result = re.search(pattern, self.match)
+        if result:
+            self.number = result.group(1)
+            self.unit = result.group(2)
+
+    def get_size(self):
+
+        def find_ratio(value, categories):
+            for category in categories:
+                if value in LENGTH_UNIT[category]["aliases"]:
+                    return LENGTH_UNIT[category]["ratio"]
+            return 1.0  # base case
+
+        unit_ratio = find_ratio(self.unit, ["foot", "mile"])
+
+        return int(self.number) * unit_ratio
 
 
 ## spell classes
@@ -211,7 +345,10 @@ class DerivedField(SpellField):
         DerivedValue instance.
         Returns a list of tags."""
         matches: list[str] = []
-        source_text: list | bool = getattr(spell, self.source)
+
+        source_text: list | bool | None = getattr(spell, self.source, None)
+        if source_text is None:
+            return []
 
         # description kept as list for readability
         if isinstance(source_text, list):
@@ -291,11 +428,48 @@ DAMAGE_AMOUNT: DerivedField = DerivedField(
     name="damage_amount",
     aliases={"damage_amount", "da"},
     operator=NumericOp,
-    values=range(0, 1000),
+    values=set(),
     source="description",
     patterns={r"\b([0-9]+)(d[0-9]+)\s*(?:\+\s*([0-9]+))?\s*\w+\s*damage"},
     use_capture=True,
     transform=lambda x: DiceRoll(x).avg_damage(),
+)
+
+
+AREA_OF_EFFECT_SHAPE: DerivedField = DerivedField(
+    name="aoe_shape",
+    aliases={"aoe_shape", "aoe_sh"},
+    operator=TextOp,
+    # values={"cone", "cube", "cylinder", "line", "sphere"},
+    values=set(),
+    source="description",
+    patterns=AreaOfEffect.generate_aoe_patterns(),
+    use_capture=True,
+    transform=lambda x: AreaOfEffect(x).get_shape(),
+)
+
+
+AREA_OF_EFFECT_SIZE: DerivedField = DerivedField(
+    name="aoe_size",
+    aliases={"aoe_size", "aoe_sz"},
+    operator=NumericOp,
+    values=set(),
+    source="description",
+    patterns=AreaOfEffect.generate_aoe_patterns(),
+    use_capture=True,
+    transform=lambda x: AreaOfEffect(x).get_size(),
+)
+
+
+RANGE_: DerivedField = DerivedField(
+    name="range",
+    aliases={"range", "rg"},
+    operator=NumericOp,
+    values=set(),
+    source="range_",
+    patterns=Range_.generate_range_pattern(),
+    use_capture=True,
+    transform=lambda x: Range_(x).get_size(),
 )
 
 
@@ -368,22 +542,7 @@ SCHOOL: DerivedField = DerivedField(
     patterns={r"\b{value}\b"},
 )
 
-# AREA_OF_EFFECT: DerivedField = DerivedField(
-# feet comes in different places in desc; I can work on them, or just display
-# e.g., a spell says 10ft and 50ft, for different things and effects
-#     name="area_of_effect",
-#     values={
-#         "shape": {
-#             "aliases": {"area_of_effct", "aoe"},
-#             "subvalues": {},  # reference the shape_units,
-#             "patterns": [],  # is this different than the shape_units pattern?
-#             "source": [],
-#             "operator": TextOp,
-#         }
-#     },
-# )
 
-# RANGE_: DerivedField = DerivedField()
 # DURATION: DerivedField = DerivedField()
 # CASTING_TIME: ScalarField = ScalarField()
 # HIGHER_LEVEL: ScalarField = ScalarField()
@@ -398,6 +557,9 @@ DERIVED_FIELDS: list = [
     MATERIAL_GP_COST,
     CLASS_,
     SCHOOL,
+    AREA_OF_EFFECT_SIZE,
+    AREA_OF_EFFECT_SHAPE,
+    RANGE_,
 ]
 SCALAR_FIELDS: list = [
     LEVEL,
