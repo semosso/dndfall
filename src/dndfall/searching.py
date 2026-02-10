@@ -4,7 +4,7 @@ from enum import StrEnum
 from dataclasses import dataclass
 
 import dndspecs
-from st_data import SPELLS, INDICES
+from pages.cached_data import SPELLS, INDICES
 
 
 ## strategy classes

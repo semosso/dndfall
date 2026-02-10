@@ -1,0 +1,12 @@
+[project]
+name = "dndfall"
+version = "0.1.0"
+description = "Scryfall for D&D"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "rich>=14.2.0",
+    "ruff>=0.14.10",
+    "streamlit>=1.54.0",
+    "ty>=0.0.8",
+]

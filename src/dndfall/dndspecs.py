@@ -1,5 +1,5 @@
-from collections.abc import Callable
 import re
+from collections.abc import Callable
 from enum import StrEnum
 from dataclasses import dataclass, field
 

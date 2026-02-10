@@ -2,8 +2,8 @@ import streamlit as st
 from collections import defaultdict
 import json
 
-from dndspecs import NormalizedSpell, DERIVED_FIELDS, SCALAR_FIELDS
-from normalization import normalizing_spells, create_indices
+from dndfall.dndspecs import NormalizedSpell, DERIVED_FIELDS, SCALAR_FIELDS
+from dndfall.normalization import normalizing_spells, create_indices
 
 st.set_page_config(page_title="dndfall")
 

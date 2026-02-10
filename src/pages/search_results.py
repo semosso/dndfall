@@ -1,9 +1,7 @@
 import streamlit as st
 
-from st_data import load_spells
-from searching import orchestrate_search
-
-SPELLS, _ = load_spells()
+from pages.cached_data import SPELLS
+from dndfall.searching import orchestrate_search
 
 st.title("search results")
 
