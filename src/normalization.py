@@ -68,11 +68,7 @@ def create_indices(
         # scalar fields
         for field in scalar_f:
             field_value = getattr(spell, field.name)
-            if isinstance(field_value, bool):
-                if field_value:
-                    indices[field.name][True].add(spell_name)
-            else:
-                indices[field.name][field_value].add(spell_name)
+            indices[field.name][field_value].add(spell_name)
 
         # derived fields, i.e., tags
         for field in derived_f:

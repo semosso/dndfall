@@ -50,7 +50,7 @@ AND_examples = [
         [
             ("red", "school:Evocation"),
             ("green", "st:dexterity"),
-            ("blue", "concentration:true"),
+            ("blue", "concentration:yes"),
         ],
         "no Fireball 😔",
     ),
@@ -97,7 +97,7 @@ range_examples = [
         [
             ("blue", "range>=150"),
             ("green", "st:dexterity"),
-            ("yellow", "aoe_sz:20"),
+            ("yellow", "aoe_sz:40"),
             ("yellow", "aoe_sh:sphere"),
         ],
         "Guess who's back? Yep, good ole' **Fireball**!",

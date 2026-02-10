@@ -41,6 +41,5 @@ relies on the [D&D 5e API](https://www.dnd5eapi.co/) for source data.
 """)
 
 if query:
-    st.session_state.query = query
-    st.switch_page("pages/search_results.py")
     st.query_params["q"] = query
+    st.switch_page("pages/search_results.py")

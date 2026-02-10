@@ -77,8 +77,8 @@ DICE_UNITS: dict = {
 
 
 class NumericOp(StrEnum):
-    EQ = ":"  # replicating scryfall's syntax
-    N_EQ = "!="  # not replicating their syntax (-<field>)
+    EQ = ":"
+    N_EQ = "!="
     GT_E = ">="
     GT = ">"
     LT_E = "<="
@@ -92,7 +92,6 @@ class TextOp(StrEnum):
 
 class BooleanOp(StrEnum):
     IS = ":"
-    N_IS = "!="
 
 
 class DiceRoll:
@@ -301,7 +300,7 @@ CONCENTRATION: ScalarField = ScalarField(
     name="concentration",
     aliases={"concentration", "conc"},
     operator=BooleanOp,
-    values={bool},
+    values={"y", "yes", "no", "n"},
 )
 
 

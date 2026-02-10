@@ -91,6 +91,7 @@ class SearchCommand:
             # think about this (avoids duplication in compose_command())
             else:
                 validated_values.add(val_check)
+
             if self.field_rules.values and val_check not in self.field_rules.values:
                 raise ValueError(
                     f"Invalid value ('{val_check}') for field '{self.sc_field}'"
@@ -117,7 +118,6 @@ class SearchExecution:
         "exclusion_lookup": {
             dndspecs.NumericOp.N_EQ,
             dndspecs.TextOp.N_EQ,
-            dndspecs.BooleanOp.N_IS,
         },
         "range_lookup": {
             dndspecs.NumericOp.GT_E,
@@ -144,6 +144,10 @@ class SearchExecution:
     # create different strategies for num vs text, too many convert to int things
     # or adapt like in final section of search creation
     def direct_lookup(self):
+        if self.c_operator is dndspecs.BooleanOp:
+            if next(iter(self.c_values)) in ["y", "yes"]:
+                return INDICES[self.c_field][True]
+            return INDICES[self.c_field][False]
         return set().union(*(INDICES[self.c_field][v] for v in self.c_values))
 
     def exclusion_lookup(self):
@@ -175,7 +179,4 @@ def orchestrate_search(query: str):
     return set.intersection(*results)
 
 
-rich.print(INDICES["aoe_shape"])
-rich.print(INDICES["aoe_size"])
-rich.print(INDICES["range"])
-rich.print(SPELLS["Fireball"])
+rich.print(INDICES["concentration"])

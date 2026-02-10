@@ -17,17 +17,20 @@ input_query = st.text_input(
 
 st.page_link("pages/syntax_guide.py", label="syntax guide", icon="📖")
 
-query = input_query if input_query else query_from_params
+query = input_query
 
-if input_query and input_query != query_from_params:
+if query != query_from_params:
     st.query_params["q"] = input_query
-    st.rerun()
 
 if query:
     try:
         results: set = orchestrate_search(query)
     except ValueError as e:
         st.error(str(e))
+    except Exception as e:
+        st.error(f"An error occurred: {type(e).__name__}: {str(e)}")
+        with st.expander("Show full error:"):
+            st.exception(e)
     else:
         if not results:
             st.warning(f"no matches for '{query}'")
