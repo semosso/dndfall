@@ -305,7 +305,10 @@ CONCENTRATION: ScalarField = ScalarField(
 
 
 RITUAL: ScalarField = ScalarField(
-    name="ritual", aliases={"ritual", "r"}, operator=BooleanOp, values={bool}
+    name="ritual",
+    aliases={"ritual", "r"},
+    operator=BooleanOp,
+    values={"y", "yes", "no", "n"},
 )
 
 
@@ -494,7 +497,7 @@ SAVING_THROW: DerivedField = DerivedField(
 
 MATERIAL_GP_COST: DerivedField = DerivedField(
     name="gp_cost",
-    aliases={"material", "gp_cost"},
+    aliases={"gp_cost", "gp"},
     operator=NumericOp,
     values=range(0, 100000000),
     source="material",

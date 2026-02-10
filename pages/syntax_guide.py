@@ -107,14 +107,17 @@ range_examples = [
 for badges, comment in range_examples:
     clickables(badges, comment)
 
-# st.markdown("""
-# ### supported fields
-# **Level:** :violet-badge[level] or :violet-badge[l]
-# **School:** :red-badge[school] or :red-badge[sch]
-# **Concentration:** :blue-badge[concentration] or :blue-badge[conc]
-# **Ritual:** :green-badge[ritual] or :green-badge[r]
-# **Condition:** :gray-badge[condition] or :gray-badge[cond]
-# **Saving Throw:**
-# **Damage Type:** :orange-badge[damage_type] or :orange-badge[dt]
-# **Damage Amount:** :yellow-badge[damage_amount] or :yellow-badge[da]
-# **Material Cost:**
+st.markdown("""
+### supported fields
+**Level:** :violet-badge[level] or :violet-badge[l]  
+**School:** :red-badge[school] or :red-badge[sch]  
+**Concentration:** :blue-badge[concentration] or :blue-badge[conc]  
+**Ritual:** :green-badge[ritual] or :green-badge[r]  
+**Condition:** :gray-badge[condition] or :gray-badge[cond]  
+**Saving Throw:** :blue-badge[saving_throw] or :blue-badge[st]
+**Damage Type:** :orange-badge[damage_type] or :orange-badge[dt]  
+**Damage Amount:** :yellow-badge[damage_amount] or :yellow-badge[da]  
+**Material Cost:** :red-badge[gp_cost] or :red-badge[gp] 
+**Area of Effect:** :green-badge[aoe_size] or :green-badge[aoe_sz]. You can also search
+for :green-badge[aoe_shape] or :green-badge[aoe_sh]. All sizes in feet, normalized for
+diameter so you can compare different AOE sizes.""")

@@ -2,7 +2,6 @@ from __future__ import annotations
 import re
 from enum import StrEnum
 from dataclasses import dataclass
-import rich
 
 from src import dndspecs
 from pages.cached_data import SPELLS, INDICES
@@ -104,7 +103,10 @@ class SearchCommand:
         comm_values: set = self.validate_values()
         if self.validate_operator() and self.validate_values():
             return SearchExecution(
-                field=comm_field, operator=comm_operator, values=comm_values
+                field=comm_field,
+                operator=comm_operator,
+                values=comm_values,
+                rules=self.field_rules,
             )
 
 
@@ -131,10 +133,11 @@ class SearchExecution:
         op: strategy for strategy, ops in OP_BY_STRAT.items() for op in ops
     }
 
-    def __init__(self, field, operator, values):
+    def __init__(self, field, operator, values, rules):
         self.c_field: str = field
         self.c_operator: str = operator
         self.c_values: set = values
+        self.c_rules = rules
 
     def execute(self):
         strat_name = self.STRATEGY_MAPPINGS.get(self.c_operator, "")
@@ -144,7 +147,7 @@ class SearchExecution:
     # create different strategies for num vs text, too many convert to int things
     # or adapt like in final section of search creation
     def direct_lookup(self):
-        if self.c_operator is dndspecs.BooleanOp:
+        if self.c_rules.operator is dndspecs.BooleanOp:
             if next(iter(self.c_values)) in ["y", "yes"]:
                 return INDICES[self.c_field][True]
             return INDICES[self.c_field][False]
@@ -177,6 +180,3 @@ def orchestrate_search(query: str):
     for pq in parsed_queries:
         results.append(pq.validate_field().compose_command().execute())
     return set.intersection(*results)
-
-
-rich.print(INDICES["concentration"])
