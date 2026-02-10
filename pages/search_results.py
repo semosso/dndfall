@@ -1,9 +1,13 @@
 import streamlit as st
 
-from app import SPELLS
+from st_data import load_spells
 from searching import orchestrate_search
 
+SPELLS, _ = load_spells()
+
 st.title("search results")
+
+st.page_link("app.py", label="<< Back to Search")
 
 if "query" in st.session_state:
     query = st.session_state.query
@@ -23,8 +27,9 @@ if "query" in st.session_state:
                             **Range:** {spell.range_}  
                             **Components:** {spell.components}  
                             **Duration:** {spell.duration}  
-                            **Classes:** {spell.classes}""")
-                st.write(spell.description)
-                st.write("**View it in SRD:**", spell.url)
-
-st.page_link("app.py", label="<< Back to Search")
+                            **Concentration:** {spell.concentration}  
+                            **Classes:** {spell.classes}  
+                            **SRD API url:** {spell.url}""")
+                with st.expander("Description"):
+                    for string in spell.description:
+                        st.write(string)

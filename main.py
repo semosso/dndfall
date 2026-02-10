@@ -7,6 +7,7 @@ from dndspecs import NormalizedSpell, DERIVED_FIELDS, SCALAR_FIELDS
 
 # my modules
 from normalization import normalizing_spells, create_indices
+from searching import orchestrate_search
 
 
 # initializes the dict of curated spells
@@ -18,7 +19,16 @@ def main():
     indices: dict[str, defaultdict] = create_indices(
         spells=spells, scalar_f=SCALAR_FIELDS, derived_f=DERIVED_FIELDS
     )
-    rich.print(indices["level"])
+
+    return spells, indices
+
+
+SPELLS, INDICES = main()
+user_input = "l:7"
+rich.print(orchestrate_search(user_input))
+rich.print(SPELLS["Raise Dead"])
+rich.print(SPELLS["Prismatic Spray"])
+rich.print(INDICES["damage_amount"])
 
 
 if __name__ == "__main__":

@@ -90,32 +90,32 @@ class SearchCommand:
 
     # think of error messages
     def validate_values(self):
+        validated_values = set()
         for value in self.sc_values:
             try:
                 val_check: int | str = (
                     int(value)
-                    if self.field_rules.operator == dndspecs.NumericOp
-                    else value
+                    if self.field_rules.operator is dndspecs.NumericOp
+                    else value.lower()
                 )
             except ValueError:
                 raise ValueError(
-                    f"Value for {self.sc_field} must be a number (e.g., 3, not three)"
+                    f"Value for '{self.sc_field}' must be a number (e.g., 3, not three)"
                 )
+            # think about this (avoids duplication in compose_command())
+            else:
+                validated_values.add(val_check)
             if val_check not in self.field_rules.values:
                 raise ValueError(
                     f"Invalid value ('{val_check}') for field '{self.sc_field}'"
                 )
-        return True
+        return validated_values
 
     def compose_command(self):
         comm_field: str = self.field_rules.name
         comm_operator: StrEnum = self.sc_operator
-        comm_values: set = {
-            int(value) if self.field_rules.operator is dndspecs.NumericOp else value
-            for value in self.sc_values
-        }
+        comm_values: set = self.validate_values()
         if self.validate_operator() and self.validate_values():
-            # each different command must be instantiated separately
             return SearchExecution(
                 field=comm_field, operator=comm_operator, values=comm_values
             )
@@ -154,8 +154,6 @@ class SearchExecution:
     def execute(self):
         strat_name = self.STRATEGY_MAPPINGS.get(self.c_operator, "")
         strategy = getattr(self, strat_name)
-        # testing
-        print(self.c_field, self.c_operator, self.c_values)
         return strategy()
 
     # create different strategies for num vs text, too many convert to int things
@@ -190,11 +188,3 @@ def orchestrate_search(query: str):
     for pq in parsed_queries:
         results.append(pq.validate_field().compose_command().execute())
     return set.intersection(*results)
-
-
-## testing things
-
-user_input = "gp>500 st:wisdom"
-rich.print(orchestrate_search(user_input))
-rich.print(INDICES["gp_cost"])
-rich.print(SPELLS["Fireball"])

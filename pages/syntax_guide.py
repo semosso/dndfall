@@ -2,125 +2,61 @@ import streamlit as st
 
 st.header("syntax guide", divider=True)
 
-st.markdown("""Search terms must be in `<field>``<operator>``<value>` format.""")
-
-st.subheader("Combining terms")
-
-st.markdown("""This is where the magic happens: You can put multiple terms together and create really specific search commands. By default, all terms are combined, i.e., all terms must match to find a spell.
-
-**For example:**
-- :violet-badge[level:3] :orange-badge[dt:fire] returns 3rd level fire damage spells, **Fireball** anyone?
-- :red-badge[school:Evocation] :gray-badge[st:dexterity] :blue-badge[conc:false] returns Evocation spells with Dexterity saves that don't require concentration. **Fireball** and friends!
-- :gray-badge[st:wisdom] :orange-badge[cond:charmed] :violet-background[class:Bard] returns charm spells, available to Bards, with Wisdom saves like **Charm Person**""")
-
-st.subheader("Numeric fields")
-
-st.markdown(
-    """Searches on numeric fields accept equality/inequality (:violet-badge[:] or :violet-badge[!=]) and comparison (:violet-badge[>], :violet-badge[>=], :violet-badge[<], :violet-badge[<=]) operators.
-    Different fields accept different ranges of values, but they all must be numeric (e.g., `3`, not `three`). E.g., :red-badge[level] supports numbers from 0 (cantrips) to 9, while :green-badge[range] or :blue-badge[duration] accept any positive number.
-
-Currently, supported numeric fields are :red-badge[level], :green-badge[range] or :blue-badge[duration]."""
-)
-
-st.subheader("Level")
+st.markdown("""Search terms must be in **`<field><operator><value>`** format. For example:
+- :violet-badge[level:3] gets you all 3rd level spells
+- :blue-badge[concentration:true] returns all spells requiring concentration
+- :orange-badge[damage_type!:fire] returns all spells that do not cause Fire damage""")
 
 st.markdown("""
-Use the :violet-badge[level] keyword, or simply :violet-badge[l] (most keywords have some shorthand notation), to search spells by level.
-Level searches accept only numeric values, from 0 (cantrips) to 9, and may be performed with equality (:violet-badge[:]), inequality (:violet-badge[!=]) or comparison (:violet-badge[>], :violet-badge[>=], :violet-badge[<], :violet-badge[<=]) operators.
+### aliases
+Most keywords have some form of shorthand notation. E.g., you can use :violet-badge[l]
+for :violet-badge[level], :green-badge[st] for :green-badge[saving_throw], or :orange-badge[dt] for
+:orange-badge[damage_type]. See below for a full list.""")
+
+st.markdown("""
+### combining search terms
+This is where it gets fun. You can put multiple terms together and create really specific search commands.
+By default, all terms are combined, i.e., all must match to find a spell.
             
-**For example:** :violet-badge[l:3] gets you all 3rd level spells, :violet-badge[l>=5] those higher than or from the 5th level. :violet-badge[level!=0] will show only leveled spells (i.e., excluding cantrips).""")
-
-st.subheader("School")
+- :violet-badge[level:3] :orange-badge[dt:fire] returns 3rd level fire damage spells, **Fireball** anyone?
+- :red-badge[school:Evocation] :green-badge[st:dexterity] :blue-badge[conc:false] returns Evocation spells,
+with Dexterity saves, that don't require concentration. **Fireball** again, but this time with friends!
+            
+If you want to search over a set of options instead of combining them, nest the values inside `( )` .
+            
+- :violet-badge[level:3] :orange-badge[dt:(fire cold)] returns 3rd level spells that deal either Fire **OR** Cold damage
+- :violet-badge[level:3] :orange-badge[dt:fire] :orange-badge[dt:cold] won't match anything,
+as no 3rd level spells deal both Fire **AND** Cold damage
+- :orange-badge[dt:fire] :orange-badge[dt:cold] will let you know that **Prismatic Spray** and **Prismatic Wall**
+are, unsurprisingly, the only ones with this weird mix!""")
 
 st.markdown("""
-Use :red-badge[school] or :red-badge[sch] to find spells from a specific school of magic. School searches may be performed with equality (:red-badge[:]) or inequality (:red-badge[!=]) operators.
+### operators
+All fields accept equality or inequality operators (:violet-badge[:] or :violet-badge[!=]),
 
-**For example:** :red-badge[school:Evocation] results in all spells from the Evocation school, while :red-badge[sch!=Illusion] shows all spells except those from the Illusion school.""")
+[including boolean]
+                       
+Numeric fields also accept comparison operators (:violet-badge[>], :violet-badge[>=], :violet-badge[<],or :violet-badge[<=]).
+Different numeric fields accept different ranges, but they all must be numeric
+(e.g., `3`, not `three`). E.g., :red-badge[level] supports numbers from 0 (cantrips) to 9,
+while :green-badge[range] or :blue-badge[duration] accept any positive number.
 
+[EXAMPLES]
+
+Currently supported numeric fields are :red-badge[level], :green-badge[range] or :blue-badge[duration].""")
 
 st.markdown("""
-## Concentration
+### supported fields
+**Level:** :violet-badge[level] or :violet-badge[l]  
+**School:** :red-badge[school] or :red-badge[sch]  
+**Concentration:** :blue-badge[concentration] or :blue-badge[conc]  
+**Ritual:** :green-badge[ritual] or :green-badge[r]  
+**Condition:** :gray-badge[condition] or :gray-badge[cond]  
+**Saving Throw:**   
+**Damage Type:** :orange-badge[damage_type] or :orange-badge[dt]  
+**Damage Amount:** :yellow-badge[damage_amount] or :yellow-badge[da]
 
-Use `concentration:` or `conc:` to find spells that require (or don't require) concentration.
 
-**Examples:**
-
-- :blue-badge[concentration:true] — Spells requiring concentration
-- :blue-badge[conc:false] — Spells that don't require concentration
-- :blue-badge[concentration!=false] — Same as `conc:true`
-
----
-
-## Ritual
-
-Use `ritual:` or `r:` to find spells that can (or can't) be cast as rituals.
-
-**Examples:**
-
-- :green-badge[ritual:true] — Spells that can be cast as rituals
-- :green-badge[r:false] — Spells that cannot be ritual cast
-- :green-badge[ritual!=true] — Non-ritual spells
-
----
-
-## School
-
-Use `school:` or `sch:` to find spells from a specific school of magic.
-
-**Examples:**
-
-- :red-badge[school:Evocation] — Evocation school spells
-- :red-badge[sch:Necromancy] — Necromancy school spells
-- :red-badge[school!=Illusion] — All spells except Illusion
-
----
-
-## Condition
-
-Use `condition:` or `cond:` to find spells that inflict status conditions.
-
-**Examples:**
-
-- :orange-badge[condition:frightened] — Spells that can cause the frightened condition
-- :orange-badge[cond:charmed] — Spells involving charm effects
-- :orange-badge[condition:invisible] — Spells that grant invisibility
-
----
-
-## Damage Type
-
-Use `damage_type:`, `dmg_type:`, or `dt:` to find spells that deal specific damage types.
-
-**Examples:**
-
-- :orange-badge[damage_type:fire] — Fire damage spells
-- :orange-badge[dt:lightning] — Lightning damage spells
-- :orange-badge[dmg_type!=poison] — Spells that don't deal poison damage
-
----
-
-## Damage Amount
-
-Use `damage_amount:`, `dmg_amt:`, or `da:` to find spells by their damage dice.
-
-**Examples:**
-
-- :orange-badge[damage_amount:8d6] — Spells dealing exactly 8d6 damage
-- :orange-badge[da:8d6] — Same as above
-
----
-
-## Saving Throw
-
-Use `saving_throw:` or `st:` to find spells that require specific saving throws.
-
-**Examples:**
-
-- :gray-badge[saving_throw:dexterity] — Spells requiring a Dexterity save
-- :gray-badge[st:wisdom] — Spells requiring a Wisdom save
-- :gray-badge[saving_throw!=constitution] — Spells that don't use Constitution saves
-
----
 
 ## Material Cost
 

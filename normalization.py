@@ -23,10 +23,10 @@ def normalizing_spells(database: list):
             casting_time=sp["casting_time"],
             classes=", ".join([c["name"] for c in sp["classes"]]),
             higher_level=False
-            if "higher_level" not in sp
+            if not sp["higher_level"]
             else (True, " ".join(" ".join(sp["higher_level"]).split())),
-            description=" ".join(" ".join(sp["desc"]).split()),
-            url=sp["url"],
+            description=sp["desc"],
+            url="https://www.dnd5eapi.co" + sp["url"],
         )
         spell.tags = add_tags(spell=spell, derived_f=dndspecs.DERIVED_FIELDS)
         spells[spell.name] = spell

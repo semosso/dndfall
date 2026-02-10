@@ -1,6 +1,8 @@
+from collections.abc import Callable
 import re
 from enum import StrEnum
 from dataclasses import dataclass, field
+
 
 ## helper schema: distance, shape and time blocks, dice types, operators etc.
 
@@ -63,8 +65,6 @@ SIZE_UNIT: dict = {
     # tiny, small, large, huge, gargantuan and how they interact (i.e., < or >)
 }
 
-DICE_UNIT: dict = {}  # type, amount? average rolls with high enough sample size?
-
 
 class NumericOp(StrEnum):
     EQ = ":"  # replicating scryfall's syntax
@@ -85,7 +85,7 @@ class BooleanOp(StrEnum):
     N_IS = "!="
 
 
-## spell and field classes
+## spell classes
 
 
 @dataclass
@@ -102,7 +102,7 @@ class NormalizedSpell:
     casting_time: str
     classes: list[str]
     higher_level: bool | tuple[bool, str]  # could be just bool | str, TBH
-    description: str
+    description: list
     url: str
     tags: dict[str, list[str] | bool] = field(init=False)
 
@@ -113,6 +113,36 @@ class TagRule:
     # FORBIDDANCE's damage_type (r"\b5d10 radiant or necrotic)
     # edge_rules: list[TagRule] | None = None
     pass
+
+
+## helper functions
+
+
+class DiceRoll:
+    DICE_UNITS: dict = {
+        "d4": 2.5,
+        "d6": 3.5,
+        "d8": 4.5,
+        "d10": 5.5,
+        "d12": 6.5,
+        "d20": 10.5,
+    }
+
+    def __init__(self, match):
+        self.match = match
+        self.amount, self.die, self.modifier = "", "", ""
+        pattern = r"\b([0-9]+)(d[0-9]+)\s?(?:\+\s?([0-9]+))?\s*\w+\s*damage"
+        result = re.search(pattern, self.match)
+        if result:
+            self.amount = result.group(1)
+            self.die = result.group(2)
+            self.modifier = result.group(3) if result.group(3) else 0
+
+    def avg_damage(self):
+        return (self.DICE_UNITS[self.die] * int(self.amount)) + int(self.modifier)
+
+
+## field classes
 
 
 @dataclass(kw_only=True)
@@ -151,29 +181,13 @@ RITUAL: ScalarField = ScalarField(
 )
 
 
-SCHOOL: ScalarField = ScalarField(
-    name="school",
-    aliases={"school", "sch"},
-    operator=TextOp,
-    values={
-        "Abjuration",
-        "Conjuration",
-        "Divination",
-        "Enchantment",
-        "Evocation",
-        "Illusion",
-        "Necromancy",
-        "Transmutation",
-    },
-)
-
-
 @dataclass(kw_only=True)
 class DerivedField(SpellField):
     source: str
     patterns: set[str] = field(default_factory=set)
     values: set[str] | range = field(default_factory=set)
     use_capture: bool = False
+    transform: Callable | None = None
 
     def derive_patterns(self):
         """Compiles regex patterns based on the DerivedValue instance's subvalues
@@ -202,17 +216,33 @@ class DerivedField(SpellField):
         DerivedValue instance.
         Returns a list of tags."""
         matches: list[str] = []
-        source_text: str | bool = getattr(spell, self.source)
-        if not isinstance(source_text, str):
+        source_text: list | bool = getattr(spell, self.source)
+
+        # description kept as list for readability
+        if isinstance(source_text, list):
+            source_str = " ".join(" ".join(source_text).split())
+        # other fields are strings
+        elif isinstance(source_text, str):
+            source_str = source_text
+        # some spells don't have source (e.g., when source is "material")
+        else:
             return []
 
         for value, regex in self.derive_patterns():
+            # if case covers fields where value will depend on regex match
             if self.use_capture:
-                for match in regex.finditer(string=source_text):
+                for match in regex.finditer(string=source_str):
                     if match.groups():
-                        matches.append(match.group(1).replace(",", ""))
+                        # field specific helper functions to manipulate matches into tags
+                        if self.transform:
+                            final_value = self.transform(match.group(0))
+                            if final_value:
+                                matches.append(final_value)
+                        # # not sure that else will ever be needed
+                        # else:
+                        #     matches.append("".join(g for g in match.group(0) if g))
             else:
-                if regex.search(string=source_text):
+                if regex.search(string=source_str):
                     matches.append(value)
 
         return matches
@@ -240,7 +270,7 @@ CONDITION: DerivedField = DerivedField(
 
 DAMAGE_TYPE: DerivedField = DerivedField(
     name="damage_type",
-    aliases={"damage_type", "dmg_type", "dt"},
+    aliases={"damage_type", "dt"},
     operator=TextOp,
     values={
         "acid",
@@ -253,6 +283,9 @@ DAMAGE_TYPE: DerivedField = DerivedField(
         "psychic",
         "radiant",
         "thunder",
+        "piercing",
+        "bludgeoning",
+        "slashing",
     },
     source="description",
     patterns={
@@ -264,11 +297,13 @@ DAMAGE_TYPE: DerivedField = DerivedField(
 
 DAMAGE_AMOUNT: DerivedField = DerivedField(
     name="damage_amount",
-    aliases={"damage_amount", "dmg_amt", "da"},
+    aliases={"damage_amount", "da"},
     operator=NumericOp,
-    values={"8d6"},
+    values=set(),
     source="description",
-    patterns={r"\b8d6\b"},  # is this where I call on the building blocks?
+    patterns={r"\b([0-9]+)(d[0-9]+)\s*(?:\+\s*([0-9]+))?\s*\w+\s*damage"},
+    use_capture=True,
+    transform=lambda x: DiceRoll(x).avg_damage(),
 )
 
 
@@ -287,8 +322,6 @@ SAVING_THROW: DerivedField = DerivedField(
     },
     source="description",
     patterns={
-        # r"\b(make(s)?|succeed(s)? on|fail(s)?)\s+(?:a|an|another)?\s*(?:DC [0-9]+\s*)?(?:new|successful)?\s*{value} saving throw(s)?"
-        # r"make\s+a\s+DC\s+15\s+{value}\s+saving\s+throw",
         r"\b(make(s)?|succeed(s)? on|fail(s)?)\s+(?!all\s).*?\b{value} saving throw(s)?",
         r"\bsaving throw of {value}\b",
     },
@@ -297,33 +330,52 @@ SAVING_THROW: DerivedField = DerivedField(
 
 MATERIAL_GP_COST: DerivedField = DerivedField(
     name="gp_cost",
-    aliases={"material", "gp_cost", "gp"},
+    aliases={"material", "gp_cost"},
     operator=NumericOp,
     values=range(0, 100000000),
     source="material",
-    patterns={r"\b([0-9]+(,[0-9]+)?)\s?[Gg][Pp]\b"},
+    patterns={r"\b([0-9,]+)\s?[Gg][Pp]\b"},
     use_capture=True,
+    transform=lambda x: x.replace(",", ""),
 )
 
 
 CLASS_: DerivedField = DerivedField(
     name="class",
-    aliases={"classes", "cls"},
+    aliases={"class", "cls"},
     operator=TextOp,
     values={
-        "Wizard",
-        "Sorcerer",
-        "Cleric",
-        "Paladin",
-        "Ranger",
-        "Bard",
-        "Druid",
-        "Warlock",
+        "wizard",
+        "sorcerer",
+        "cleric",
+        "paladin",
+        "ranger",
+        "bard",
+        "druid",
+        "warlock",
     },
     source="classes",
     patterns={r"\b{value}\b"},
 )
 
+
+SCHOOL: DerivedField = DerivedField(
+    name="school",
+    aliases={"school", "sch"},
+    operator=TextOp,
+    values={
+        "abjuration",
+        "conjuration",
+        "divination",
+        "enchantment",
+        "evocation",
+        "illusion",
+        "necromancy",
+        "transmutation",
+    },
+    source="school",
+    patterns={r"\b{value}\b"},
+)
 
 # AREA_OF_EFFECT: DerivedField = DerivedField(
 # feet comes in different places in desc; I can work on them, or just display
@@ -355,8 +407,13 @@ DERIVED_FIELDS: list = [
     SAVING_THROW,
     MATERIAL_GP_COST,
     CLASS_,
+    SCHOOL,
 ]
-SCALAR_FIELDS: list = [LEVEL, CONCENTRATION, RITUAL, SCHOOL]
+SCALAR_FIELDS: list = [
+    LEVEL,
+    CONCENTRATION,
+    RITUAL,
+]
 
 
 def build_field_by_alias():
