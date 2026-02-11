@@ -22,10 +22,11 @@ def normalizing_spells(database: list):
             duration=sp["duration"],
             casting_time=sp["casting_time"],
             classes=", ".join([c["name"] for c in sp["classes"]]),
-            higher_level=False
-            if not sp["higher_level"]
-            else (True, " ".join(" ".join(sp["higher_level"]).split())),
-            description=sp["desc"],
+            higher_level=False if not sp["higher_level"] else True,
+            description=sp["desc"]
+            + [f"At Higher Levels: {' '.join(' '.join(sp['higher_level']).split())}"]
+            if sp["higher_level"]
+            else sp["desc"],
             url="https://www.dnd5eapi.co" + sp["url"],
         )
         spell.tags = add_tags(spell=spell, derived_f=dndspecs.DERIVED_FIELDS)

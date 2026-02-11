@@ -77,20 +77,23 @@ class SearchCommand:
     def validate_values(self):
         validated_values = set()
         for value in self.sc_values:
-            try:
-                val_check: int | str = (
-                    int(value)
-                    if self.field_rules.operator is dndspecs.NumericOp
-                    else value.lower()
-                )
-            except ValueError:
-                raise ValueError(
-                    f"Value for '{self.sc_field}' must be a number (e.g., 3, not three)"
-                )
+            match self.field_rules.operator:
+                case dndspecs.NumericOp:
+                    val_check = int(value)
+                case dndspecs.BooleanOp:
+                    lower_val = value.lower()
+                    if lower_val in ("true", "yes"):
+                        val_check = True
+                    elif lower_val in ("false", "no"):
+                        val_check = False
+                case dndspecs.TextOp:
+                    val_check = value.lower()
+                case _:
+                    raise ValueError(
+                        f"Invalid value ('{value}') for field '{self.sc_field}'"
+                    )
             # think about this (avoids duplication in compose_command())
-            else:
-                validated_values.add(val_check)
-
+            validated_values.add(val_check)
             if self.field_rules.values and val_check not in self.field_rules.values:
                 raise ValueError(
                     f"Invalid value ('{val_check}') for field '{self.sc_field}'"
@@ -147,10 +150,6 @@ class SearchExecution:
     # create different strategies for num vs text, too many convert to int things
     # or adapt like in final section of search creation
     def direct_lookup(self):
-        if self.c_rules.operator is dndspecs.BooleanOp:
-            if next(iter(self.c_values)) in ["y", "yes"]:
-                return INDICES[self.c_field][True]
-            return INDICES[self.c_field][False]
         return set().union(*(INDICES[self.c_field][v] for v in self.c_values))
 
     def exclusion_lookup(self):
@@ -180,3 +179,7 @@ def orchestrate_search(query: str):
     for pq in parsed_queries:
         results.append(pq.validate_field().compose_command().execute())
     return set.intersection(*results)
+
+print(INDICES["higher_level"])
+print(orchestrate_search("dt:fire conc:yes"))
+print(SPELLS["Fireball"])

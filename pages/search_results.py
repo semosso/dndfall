@@ -1,51 +1,52 @@
 import streamlit as st
+import uuid
+
 from pages.cached_data import SPELLS
 from src.searching import orchestrate_search
-from pages.analytics import init_analytics, track_search
+from pages.analytics import track_search
 
-init_analytics()
+st.set_page_config(layout="wide")
+
+# for tracking purposes
+if "client_id" not in st.session_state:
+    st.session_state.client_id = str(uuid.uuid4())
+
+
+def handle_search():
+    query = st.session_state.search_input_widget
+    st.session_state.query = query
+    track_search(query)
+
 
 st.title("search results")
-
-query_from_session = st.session_state.get("search_query", "")
-query_from_params = st.query_params.get("q", "")
-initial_query = query_from_session or query_from_params
+query = st.session_state.get("query")
 
 input_query = st.text_input(
     "Search",
     placeholder="e.g., level:3 dt:fire",
     label_visibility="hidden",
-    value=initial_query,
+    value=query,
+    key="search_input_widget",
+    on_change=handle_search,
 )
-
-_, col2, _ = st.columns(3)
-with col2:
-    st.page_link("pages/syntax_guide.py", label="syntax guide", icon="📖")
-
-query = input_query
-
-if query:
-    st.session_state.search_query = query
-    if query != query_from_params:
-        st.query_params["q"] = query
+# _, col2, _ = st.columns(3)
+# with col2:
+#     st.page_link("pages/syntax_guide.py", label="syntax guide", icon="📖")
 
 if query:
     try:
         results: set = orchestrate_search(query)
-        track_search(query)
-    except ValueError as e:
-        st.error(str(e))
     except Exception as e:
         st.error(f"An error occurred: {type(e).__name__}: {str(e)}")
-        with st.expander("Show full error:"):
-            st.exception(e)
     else:
         if not results:
             st.warning(f"no matches for '{query}'")
         else:
             st.success(f"Found {len(results)} matches for query '{query}'")
+            # tile = st.container(horizontal=True, border=True)
             for name in sorted(results):
                 spell = SPELLS[name]
+                # with tile:
                 st.subheader(f"**{spell.name}** _(Level {spell.level} {spell.school})_")
                 st.write(f"""**Casting Time:** {spell.casting_time}  
 **Range:** {spell.range_}  

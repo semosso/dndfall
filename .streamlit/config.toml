@@ -1,3 +1,9 @@
 [server]
 port = 8501
 address = "0.0.0.0"
+
+[theme]
+baseFontSize = 18
+
+[client]
+showSidebarNavigation = false

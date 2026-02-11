@@ -280,7 +280,7 @@ class SpellField:
     name: str
     aliases: set[str]
     operator: type[StrEnum]
-    values: set[str | type[bool]] | range
+    values: set[str | bool] | range
 
 
 @dataclass
@@ -300,7 +300,7 @@ CONCENTRATION: ScalarField = ScalarField(
     name="concentration",
     aliases={"concentration", "conc"},
     operator=BooleanOp,
-    values={"y", "yes", "no", "n"},
+    values={True, False},
 )
 
 
@@ -308,7 +308,15 @@ RITUAL: ScalarField = ScalarField(
     name="ritual",
     aliases={"ritual", "r"},
     operator=BooleanOp,
-    values={"y", "yes", "no", "n"},
+    values={True, False},
+)
+
+
+UPCASTABLE: ScalarField = ScalarField(
+    name="higher_level",
+    aliases={"upcast", "up"},
+    operator=BooleanOp,
+    values={True, False},
 )
 
 
@@ -316,7 +324,7 @@ RITUAL: ScalarField = ScalarField(
 class DerivedField(SpellField):
     source: str
     patterns: set[str] = field(default_factory=set)
-    values: set[str] | range = field(default_factory=set)
+    values: set[str | bool] | range = field(default_factory=set)
     use_capture: bool = False
     transform: Callable | None = None
 
@@ -442,7 +450,6 @@ AREA_OF_EFFECT_SHAPE: DerivedField = DerivedField(
     name="aoe_shape",
     aliases={"aoe_shape", "aoe_sh"},
     operator=TextOp,
-    # values={"cone", "cube", "cylinder", "line", "sphere"},
     values=set(),
     source="description",
     patterns=AreaOfEffect.generate_aoe_patterns(),
@@ -499,7 +506,7 @@ MATERIAL_GP_COST: DerivedField = DerivedField(
     name="gp_cost",
     aliases={"gp_cost", "gp"},
     operator=NumericOp,
-    values=range(0, 100000000),
+    values=set(),
     source="material",
     patterns={r"\b([0-9,]+)\s?[Gg][Pp]\b"},
     use_capture=True,
@@ -567,6 +574,7 @@ SCALAR_FIELDS: list = [
     LEVEL,
     CONCENTRATION,
     RITUAL,
+    UPCASTABLE,
 ]
 
 
