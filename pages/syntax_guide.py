@@ -7,11 +7,12 @@ def clickables(badges, comment=None):
     query = " ".join(term for _, term in badges)
     label = " ".join(f":{color}-badge[{term}]" for color, term in badges)
 
-    st.page_link(
-        "pages/search_results.py",
-        label=label,
-        query_params={"q": query},
-    )
+    button_key = f"search_{hash(query)}"
+
+    if st.button(label, key=button_key, use_container_width=False):
+        st.session_state.search_query = query
+        st.switch_page("pages/search_results.py")
+
     if comment:
         st.caption(comment)
 

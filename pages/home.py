@@ -1,7 +1,4 @@
 import streamlit as st
-from analytics import init_analytics, track_search
-
-init_analytics()
 
 st.title("dndfall", text_alignment="center")
 st.subheader("an advanced D&D search tool", text_alignment="center", anchor=False)
@@ -31,22 +28,18 @@ with col_github:
 st.markdown(
     """
 ### about dndfall
-            
 Inspired by the amazing [Scryfall](https://scryfall.com/), **dndfall** is a search tool that
 understands how D&D is actually played. Players and DMs can mix and match criteria to
 form powerful commands, cut through the noise, and quickly find what they need. This is
 a personal project I came up with as a programming/Python learning-companion, and
 relies on the [D&D 5e API](https://www.dnd5eapi.co/) for source data.
-            
+
 **v. 0.1 (beta):** supports all [SRD](https://www.dndbeyond.com/srd) spells, with
 additional functionality to follow soon (monsters, class abilities, features, etc.).
 """,
     text_alignment="justify",
 )
 
-search_results = st.Page("pages/search_results.py")
-
 if query:
-    track_search(query)
-    st.query_params["q"] = query
-    st.switch_page(search_results)
+    st.session_state.search_query = query  # Use session_state
+    st.switch_page("pages/search_results.py")
