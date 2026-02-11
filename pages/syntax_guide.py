@@ -90,7 +90,7 @@ comparison operators (:violet-badge[>], :violet-badge[>=], :violet-badge[<], or 
 
 range_examples = [
     (
-        [("violet", "level<=2"), ("grey", "st:intelligence")],
+        [("violet", "level<=2"), ("grey", "st:wisdom")],
         "Are you a low level caster wanting to take advantage of dumb enemies? Say no more.",
     ),
     (

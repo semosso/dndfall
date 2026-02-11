@@ -4,7 +4,6 @@ from pages.cached_data import SPELLS
 from src.searching import orchestrate_search
 
 st.title("search results")
-st.page_link("dndfall.py", label="<< Back to Search")
 
 query_from_params = st.query_params.get("q", "")
 
@@ -15,7 +14,9 @@ input_query = st.text_input(
     value=query_from_params,
 )
 
-st.page_link("pages/syntax_guide.py", label="syntax guide", icon="📖")
+_, col2, _ = st.columns(3)
+with col2:
+    st.page_link("pages/syntax_guide.py", label="syntax guide", icon="📖")
 
 query = input_query
 
@@ -49,3 +50,5 @@ if query:
                 with st.expander("Description"):
                     for string in spell.description:
                         st.write(string)
+
+st.page_link("pages/home.py", label="**[<] Back to search**")

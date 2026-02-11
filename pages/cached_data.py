@@ -5,8 +5,6 @@ import json
 from src.dndspecs import NormalizedSpell, DERIVED_FIELDS, SCALAR_FIELDS
 from src.normalization import normalizing_spells, create_indices
 
-st.set_page_config(page_title="dndfall")
-
 
 @st.cache_data
 def load_spells():
