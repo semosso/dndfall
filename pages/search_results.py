@@ -50,7 +50,7 @@ if query:
                     )
                     st.write(f"""**Casting Time:** {spell.casting_time}  
     **Range:** {spell.range_}  
-    **Components:** {spell.components}  
+    **Components:** {spell.components}. {spell.material}  
     **Duration:** {spell.duration}  
     **Concentration:** {spell.concentration}  
     **Classes:** {spell.classes}  
@@ -66,7 +66,7 @@ if query:
                     )
                     st.write(f"""**Casting Time:** {spell.casting_time}  
                 **Range:** {spell.range_}  
-                **Components:** {spell.components}  
+                **Components:** {spell.components}. {spell.material}  
                 **Duration:** {spell.duration}  
                 **Concentration:** {spell.concentration}  
                 **Classes:** {spell.classes}  

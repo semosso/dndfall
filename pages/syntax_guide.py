@@ -50,7 +50,7 @@ AND_examples = [
     ([("violet", "level:3"), ("orange", "dt:fire")], "Fireball, NICE!"),
     (
         [
-            ("red", "school:Evocation"),
+            ("red", "school:evocation"),
             ("green", "st:dexterity"),
             ("blue", "concentration:no"),
         ],
@@ -123,8 +123,8 @@ range_examples = [
         [
             ("blue", "range>=150"),
             ("green", "st:dexterity"),
-            ("yellow", "aoe_sz:40"),
-            ("yellow", "aoe_sh:sphere"),
+            ("yellow", "asz:40"),
+            ("yellow", "ash:sphere"),
         ],
         "Guess who's back? Yep, good ole' **Fireball**!",
     ),
@@ -136,6 +136,8 @@ for badges, comment in range_examples:
 
 st.markdown("""
 ### supported fields (new ones are added everyday)
+Input for all fields and values is case insensitive, e.g., both "evocation" or "Evocation"
+are valid school values.
             
 #### Numeric fields
 These only accept numbers (e.g., `3`, not `three`). To accommodate comparison operations,
@@ -145,12 +147,13 @@ spells with 1 minute duration, and :green-badge[range:5280] finds range of 1 mil
 **Level:** :violet-badge[level] or :violet-badge[l]. Accepts values from :violet-badge[0] to :violet-badge[9].  
             
 **Damage Amount:** :yellow-badge[damage_amount] or :yellow-badge[da]. Calculated by the applicable
-die's average roll.
+die's average roll. You can also search for maximum damage (:yellow-badge[damage_amount_max]
+or :yellow-badge[da_max]).
             
 **Material Cost:** :red-badge[gp_cost] or :red-badge[gp]. For those pesky spells that require
 a specific GP amount of some component.  
             
-**Area of Effect (_size_):** :green-badge[aoe_size] or :green-badge[aoe_sz]. In addition to normalizing
+**Area of Effect (_size_):** :green-badge[aoe_size] or :green-badge[asz]. In addition to normalizing
 for feet, radius measures were normalized to diameter for comparison. For shapes that
 have multiple measures (e.g., distance, height, depth), returns whichever makes more practical
 sense in-game (e.g., length of line vs. width).  
@@ -183,7 +186,7 @@ that force a save (e.g., you wouldn't want to see **Bless** as a result of this 
 :orange-badge[necrotic], :orange-badge[poison], :orange-badge[psychic], :orange-badge[radiant],
 :orange-badge[thunder], :orange-badge[piercing], :orange-badge[bludgeoning], or :orange-badge[slashing].
 
-**Area of Effect (_shape_):** :green-badge[aoe_shape] or :green-badge[aoe_sh]. Valid values are
+**Area of Effect (_shape_):** :green-badge[aoe_shape] or :green-badge[ash]. Valid values are
 :green-badge[cone], :green-badge[cube], :green-badge[cylinder], :green-badge[line], or :green-badge[sphere].
 
 

@@ -179,3 +179,6 @@ def orchestrate_search(query: str):
     for pq in parsed_queries:
         results.append(pq.validate_field().compose_command().execute())
     return set.intersection(*results)
+
+
+# print(INDICES["gp_cost"])
