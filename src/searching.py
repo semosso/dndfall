@@ -179,7 +179,3 @@ def orchestrate_search(query: str):
     for pq in parsed_queries:
         results.append(pq.validate_field().compose_command().execute())
     return set.intersection(*results)
-
-print(INDICES["higher_level"])
-print(orchestrate_search("dt:fire conc:yes"))
-print(SPELLS["Fireball"])

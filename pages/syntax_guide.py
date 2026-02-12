@@ -155,6 +155,9 @@ for feet, radius measures were normalized to diameter for comparison. For shapes
 have multiple measures (e.g., distance, height, depth), returns whichever makes more practical
 sense in-game (e.g., length of line vs. width).  
             
+**Range:** :blue-badge[range] or :blue-badge[rg]. Don't forget that all values are normalized
+to feet.  
+            
 #### Textual fields  
 These accept specific values per SRD 5e rules.  
             

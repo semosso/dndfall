@@ -29,9 +29,6 @@ input_query = st.text_input(
     key="search_input_widget",
     on_change=handle_search,
 )
-# _, col2, _ = st.columns(3)
-# with col2:
-#     st.page_link("pages/syntax_guide.py", label="syntax guide", icon="📖")
 
 if query:
     try:
@@ -43,20 +40,40 @@ if query:
             st.warning(f"no matches for '{query}'")
         else:
             st.success(f"Found {len(results)} matches for query '{query}'")
-            # tile = st.container(horizontal=True, border=True)
-            for name in sorted(results):
-                spell = SPELLS[name]
-                # with tile:
-                st.subheader(f"**{spell.name}** _(Level {spell.level} {spell.school})_")
-                st.write(f"""**Casting Time:** {spell.casting_time}  
-**Range:** {spell.range_}  
-**Components:** {spell.components}  
-**Duration:** {spell.duration}  
-**Concentration:** {spell.concentration}  
-**Classes:** {spell.classes}  
-**SRD API url:** {spell.url}""")
-                with st.expander("Description"):
-                    for string in spell.description:
-                        st.write(string)
+            col1, col2 = st.columns(2)
+            sorted_results = sorted(list(results))
+            with col1:
+                for name in sorted(results)[::2]:
+                    spell = SPELLS[name]
+                    st.subheader(
+                        f"**{spell.name}** _(Level {spell.level} {spell.school})_"
+                    )
+                    st.write(f"""**Casting Time:** {spell.casting_time}  
+    **Range:** {spell.range_}  
+    **Components:** {spell.components}  
+    **Duration:** {spell.duration}  
+    **Concentration:** {spell.concentration}  
+    **Classes:** {spell.classes}  
+    **SRD API url:** {spell.url}""")
+                    with st.expander("Description"):
+                        for string in spell.description:
+                            st.write(string)
+            with col2:
+                for name in sorted(results)[1::2]:
+                    spell = SPELLS[name]
+                    st.subheader(
+                        f"**{spell.name}** _(Level {spell.level} {spell.school})_"
+                    )
+                    st.write(f"""**Casting Time:** {spell.casting_time}  
+                **Range:** {spell.range_}  
+                **Components:** {spell.components}  
+                **Duration:** {spell.duration}  
+                **Concentration:** {spell.concentration}  
+                **Classes:** {spell.classes}  
+                **SRD API url:** {spell.url}""")
+                    with st.expander("Description"):
+                        for string in spell.description:
+                            st.write(string)
+
 
 st.page_link("pages/home.py", label="**[<] Back to search**")
