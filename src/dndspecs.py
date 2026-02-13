@@ -15,6 +15,8 @@ LENGTH_UNIT: dict = {
         "aliases": ["mile", "miles", "mi", "mi."],
         "ratio": 5280.0,
     },
+    "touch": {"aliases": ["touch"], "ratio": 5.0},
+    "self": {"aliases": ["self"], "ratio": 1.0},
     "rad": {
         "aliases": ["radius"],
         "ratio": 2.0,
@@ -112,40 +114,6 @@ class DiceRoll:
         pass
 
 
-class Range_:
-    def generate_range_pattern():
-        foot_aliases = "|".join(LENGTH_UNIT["foot"]["aliases"])
-        mile_aliases = "|".join(LENGTH_UNIT["mile"]["aliases"])
-
-        pattern = rf"""(?x)
-        \b([0-9]+)\s*-?\s*
-        ({foot_aliases}|{mile_aliases})*
-        """
-
-        return {pattern}
-
-    def __init__(self, match):
-        self.match = match
-        self.number, self.unit = "", ""
-        pattern = next(iter(RANGE_.patterns))
-        result = re.search(pattern, self.match)
-        if result:
-            self.number = result.group(1)
-            self.unit = result.group(2)
-
-    def get_size(self):
-
-        def find_ratio(value, categories):
-            for category in categories:
-                if value in LENGTH_UNIT[category]["aliases"]:
-                    return LENGTH_UNIT[category]["ratio"]
-            return 1.0  # base case
-
-        unit_ratio = find_ratio(self.unit, ["foot", "mile"])
-
-        return int(self.number) * unit_ratio
-
-
 ## spell classes
 
 
@@ -183,7 +151,7 @@ class TagRule:
 class SpellField:
     name: str
     aliases: set[str]
-    operator: type[StrEnum]
+    operator: type[StrEnum] | set[type[StrEnum]]
     values: set[str | bool] | range
 
 
@@ -233,11 +201,8 @@ class DerivedField(SpellField):
     transform: Callable | None = None
 
     def derive_tags(self, spell: NormalizedSpell):
-        """Compiles regex patterns based on the DerivedValue instance's subvalues
-        and search patterns.
-        Returns a list of (subvalue, regex object) tuples."""
         """Given a spell (NormalizedSpell instance), extracts tags based on the
-        DerivedValue instance.
+        DerivedField's rules.
         Returns a list of tags."""
         source_text: list | bool | None = getattr(spell, self.source, None)
         # some spells don't have source (e.g., when source is "material")
@@ -249,6 +214,7 @@ class DerivedField(SpellField):
             else source_text
         )
         matches: list[str] = []
+        # for fields that require additional processing, with specific rules
         if not self.values:
             results: list = self.process_patterns(source_str)
             if results:
@@ -269,9 +235,6 @@ class DerivedField(SpellField):
                 if regex.search(string=source_str):
                     matches.append(value)
         return matches
-
-    def generate_patterns(self, *args, **kwargs):
-        pass
 
     def process_patterns(self, *args, **kwargs):
         pass
@@ -327,25 +290,55 @@ DAMAGE_TYPE: DerivedField = DerivedField(
 )
 
 
-DAMAGE_AMOUNT: DerivedField = DerivedField(
-    name="damage_amount",
-    aliases={"damage_amount", "da"},
+@dataclass
+class DamageAmount(DerivedField):
+    pattern = re.compile(
+        pattern=r"""(?x)
+        \b(?P<number>[0-9]+)
+        (?P<die>d[0-9]+)\s*
+        (?:\+\s*
+        (?P<modifier>[0-9]+))?\s*\w+\s*damage""",
+        flags=re.IGNORECASE,
+    )
+
+    def process_patterns(self, source_text):
+        result = self.pattern.search(string=source_text)
+        self.number, self.die, self.modifier = "", "", ""
+        if result:
+            groups = result.groupdict()
+            if "number" in groups:
+                self.number = groups.get("number") or ""
+                self.die = groups.get("die") or ""
+                self.modifier = groups.get("modifier") or ""
+
+
+DAMAGE_AMOUNT_AVERAGE: DerivedField = DerivedField(
+    name="damage_average",
+    aliases={"damage_average", "davg"},
     operator=NumericOp,
     values=set(),
     source="description",
-    patterns={r"\b([0-9]+)(d[0-9]+)\s*(?:\+\s*([0-9]+))?\s*\w+\s*damage"},
-    transform=lambda x: DiceRoll(x).avg_damage(),
+    patterns=set(),
+)
+
+
+DAMAGE_AMOUNT_MAX: DerivedField = DerivedField(
+    name="damage_maximum",
+    aliases={"damage_maximum", "dmax"},
+    operator=NumericOp,
+    values=set(),
+    source="description",
+    patterns=set(),
 )
 
 
 @dataclass
 class GpCostField(DerivedField):
+    pattern = re.compile(pattern=r"\b([0-9,]+)\s?[Gg][Pp]\b", flags=re.IGNORECASE)
+
     def process_patterns(self, source_text):
-        self.pattern = re.compile(
-            pattern=r"\b([0-9,]+)\s?[Gg][Pp]\b", flags=re.IGNORECASE
-        )
+        result = self.pattern.search(string=source_text)
         self.number = ""
-        result = re.search(pattern=self.pattern, string=source_text)
         if result:
             self.number = result.group(1)
         return self.number
@@ -360,7 +353,7 @@ MATERIAL_GP_COST: GpCostField = GpCostField(
     operator=NumericOp,
     values=set(),
     source="material",
-    patterns={r"\b([0-9,]+)\s?[Gg][Pp]\b"},
+    patterns=set(),
 )
 
 
@@ -489,15 +482,67 @@ MATERIAL_GP_COST: GpCostField = GpCostField(
 # )
 
 
-RANGE_: DerivedField = DerivedField(
+@dataclass
+class RangeField(DerivedField):
+    foot_aliases = "|".join(LENGTH_UNIT["foot"]["aliases"])
+    mile_aliases = "|".join(LENGTH_UNIT["mile"]["aliases"])
+    text_aliases = "|".join(
+        LENGTH_UNIT["self"]["aliases"] + LENGTH_UNIT["touch"]["aliases"]
+    )
+
+    patterns = [
+        rf"""(?x)
+    \b(?P<number>[0-9,]+)\s*-?\s*
+    (?P<unit>{foot_aliases}|{mile_aliases})?\b
+    """,
+        rf"""(?x)
+    \b(?P<text>{text_aliases})\b""",
+    ]
+
+    compiled_patterns = [
+        re.compile(pattern, flags=re.IGNORECASE) for pattern in patterns
+    ]
+
+    def process_patterns(self, source_text):
+        self.number, self.unit, self.text = "", "", ""
+        for pattern in self.compiled_patterns:
+            result = pattern.search(string=source_text)
+            if result:
+                groups = result.groupdict()
+                if "number" in groups:
+                    self.number = groups.get("number") or ""
+                    self.unit = groups.get("unit") or ""
+                if "text" in groups:
+                    self.text = groups.get("text") or ""
+                break
+
+        return self.get_values()
+
+    def get_values(self):
+
+        def find_ratio(value, categories):
+            for category in categories:
+                if value.lower() in LENGTH_UNIT[category]["aliases"]:
+                    return LENGTH_UNIT[category]["ratio"]
+            return 1.0  # base case
+
+        text_value = self.unit if self.unit else self.text
+        text_ratio = find_ratio(
+            value=text_value, categories=["self", "touch", "foot", "mile"]
+        )
+        if self.number:
+            return int(self.number) * text_ratio
+        if self.text:
+            return text_ratio
+
+
+RANGE_: RangeField = RangeField(
     name="range",
     aliases={"range", "rg"},
     operator=NumericOp,
     values=set(),
     source="range_",
-    patterns=Range_.generate_range_pattern(),
-    use_capture=True,
-    transform=lambda x: Range_(x).get_size(),
+    patterns=set(),
 )
 
 

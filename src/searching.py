@@ -88,6 +88,8 @@ class SearchCommand:
                         val_check = False
                 case dndspecs.TextOp:
                     val_check = value.lower()
+                # case set(dndspecs.NumericOp, dndspecs.TextOp):
+                #     pass
                 case _:
                     raise ValueError(
                         f"Invalid value ('{value}') for field '{self.sc_field}'"
@@ -181,4 +183,4 @@ def orchestrate_search(query: str):
     return set.intersection(*results)
 
 
-# print(INDICES["gp_cost"])
+print(INDICES["range"])

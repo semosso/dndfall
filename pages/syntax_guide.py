@@ -146,9 +146,9 @@ spells with 1 minute duration, and :green-badge[range:5280] finds range of 1 mil
         
 **Level:** :violet-badge[level] or :violet-badge[l]. Accepts values from :violet-badge[0] to :violet-badge[9].  
             
-**Damage Amount:** :yellow-badge[damage_amount] or :yellow-badge[da]. Calculated by the applicable
-die's average roll. You can also search for maximum damage (:yellow-badge[damage_amount_max]
-or :yellow-badge[da_max]).
+**Damage Amount:** :yellow-badge[damage_average] or :yellow-badge[davg]. Calculated by the applicable
+die's average roll. You can also search for maximum damage (:yellow-badge[damage_maximum]
+or :yellow-badge[dmax]).
             
 **Material Cost:** :red-badge[gp_cost] or :red-badge[gp]. For those pesky spells that require
 a specific GP amount of some component.  
@@ -159,7 +159,8 @@ have multiple measures (e.g., distance, height, depth), returns whichever makes 
 sense in-game (e.g., length of line vs. width).  
             
 **Range:** :blue-badge[range] or :blue-badge[rg]. Don't forget that all values are normalized
-to feet.  
+to feet, so to enable comparisons, :blue-badge[self] is equal to :blue-badge[1.0] foot, and :blue-badge[touch]
+is equal to :blue-badge[5] feet.  
             
 #### Textual fields  
 These accept specific values per SRD 5e rules.  
