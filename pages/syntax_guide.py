@@ -8,7 +8,7 @@ def clickables(badges, comment=None):
     query = " ".join(term for _, term in badges)
     label = " ".join(f":{color}-badge[{term}]" for color, term in badges)
 
-    if st.button(label, use_container_width=False):
+    if st.button(label, use_container_width=True):
         st.session_state.query = query
         track_search(query)
         st.switch_page("pages/search_results.py")
@@ -19,74 +19,87 @@ def clickables(badges, comment=None):
 
 st.header("syntax guide", divider=True)
 st.markdown(
-    """Search terms must be in **`<field><operator><value>`** format.
-That sounds more complicated than it really is, trust me. For example, this is how
-you would search for all 3rd level spells, or spells that do not cause fire damage, or those
-that require concentration"""
+    """**dndfall** offers keywords and expressions you can use to search through
+D&D resources. See below for a quick overwivew of basic commands, and jump to the other specific
+sections as needed. We're in beta and new functionalities are added almost everyday,
+so make sure to review the guide from time to time."""
 )
+st.markdown("""**Jump to:**""")
+col1, col2, col3 = st.columns(3)
+with col1:
+    st.markdown("""
+                - Basic spell characteristics (e.g., level, school, class)""")
 
-examples = [
-    [("violet", "level:3")],
-    [("orange", "dt!=fire")],
-    [("blue", "concentration:yes")],
-]
+st.divider()
+st.markdown("#### basic behavior")
+col1, col2 = st.columns([2, 1])
+with col1:
+    st.markdown("""
+Search terms must be in **`<field><operator><value>`** format, so this is how you
+would search for all 3rd level spells, or spells that do not cause fire damage, or those
+that require concentration.
 
-for badges in examples:
-    clickables(badges)
-st.caption("Click any example to perform its search command!")
-
-st.markdown("""
-### aliases
 Most keywords have some form of shorthand notation. E.g., you can use :violet-badge[l]
 for :violet-badge[level], :green-badge[st] for :green-badge[saving_throw], or :orange-badge[dt] for
-:orange-badge[damage_type]. [See below](#supported-fields) for a full list of supported terms.""")
+:orange-badge[damage_type].""")
 
-st.markdown("""
-### combining search terms
-This is where it gets fun! You can put multiple terms together and create really
-specific search commands. By default, all terms must match to find a spell (i.e., implicit **AND**).""")
+with col2:
+    examples = [
+        [("violet", "level:3")],
+        [("orange", "dt!=fire")],
+        [("blue", "concentration:yes")],
+    ]
+    for badges in examples:
+        clickables(badges)
+    st.caption("Click any example to perform the command!")
+
+st.markdown("""This is where it gets fun, **you can put multiple terms together and create really
+    specific search commands.**""")
 
 AND_examples = [
-    ([("violet", "level:3"), ("orange", "dt:fire")], "Fireball, NICE!"),
-    (
-        [
-            ("red", "school:evocation"),
-            ("green", "st:dexterity"),
-            ("blue", "concentration:no"),
-        ],
-        "Fireball again! Plus friends.",
-    ),
-    (
-        [("yellow", "da>20"), ("orange", "up:yes")],
-        """Spells that average more than 20 points of damage AND also upscale
-when cast at higher levels. BTW, Fireball is one of them.""",
-    ),
+    [("violet", "level:3"), ("orange", "dt:fire")],
+    [
+        ("red", "school:evocation"),
+        ("green", "st:dexterity"),
+        ("blue", "concentration:no"),
+    ],
+    [("yellow", "da>20"), ("orange", "up:yes"), ("grey", "ash:sphere")],
 ]
 
-for badges, comment in AND_examples:
-    clickables(badges, comment)
+for badges in AND_examples:
+    clickables(badges)
+st.caption("Fireball! Then Fireball plus friends. And then another one!")
 
-st.markdown("""If you want to search over a set of options instead of combining them,
-nest the values inside `( )`.""")
+st.markdown(""" By default, all input terms must match to find a spell (i.e., implicit **AND**).
+If you want to search over a set of options instead of combining them, nest the values inside `( )`.""")
 
 OR_examples = [
-    (
-        [("violet", "level:3"), ("orange", "dt:(fire lightning)")],
-        "3rd level spells that deal either fire **OR** lightning damage.",
-    ),
-    (
-        [("violet", "level:3"), ("orange", "dt:fire"), ("orange", "dt:lightning")],
-        "No match, since no 3rd level spells deal **BOTH** fire **AND** lightning damage",
-    ),
+    [("violet", "level:3"), ("orange", "dt:fire"), ("orange", "dt:lightning")],
+    [("violet", "level:3"), ("orange", "dt:(fire lightning)")],
 ]
 
-for badges, comment in OR_examples:
-    clickables(badges, comment)
+for badges in OR_examples:
+    clickables(badges)
+st.caption("""No matches on the first one, no 3rd level spells deal **BOTH** fire
+**AND** lightning damage. The second one searches for fire **OR** lightning damage, so match!""")
 
-st.markdown("""
-### operators
-All searchable fields accept equality or inequality operators (:violet-badge[:] or
-:violet-badge[!=]), and accept field-specific values based on D&D rules. For instance:""")
+st.markdown("""**Operators are a big part of the magic.** All searchable fields accept
+equality or inequality operators (:violet-badge[:] or :violet-badge[!=]), and numeric fields also accept
+comparison operators (:violet-badge[>], :violet-badge[>=], :violet-badge[<], or :violet-badge[<=]).
+            
+Most values have been worked on to allow custom comparisons you wouldn't expect, such as range and
+casting time between different D&D units.
+            
+
+
+            
+            only numbers as input (e.g., `3`, not `three`), and accept
+different ranges (e.g., :violet-badge[level] supports numbers from :violet-badge[0] (cantrips)
+to :violet-badge[9]). In addition to equality and inequality, numeric fields also
+            
+            
+            
+            and accept field-specific values based on D&D rules. For instance:""")
 
 text_examples = [
     (
