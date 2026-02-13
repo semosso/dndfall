@@ -1,5 +1,4 @@
 import re
-from collections.abc import Callable
 from enum import StrEnum
 from dataclasses import dataclass, field
 
@@ -15,6 +14,8 @@ LENGTH_UNIT: dict = {
         "aliases": ["mile", "miles", "mi", "mi."],
         "ratio": 5280.0,
     },
+    "touch": {"aliases": ["touch"], "ratio": 5.0},
+    "self": {"aliases": ["self"], "ratio": 1.0},
     "rad": {
         "aliases": ["radius"],
         "ratio": 2.0,
@@ -28,38 +29,33 @@ LENGTH_UNIT: dict = {
 TIME_UNIT: dict = {
     "second": {
         "aliases": ["second", "seconds"],
-        "pattern": [r"\b{value}\b"],
         "ratio": 1.0,
     },
+    "instantaneous": {"aliases": ["instantaneous", "instant", "inst"], "ratio": 1.0},
     "minute": {
         "aliases": ["minute", "minutes"],
-        "pattern": [r"\b{value}\b"],
         "ratio": 60.0,
     },
     "hour": {
         "aliases": ["hour", "hours"],
-        "pattern": [r"\b{value}\b"],
         "ratio": 3600.0,
     },
     "day": {
         "aliases": ["day", "days"],
-        "pattern": [r"\b{value}\b"],
         "ratio": 86400.0,
     },
     "year": {
         "aliases": ["year", "years", "yr", "yrs"],
-        "pattern": [r"\b{value}\b"],
         "ratio": 31536000.0,
     },
     "dnd_economy": {
-        "aliases": ["action", "bonus action", "bonus", "reaction"],  # plurals?
-        "pattern": [r"\b{value}\b"],  # int + alias, "spend a" etc.
+        "aliases": ["action", "bonus action", "reaction"],  # plurals?
         "ratio": 6.0,
     },
 }
 
 SHAPE_UNIT: dict = {  # diff than units is gonna bite me in the ass, TBAdjusted
-    "shapes": ["cone", "cube", "cylinder", "line", "sphere"],
+    "aliases": ["cone", "cube", "cylinder", "line", "sphere"],
 }
 
 SIZE_UNIT: dict = {
@@ -67,13 +63,23 @@ SIZE_UNIT: dict = {
 }
 
 DICE_UNITS: dict = {
-    "d4": 2.5,
-    "d6": 3.5,
-    "d8": 4.5,
-    "d10": 5.5,
-    "d12": 6.5,
-    "d20": 10.5,
+    "d4": {"average": 2.5, "max": 4},
+    "d6": {"average": 3.5, "max": 6},
+    "d8": {"average": 4.5, "max": 8},
+    "d10": {"average": 5.5, "max": 10},
+    "d12": {"average": 6.5, "max": 12},
+    "d20": {"average": 10.5, "max": 20},
 }
+
+
+class DiceRoll:
+    @staticmethod
+    def avg_damage(number, die):
+        return DICE_UNITS[die]["average"] * int(number)
+
+    @staticmethod
+    def max_damage(number, die):
+        return DICE_UNITS[die]["max"] * int(number)
 
 
 class NumericOp(StrEnum):
@@ -94,58 +100,6 @@ class BooleanOp(StrEnum):
     IS = ":"
 
 
-class DiceRoll:
-    def __init__(self, match):
-        self.match = match
-        self.amount, self.die, self.modifier = "", "", ""
-        pattern = next(iter(DAMAGE_AMOUNT.patterns))
-        result = re.search(pattern, self.match)
-        if result:
-            self.amount = result.group(1)
-            self.die = result.group(2)
-            self.modifier = result.group(3) if result.group(3) else 0
-
-    def avg_damage(self):
-        return (DICE_UNITS[self.die] * int(self.amount)) + int(self.modifier)
-
-    def max_damage(self):
-        pass
-
-
-class Range_:
-    def generate_range_pattern():
-        foot_aliases = "|".join(LENGTH_UNIT["foot"]["aliases"])
-        mile_aliases = "|".join(LENGTH_UNIT["mile"]["aliases"])
-
-        pattern = rf"""(?x)
-        \b([0-9]+)\s*-?\s*
-        ({foot_aliases}|{mile_aliases})*
-        """
-
-        return {pattern}
-
-    def __init__(self, match):
-        self.match = match
-        self.number, self.unit = "", ""
-        pattern = next(iter(RANGE_.patterns))
-        result = re.search(pattern, self.match)
-        if result:
-            self.number = result.group(1)
-            self.unit = result.group(2)
-
-    def get_size(self):
-
-        def find_ratio(value, categories):
-            for category in categories:
-                if value in LENGTH_UNIT[category]["aliases"]:
-                    return LENGTH_UNIT[category]["ratio"]
-            return 1.0  # base case
-
-        unit_ratio = find_ratio(self.unit, ["foot", "mile"])
-
-        return int(self.number) * unit_ratio
-
-
 ## spell classes
 
 
@@ -158,7 +112,7 @@ class NormalizedSpell:
     school: str
     range_: str
     components: str
-    material: str | None
+    # material: str | None
     duration: str
     casting_time: str
     classes: list[str]
@@ -183,7 +137,7 @@ class TagRule:
 class SpellField:
     name: str
     aliases: set[str]
-    operator: type[StrEnum]
+    operator: type[StrEnum] | set[type[StrEnum]]
     values: set[str | bool] | range
 
 
@@ -191,6 +145,13 @@ class SpellField:
 class ScalarField(SpellField):
     pass
 
+
+# NAME: ScalarField = ScalarField(
+#     name="name",
+#     aliases={"name", "n"},
+#     operator=TextOp,
+#     values="spell_name",
+# )
 
 LEVEL: ScalarField = ScalarField(
     name="level",
@@ -229,15 +190,12 @@ class DerivedField(SpellField):
     source: str
     patterns: set[str] = field(default_factory=set)
     values: set[str | bool] | range = field(default_factory=set)
-    use_capture: bool = False
-    transform: Callable | None = None
+    # shortcut to modify behavior in getter/setter/helper functions
+    modifier: bool | None = None
 
     def derive_tags(self, spell: NormalizedSpell):
-        """Compiles regex patterns based on the DerivedValue instance's subvalues
-        and search patterns.
-        Returns a list of (subvalue, regex object) tuples."""
         """Given a spell (NormalizedSpell instance), extracts tags based on the
-        DerivedValue instance.
+        DerivedField's rules.
         Returns a list of tags."""
         source_text: list | bool | None = getattr(spell, self.source, None)
         # some spells don't have source (e.g., when source is "material")
@@ -249,10 +207,11 @@ class DerivedField(SpellField):
             else source_text
         )
         matches: list[str] = []
+        # for fields that require additional processing, with specific rules
         if not self.values:
             results: list = self.process_patterns(source_str)
             if results:
-                matches.append(self.get_values())
+                matches.append(results)
         else:
             patterns: list = [
                 (
@@ -269,9 +228,6 @@ class DerivedField(SpellField):
                 if regex.search(string=source_str):
                     matches.append(value)
         return matches
-
-    def generate_patterns(self, *args, **kwargs):
-        pass
 
     def process_patterns(self, *args, **kwargs):
         pass
@@ -327,25 +283,63 @@ DAMAGE_TYPE: DerivedField = DerivedField(
 )
 
 
-DAMAGE_AMOUNT: DerivedField = DerivedField(
+@dataclass
+class DamageAmountField(DerivedField):
+    pattern = re.compile(
+        pattern=r"""(?x)
+        \b(?P<number>[0-9]+)
+        (?P<die>d[0-9]+)\s*
+        (?:\+\s*
+        (?P<fixed>[0-9]+))?\s*\w+\s*damage""",
+        flags=re.IGNORECASE,
+    )
+
+    def process_patterns(self, source_text):
+        result = self.pattern.search(string=source_text)
+        self.number, self.die, self.fixed = "", "", ""
+        if result:
+            groups = result.groupdict()
+            if "number" in groups:
+                self.number = groups.get("number") or ""
+                self.die = groups.get("die") or ""
+                self.fixed = groups.get("fixed") or "0"
+
+            return self.get_values()
+
+    def get_values(self):
+        if self.modifier:
+            return DiceRoll.max_damage(self.number, self.die) + int(self.fixed)
+        return DiceRoll.avg_damage(self.number, self.die) + int(self.fixed)
+
+
+DAMAGE_AVERAGE: DamageAmountField = DamageAmountField(
     name="damage_amount",
     aliases={"damage_amount", "da"},
     operator=NumericOp,
     values=set(),
     source="description",
-    patterns={r"\b([0-9]+)(d[0-9]+)\s*(?:\+\s*([0-9]+))?\s*\w+\s*damage"},
-    transform=lambda x: DiceRoll(x).avg_damage(),
+    patterns=set(),
+)
+
+
+DAMAGE_MAXIMUM: DamageAmountField = DamageAmountField(
+    name="damage_maximum",
+    aliases={"damage_maximum", "dmax"},
+    operator=NumericOp,
+    values=set(),
+    source="description",
+    patterns=set(),
+    modifier=True,
 )
 
 
 @dataclass
 class GpCostField(DerivedField):
+    pattern = re.compile(pattern=r"\b([0-9,]+)\s?[Gg][Pp]\b", flags=re.IGNORECASE)
+
     def process_patterns(self, source_text):
-        self.pattern = re.compile(
-            pattern=r"\b([0-9,]+)\s?[Gg][Pp]\b", flags=re.IGNORECASE
-        )
+        result = self.pattern.search(string=source_text)
         self.number = ""
-        result = re.search(pattern=self.pattern, string=source_text)
         if result:
             self.number = result.group(1)
         return self.number
@@ -359,145 +353,200 @@ MATERIAL_GP_COST: GpCostField = GpCostField(
     aliases={"gp_cost", "gp"},
     operator=NumericOp,
     values=set(),
-    source="material",
-    patterns={r"\b([0-9,]+)\s?[Gg][Pp]\b"},
+    source="components",
+    patterns=set(),
 )
 
 
-# @dataclass
-# class AreaOfEffectField(DerivedField):
-#     @classmethod
-#     def generate_aoe_patterns(cls):
-#         foot_aliases = "|".join(LENGTH_UNIT["foot"]["aliases"])
-#         mile_aliases = "|".join(LENGTH_UNIT["mile"]["aliases"])
-#         rad_aliases = "|".join(LENGTH_UNIT["rad"]["aliases"])
-#         diam_aliases = "|".join(LENGTH_UNIT["diam"]["aliases"])
-#         shapes = "|".join(SHAPE_UNIT["shapes"])
+@dataclass
+class RangeField(DerivedField):
+    foot_aliases = "|".join(LENGTH_UNIT["foot"]["aliases"])
+    mile_aliases = "|".join(LENGTH_UNIT["mile"]["aliases"])
+    text_aliases = "|".join(
+        LENGTH_UNIT["self"]["aliases"] + LENGTH_UNIT["touch"]["aliases"]
+    )
 
-#         pattern = {
-#             # cone, sphere, cube (most)
-#             rf"""(?x)
-#         \b(?P<number>[0-9]+)\s*-?\s*
-#         (?P<unit>{foot_aliases}|{mile_aliases})\s*-?\s*
-#         (?P<rad_diam>{rad_aliases}|{diam_aliases})?\s*-?\s*
-#         (?P<shape>{shapes})
-#         """,
-#             # cylinder after radius, I won't track height
-#             # 10-foot-radius, 40-foot-high cylinder
-#             rf"""(?x)
-#         \b(?P<number>[0-9]+)\s*-?\s*
-#         (?P<unit>{foot_aliases}|{mile_aliases})\s*-?\s*
-#         (?P<modifier>{rad_aliases}|{diam_aliases})\s*-?\s*.*
-#         (?P<shape>cylinder)
-#         """,
-#             # cylinder before radius, I won't track height
-#             rf"""(?x)
-#         \b(?P<shape>cylinder)\s+.*?
-#         (?P<number>[0-9]+)\s*-?\s*
-#         (?P<unit>{foot_aliases}|{mile_aliases})\s*-?\s*.*
-#         (?P<modifier>{rad_aliases}|{diam_aliases})
-#         """,
-#             # line after long
-#             rf"""(?x)
-#         \b(?P<number>[0-9]+)\s*-?\s*
-#         (?P<unit>{foot_aliases}|{mile_aliases})\s*-?\s*
-#         (?:\w+\s+)?
-#         (?P<shape>line)
-#         """,
-#             # line before long
-#             rf"""(?x)
-#         \b(?P<shape>line)\s+.*
-#         (?P<number>[0-9]+)\s+
-#         (?P<unit>{foot_aliases}|{mile_aliases})
-#         (?:\s+long)?
-#         """,
-#             # walls are also lines
-#             rf"""(?x)
-#         \b(?P<shape>wall)\s+.*
-#         (?P<number>[0-9]+)\s+
-#         (?P<unit>{foot_aliases}|{mile_aliases})
-#         (?:\s+long)?
-#             """,
-#         }
+    patterns = [
+        rf"""(?x)
+    \b(?P<number>[0-9,]+)\s*-?\s*
+    (?P<unit>{foot_aliases}|{mile_aliases})?\b
+    """,
+        rf"""(?x)
+    \b(?P<text>{text_aliases})\b""",
+    ]
 
-#         return pattern
+    compiled_patterns = [
+        re.compile(pattern, flags=re.IGNORECASE) for pattern in patterns
+    ]
 
-#     @classmethod
-#     def process_patterns(cls, match):
-#         cls.match = match
-#         cls.number, cls.unit, cls.rad_diam, cls.shape = "", "", "", ""
+    def process_patterns(self, source_text):
+        self.number, self.unit, self.text = "", "", ""
+        for pattern in self.compiled_patterns:
+            result = pattern.search(string=source_text)
+            if result:
+                groups = result.groupdict()
+                if "number" in groups:
+                    self.number = groups.get("number") or ""
+                    self.unit = groups.get("unit") or ""
+                if "text" in groups:
+                    self.text = groups.get("text") or ""
+                break
 
-#         for pattern in AreaOfEffectField.generate_aoe_patterns():
-#             result = re.search(pattern, cls.match)
-#             if result:
-#                 groups = result.groupdict()
+        return self.get_values()
 
-#                 cls.number = groups.get("number") or ""
-#                 cls.unit = groups.get("unit") or ""
-#                 cls.rad_diam = groups.get("rad_diam")
-#                 cls.shape = groups.get("shape") or ""
+    def get_values(self):
 
-#             if cls.number:
-#                 break
+        def find_ratio(value, categories):
+            for category in categories:
+                if value.lower() in LENGTH_UNIT[category]["aliases"]:
+                    return LENGTH_UNIT[category]["ratio"]
+            return 1.0  # base case
 
-#     @classmethod
-#     def get_size(cls):
-#         if not cls.number:
-#             return None
-
-#         def find_ratio(value, categories):
-#             for category in categories:
-#                 if value in LENGTH_UNIT[category]["aliases"]:
-#                     return LENGTH_UNIT[category]["ratio"]
-#             return 1.0  # base unit
-
-#         unit_ratio = find_ratio(cls.unit, ["foot", "mile"])
-#         rad_diam_ratio = (
-#             find_ratio(cls.rad_diam, ["rad", "diam"]) if cls.rad_diam else 1.0
-#         )
-
-#         return int(cls.number) * unit_ratio * rad_diam_ratio
-
-#     @classmethod
-#     def get_shape(cls):
-#         if cls.shape == "wall":
-#             return "line"
-#         return cls.shape
+        text_value = self.unit if self.unit else self.text
+        text_ratio = find_ratio(
+            value=text_value, categories=["self", "touch", "foot", "mile"]
+        )
+        if self.number:
+            return int(self.number) * text_ratio
+        if self.text:
+            return text_ratio
 
 
-# AOE_SHAPE: AreaOfEffectField = AreaOfEffectField(
-#     name="aoe_shape",
-#     aliases={"aoe_shape", "ash"},
-#     operator=TextOp,
-#     values=set(),
-#     source="description",
-#     patterns=AreaOfEffectField.generate_aoe_patterns(),
-#     use_capture=True,
-#     transform=AreaOfEffectField.get_shape(),
-# )
-
-
-# AOE_SIZE: AreaOfEffectField = AreaOfEffectField(
-#     name="aoe_size",
-#     aliases={"aoe_size", "asz"},
-#     operator=NumericOp,
-#     values=set(),
-#     source="description",
-#     patterns=AreaOfEffectField.generate_aoe_patterns(),
-#     use_capture=True,
-#     transform=AreaOfEffectField.get_size(),
-# )
-
-
-RANGE_: DerivedField = DerivedField(
+RANGE_: RangeField = RangeField(
     name="range",
     aliases={"range", "rg"},
     operator=NumericOp,
     values=set(),
     source="range_",
-    patterns=Range_.generate_range_pattern(),
-    use_capture=True,
-    transform=lambda x: Range_(x).get_size(),
+    patterns=set(),
+)
+
+
+@dataclass
+class DurationField(DerivedField):
+    time_aliases = "|".join(
+        sorted(
+            TIME_UNIT["second"]["aliases"]
+            + TIME_UNIT["minute"]["aliases"]
+            + TIME_UNIT["hour"]["aliases"]
+            + TIME_UNIT["day"]["aliases"]
+            + TIME_UNIT["year"]["aliases"],
+            key=len,
+            reverse=True,
+        )
+    )
+    text_aliases = "|".join(TIME_UNIT["instantaneous"]["aliases"])
+
+    patterns = [
+        rf"""(?x)
+    \b(?P<number>[0-9]+)\s*
+    (?P<unit>{time_aliases})\b
+    """,
+        rf"""(?x)
+    \b(?P<text>{text_aliases})\b""",
+    ]
+
+    compiled_patterns = [
+        re.compile(pattern, flags=re.IGNORECASE) for pattern in patterns
+    ]
+
+    def process_patterns(self, source_text):
+        self.number, self.unit, self.text = "", "", ""
+        for pattern in self.compiled_patterns:
+            result = pattern.search(string=source_text)
+            if result:
+                groups = result.groupdict()
+                if "number" in groups:
+                    self.number = groups.get("number") or ""
+                    self.unit = groups.get("unit") or ""
+                if "text" in groups:
+                    self.text = groups.get("text") or ""
+                break
+        return self.get_values()
+
+    def get_values(self):
+
+        def find_ratio(value, categories):
+            for category in categories:
+                if value.lower() in TIME_UNIT[category]["aliases"]:
+                    return TIME_UNIT[category]["ratio"]
+            return 1.0  # base case
+
+        text_value = self.unit if self.unit else self.text
+        text_ratio = find_ratio(
+            value=text_value,
+            categories=["instantaneous", "second", "minute", "hour", "day", "year"],
+        )
+        if self.number:
+            return int(self.number) * text_ratio
+        if self.text:
+            return text_ratio
+
+
+DURATION: DurationField = DurationField(
+    name="duration",
+    aliases={"duration", "dur"},
+    operator=NumericOp,
+    values=set(),
+    source="casting_time",
+    patterns=set(),
+)
+
+
+@dataclass
+class CastingTimeField(DerivedField):
+    time_aliases = "|".join(
+        TIME_UNIT["second"]["aliases"]
+        + TIME_UNIT["minute"]["aliases"]
+        + TIME_UNIT["hour"]["aliases"]
+        + TIME_UNIT["day"]["aliases"]
+        + TIME_UNIT["year"]["aliases"]
+        + TIME_UNIT["dnd_economy"]["aliases"]
+    )
+
+    patterns = [
+        rf"""(?x)
+    \b([0-9]+)\s*
+    ({time_aliases})\b
+    """
+    ]
+
+    compiled_patterns = [
+        re.compile(pattern, flags=re.IGNORECASE) for pattern in patterns
+    ]
+
+    def process_patterns(self, source_text):
+        self.number, self.unit = "", ""
+        for pattern in self.compiled_patterns:
+            result = pattern.search(string=source_text)
+            if result:
+                self.number = result.group(1)
+                self.unit = result.group(2)
+        return self.get_values()
+
+    def get_values(self):
+        if not self.number:
+            return None
+
+        def find_ratio(value, categories):
+            for category in categories:
+                if value.lower() in TIME_UNIT[category]["aliases"]:
+                    return TIME_UNIT[category]["ratio"]
+            return 1.0  # base case
+
+        text_ratio = find_ratio(
+            value=self.unit,
+            categories=["second", "minute", "hour", "day", "year", "dnd_economy"],
+        )
+        return int(self.number) * text_ratio
+
+
+CASTING_TIME: CastingTimeField = CastingTimeField(
+    name="casting_time",
+    aliases={"casting_time", "cast"},
+    operator=NumericOp,
+    values=set(),
+    source="casting_time",
 )
 
 
@@ -559,24 +608,140 @@ SCHOOL: DerivedField = DerivedField(
 )
 
 
-# DURATION: DerivedField = DerivedField()
-# CASTING_TIME: ScalarField = ScalarField()
+@dataclass
+class AreaOfEffectField(DerivedField):
+    foot_aliases = "|".join(LENGTH_UNIT["foot"]["aliases"])
+    mile_aliases = "|".join(LENGTH_UNIT["mile"]["aliases"])
+    rad_aliases = "|".join(LENGTH_UNIT["rad"]["aliases"])
+    diam_aliases = "|".join(LENGTH_UNIT["diam"]["aliases"])
+    shapes = "|".join(SHAPE_UNIT["aliases"])
 
+    patterns = [
+        # cone, sphere, cube (most)
+        rf"""(?x)
+    \b(?P<number>[0-9]+)\s*-?\s*
+    (?P<unit>{foot_aliases}|{mile_aliases})\s*-?\s*
+    (?P<rad_diam>{rad_aliases}|{diam_aliases})?\s*-?\s*
+    (?P<shape>{shapes})
+    """,
+        # cylinder after radius, I won't track height
+        # 10-foot-radius, 40-foot-high cylinder
+        rf"""(?x)
+    \b(?P<number>[0-9]+)\s*-?\s*
+    (?P<unit>{foot_aliases}|{mile_aliases})\s*-?\s*
+    (?P<rad_diam>{rad_aliases}|{diam_aliases})\s*-?\s*.*
+    (?P<shape>cylinder)
+    """,
+        # cylinder before radius, I won't track height
+        rf"""(?x)
+    \b(?P<shape>cylinder)\s+.*?
+    (?P<number>[0-9]+)\s*-?\s*
+    (?P<unit>{foot_aliases}|{mile_aliases})\s*-?\s*.*
+    (?P<rad_diam>{rad_aliases}|{diam_aliases})
+    """,
+        # line after long
+        rf"""(?x)
+    \b(?P<number>[0-9]+)\s*-?\s*
+    (?P<unit>{foot_aliases}|{mile_aliases})\s*-?\s*
+    (?:\w+\s+)?
+    (?P<shape>line)
+    """,
+        # line before long
+        rf"""(?x)
+    \b(?P<shape>line)\s+.*
+    (?P<number>[0-9]+)\s+
+    (?P<unit>{foot_aliases}|{mile_aliases})
+    (?:\s+long)?
+    """,
+        # walls are also lines
+        rf"""(?x)
+    \b(?P<shape>wall)\s+.*
+    (?P<number>[0-9]+)\s+
+    (?P<unit>{foot_aliases}|{mile_aliases})
+    (?:\s+long)?
+        """,
+    ]
+
+    compiled_patterns = [
+        re.compile(pattern, flags=re.IGNORECASE) for pattern in patterns
+    ]
+
+    def process_patterns(self, source_text):
+        self.number, self.unit, self.rad_diam, self.shape = "", "", "", ""
+
+        for pattern in self.compiled_patterns:
+            result = re.search(pattern=pattern, string=source_text)
+            print(f"Pattern match result: {result}")
+            if result:
+                groups = result.groupdict()
+                self.number = groups.get("number") or ""
+                self.unit = groups.get("unit") or ""
+                self.rad_diam = groups.get("rad_diam") or ""
+                self.shape = groups.get("shape") or ""
+                break
+        return self.get_values()
+
+    def get_values(self):
+        if not self.number:
+            return None
+        if self.modifier:
+            if self.shape == "wall":
+                return "line"
+            return self.shape
+        else:
+
+            def find_ratio(value, categories):
+                for category in categories:
+                    if value in LENGTH_UNIT[category]["aliases"]:
+                        return LENGTH_UNIT[category]["ratio"]
+                return 1.0  # base unit
+
+            unit_ratio = find_ratio(self.unit, ["foot", "mile"])
+            rad_diam_ratio = (
+                find_ratio(self.rad_diam, ["rad", "diam"]) if self.rad_diam else 1.0
+            )
+
+            return int(self.number) * unit_ratio * rad_diam_ratio
+
+
+AOE_SIZE: AreaOfEffectField = AreaOfEffectField(
+    name="aoe_size",
+    aliases={"aoe_size", "asz"},
+    operator=NumericOp,
+    values=set(),
+    source="description",
+    patterns=set(),
+)
+
+
+AOE_SHAPE: AreaOfEffectField = AreaOfEffectField(
+    name="aoe_shape",
+    aliases={"aoe_shape", "ash"},
+    operator=TextOp,
+    values=set(),
+    source="description",
+    patterns=set(),
+    modifier=True,
+)
 
 # REFERENCES for other modules, automate this at some point
 DERIVED_FIELDS: list = [
     CONDITION,
-    DAMAGE_AMOUNT,
+    DAMAGE_AVERAGE,
+    DAMAGE_MAXIMUM,
     DAMAGE_TYPE,
     SAVING_THROW,
     MATERIAL_GP_COST,
     CLASS_,
     SCHOOL,
-    # AREA_OF_EFFECT_SIZE,
-    # AREA_OF_EFFECT_SHAPE,
+    AOE_SIZE,
+    AOE_SHAPE,
     RANGE_,
+    DURATION,
+    CASTING_TIME,
 ]
 SCALAR_FIELDS: list = [
+    # NAME,
     LEVEL,
     CONCENTRATION,
     RITUAL,

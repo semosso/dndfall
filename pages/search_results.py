@@ -30,6 +30,21 @@ input_query = st.text_input(
     on_change=handle_search,
 )
 
+
+def display_handler(spell):
+    st.subheader(f"**{spell.name}** _(Level {spell.level} {spell.school})_")
+    st.write(f"""**Casting Time:** {spell.casting_time}  
+    **Range:** {spell.range_}  
+    **Components:** {spell.components}  
+    **Duration:** {spell.duration}  
+    **Concentration:** {spell.concentration}  
+    **Classes:** {spell.classes}  
+    **SRD API url:** {spell.url}""")
+    with st.expander("Description"):
+        for string in spell.description:
+            st.write(string)
+
+
 if query:
     try:
         results: set = orchestrate_search(query)
@@ -45,35 +60,10 @@ if query:
             with col1:
                 for name in sorted(results)[::2]:
                     spell = SPELLS[name]
-                    st.subheader(
-                        f"**{spell.name}** _(Level {spell.level} {spell.school})_"
-                    )
-                    st.write(f"""**Casting Time:** {spell.casting_time}  
-    **Range:** {spell.range_}  
-    **Components:** {spell.components}. {spell.material}  
-    **Duration:** {spell.duration}  
-    **Concentration:** {spell.concentration}  
-    **Classes:** {spell.classes}  
-    **SRD API url:** {spell.url}""")
-                    with st.expander("Description"):
-                        for string in spell.description:
-                            st.write(string)
+                    display_handler(spell)
             with col2:
                 for name in sorted(results)[1::2]:
                     spell = SPELLS[name]
-                    st.subheader(
-                        f"**{spell.name}** _(Level {spell.level} {spell.school})_"
-                    )
-                    st.write(f"""**Casting Time:** {spell.casting_time}  
-                **Range:** {spell.range_}  
-                **Components:** {spell.components}. {spell.material}  
-                **Duration:** {spell.duration}  
-                **Concentration:** {spell.concentration}  
-                **Classes:** {spell.classes}  
-                **SRD API url:** {spell.url}""")
-                    with st.expander("Description"):
-                        for string in spell.description:
-                            st.write(string)
-
+                    display_handler(spell)
 
 st.page_link("pages/home.py", label="**[<] Back to search**")

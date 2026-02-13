@@ -17,8 +17,7 @@ def normalizing_spells(database: list):
             ritual=sp["ritual"],
             school=sp["school"]["name"],
             range_=sp["range"],
-            components=", ".join(sp["components"]),
-            material=sp.get("material"),
+            components=", ".join(sp["components"]) + f". {sp.get('material', '')}",
             duration=sp["duration"],
             casting_time=sp["casting_time"],
             classes=", ".join([c["name"] for c in sp["classes"]]),
@@ -64,16 +63,15 @@ def create_indices(
     indices: dict = {field.name: defaultdict(set) for field in scalar_f} | {
         field.name: defaultdict(set) for field in derived_f
     }
-
     for spell_name, spell in spells.items():
         # scalar fields
         for field in scalar_f:
-            field_value = getattr(spell, field.name)
+            field_value = (
+                getattr(spell, field.name) if field.name != "name" else "spell_names"
+            )
             indices[field.name][field_value].add(spell_name)
-
         # derived fields, i.e., tags
         for field in derived_f:
             for tag in spell.tags.get(field.name, []):
                 indices[field.name][tag].add(spell_name)
-
     return indices

@@ -79,13 +79,32 @@ class SearchCommand:
         for value in self.sc_values:
             match self.field_rules.operator:
                 case dndspecs.NumericOp:
-                    val_check = int(value)
+                    if isinstance(self.field_rules, dndspecs.DerivedField):
+                        try:
+                            val_check = int(value)
+                        except ValueError:
+                            if not self._valid_text(value):
+                                raise ValueError(
+                                    f"'{value}' is not a valid number for '{self.sc_field}'"
+                                )
+                            val_check = value
+                    else:
+                        try:
+                            val_check = int(value)
+                        except ValueError:
+                            raise ValueError(
+                                f"'{value}' is not a valid number for '{self.sc_field}'"
+                            )
                 case dndspecs.BooleanOp:
                     lower_val = value.lower()
                     if lower_val in ("true", "yes"):
                         val_check = True
                     elif lower_val in ("false", "no"):
                         val_check = False
+                    else:
+                        raise ValueError(
+                            f"'{value}' is not a valid value for '{self.sc_field}'"
+                        )
                 case dndspecs.TextOp:
                     val_check = value.lower()
                 case _:
@@ -99,6 +118,25 @@ class SearchCommand:
                     f"Invalid value ('{val_check}') for field '{self.sc_field}'"
                 )
         return validated_values
+
+    def _valid_text(self, value):
+        value_lower = value.lower()
+
+        for category in ["self", "touch", "foot", "mile"]:
+            if value_lower in dndspecs.LENGTH_UNIT[category]["aliases"]:
+                return True
+
+        for category in [
+            "instantaneous",
+            "second",
+            "minute",
+            "hour",
+            "day",
+            "year",
+            "dnd_economy",
+        ]:
+            if value_lower in dndspecs.TIME_UNIT[category]["aliases"]:
+                return True
 
     def compose_command(self):
         comm_field: str = self.field_rules.name
@@ -150,35 +188,73 @@ class SearchExecution:
     # create different strategies for num vs text, too many convert to int things
     # or adapt like in final section of search creation
     def direct_lookup(self):
-        return set().union(*(INDICES[self.c_field][v] for v in self.c_values))
+        matches = {
+            self._extract_ratio(v) if isinstance(v, str) else v for v in self.c_values
+        }
+        return set().union(*(INDICES[self.c_field][v] for v in matches))
 
     def exclusion_lookup(self):
+        matches = {
+            self._extract_ratio(v) if isinstance(v, str) else v for v in self.c_values
+        }
         return set(SPELLS.keys()) - set().union(
-            *(INDICES[self.c_field][v] for v in self.c_values)
+            *(INDICES[self.c_field][v] for v in matches)
         )
 
     def range_lookup(self):
-        # level is the only one I have today, but soon casting time, duration,
-        # range, material cost etc.
+        # adapt for text comparison; e.g., if isinstance str normalize
         target = next(iter(self.c_values))
+
+        if isinstance(target, str):
+            target = self._extract_ratio(target)
+
         op: dict = {
             dndspecs.NumericOp.GT_E: lambda x: x >= target,
             dndspecs.NumericOp.GT: lambda x: x > target,
             dndspecs.NumericOp.LT_E: lambda x: x <= target,
             dndspecs.NumericOp.LT: lambda x: x < target,
         }
-        match_keys: list = [
-            k for k in INDICES[self.c_field].keys() if op[self.c_operator](int(k))
-        ]
+        match_keys: list = []
+
+        for k in INDICES[self.c_field].keys():
+            try:
+                numeric_k = float(k)
+                if op[self.c_operator](numeric_k):
+                    match_keys.append(k)
+            except (ValueError, TypeError):
+                pass
+
         return set().union(*(INDICES[self.c_field][k] for k in match_keys))
+
+    def _extract_ratio(self, value):
+        value_lower = value.lower()
+
+        for category in ["self", "touch", "foot", "mile"]:
+            if value_lower in dndspecs.LENGTH_UNIT[category]["aliases"]:
+                return dndspecs.LENGTH_UNIT[category]["ratio"]
+
+        for category in [
+            "instantaneous",
+            "second",
+            "minute",
+            "hour",
+            "day",
+            "year",
+            "dnd_economy",
+        ]:
+            if value_lower in dndspecs.TIME_UNIT[category]["aliases"]:
+                return dndspecs.TIME_UNIT[category]["ratio"]
+
+        return value
 
 
 def orchestrate_search(query: str):
     parsed_queries: list[ParsedQuery] = SearchEngine(user_input=query).parse_query()
+    if not parsed_queries:
+        raise ValueError(
+            f"Could not parse query: '{query}'. Please review our syntax guide!"
+        )
     results: list = []
     for pq in parsed_queries:
         results.append(pq.validate_field().compose_command().execute())
     return set.intersection(*results)
-
-
-# print(INDICES["gp_cost"])
