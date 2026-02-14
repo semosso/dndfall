@@ -49,12 +49,12 @@ TIME_UNIT: dict = {
         "ratio": 31536000.0,
     },
     "dnd_economy": {
-        "aliases": ["action", "bonus action", "reaction"],  # plurals?
+        "aliases": ["action", "bonus", "reaction"],
         "ratio": 6.0,
     },
 }
 
-SHAPE_UNIT: dict = {  # diff than units is gonna bite me in the ass, TBAdjusted
+SHAPE_UNIT: dict = {
     "aliases": ["cone", "cube", "cylinder", "line", "sphere"],
 }
 
@@ -177,14 +177,6 @@ RITUAL: ScalarField = ScalarField(
 )
 
 
-UPCASTABLE: ScalarField = ScalarField(
-    name="higher_level",
-    aliases={"upcast", "up"},
-    operator=BooleanOp,
-    values={True, False},
-)
-
-
 @dataclass(kw_only=True)
 class DerivedField(SpellField):
     source: str
@@ -210,7 +202,8 @@ class DerivedField(SpellField):
         # for fields that require additional processing, with specific rules
         if not self.values:
             results: list = self.process_patterns(source_str)
-            if results:
+            # i.e., let fields decide how and what to return, as long as it's not False
+            if results is not None and results is not False:
                 matches.append(results)
         else:
             patterns: list = [
@@ -236,6 +229,36 @@ class DerivedField(SpellField):
         pass
 
 
+@dataclass
+class UpcastField(DerivedField):
+    patterns = [
+        r"\bwhen you reach \w+\s+level(s)?",
+        r"\busing a spell slot of \w+ level or higher",
+        r"\bat higher levels",
+    ]
+
+    compiled_patterns = [
+        re.compile(pattern, flags=re.IGNORECASE) for pattern in patterns
+    ]
+
+    def process_patterns(self, source_text):
+        for pattern in self.compiled_patterns:
+            result = pattern.search(source_text)
+            if result:
+                return True
+        return False
+
+
+UPCAST: UpcastField = UpcastField(
+    name="upcast",
+    aliases={"upcast", "up"},
+    operator=BooleanOp,
+    values=set(),
+    source="description",
+    patterns=set(),
+)
+
+
 CONDITION: DerivedField = DerivedField(
     name="condition",
     aliases={"condition", "cond"},
@@ -250,6 +273,11 @@ CONDITION: DerivedField = DerivedField(
         "invisible",
         "paralyzed",
         "petrified",
+        "poisoned",
+        "prone",
+        "restrained",
+        "stunned",
+        "unconscious",
     },
     source="description",
     patterns={r"\b{value}\b"},
@@ -339,13 +367,13 @@ class GpCostField(DerivedField):
 
     def process_patterns(self, source_text):
         result = self.pattern.search(string=source_text)
-        self.number = ""
+        self.number = 0
         if result:
-            self.number = result.group(1)
-        return self.number
+            self.number = result.group(1).replace(",", "")
+        return self.get_values()
 
     def get_values(self):
-        return self.number.replace(",", "")
+        return int(self.number) if self.number else 0
 
 
 MATERIAL_GP_COST: GpCostField = GpCostField(
@@ -488,7 +516,7 @@ DURATION: DurationField = DurationField(
     aliases={"duration", "dur"},
     operator=NumericOp,
     values=set(),
-    source="casting_time",
+    source="duration",
     patterns=set(),
 )
 
@@ -617,6 +645,14 @@ class AreaOfEffectField(DerivedField):
     shapes = "|".join(SHAPE_UNIT["aliases"])
 
     patterns = [
+        # walls are built in blocks; specifics ahead of generic, learned the hard way
+        rf"""(?x)
+    \b(?P<number>[0-9]+)\s*-?\s*
+    (?P<unit>{foot_aliases}|{mile_aliases})\s*-?\s*
+    (?:by|x)\s*-?\s*
+    (?P<number2>[0-9]+)\s*-?\s*
+    (?P<unit2>{foot_aliases}|{mile_aliases})
+    """,
         # cone, sphere, cube (most)
         rf"""(?x)
     \b(?P<number>[0-9]+)\s*-?\s*
@@ -629,14 +665,14 @@ class AreaOfEffectField(DerivedField):
         rf"""(?x)
     \b(?P<number>[0-9]+)\s*-?\s*
     (?P<unit>{foot_aliases}|{mile_aliases})\s*-?\s*
-    (?P<rad_diam>{rad_aliases}|{diam_aliases})\s*-?\s*.*
+    (?P<rad_diam>{rad_aliases}|{diam_aliases})\s*-?\s*.*?
     (?P<shape>cylinder)
     """,
         # cylinder before radius, I won't track height
         rf"""(?x)
     \b(?P<shape>cylinder)\s+.*?
     (?P<number>[0-9]+)\s*-?\s*
-    (?P<unit>{foot_aliases}|{mile_aliases})\s*-?\s*.*
+    (?P<unit>{foot_aliases}|{mile_aliases})\s*-?\s*.?
     (?P<rad_diam>{rad_aliases}|{diam_aliases})
     """,
         # line after long
@@ -648,14 +684,17 @@ class AreaOfEffectField(DerivedField):
     """,
         # line before long
         rf"""(?x)
-    \b(?P<shape>line)\s+.*
+    \b(?P<shape>line)
+    (?:\s+of\s+strong\s+wind)?
+    \s+
+    (?!\s+of\s+sight)
     (?P<number>[0-9]+)\s+
     (?P<unit>{foot_aliases}|{mile_aliases})
     (?:\s+long)?
     """,
         # walls are also lines
         rf"""(?x)
-    \b(?P<shape>wall)\s+.*
+    \b(?P<shape>wall)\s+.*?
     (?P<number>[0-9]+)\s+
     (?P<unit>{foot_aliases}|{mile_aliases})
     (?:\s+long)?
@@ -671,10 +710,10 @@ class AreaOfEffectField(DerivedField):
 
         for pattern in self.compiled_patterns:
             result = re.search(pattern=pattern, string=source_text)
-            print(f"Pattern match result: {result}")
             if result:
                 groups = result.groupdict()
                 self.number = groups.get("number") or ""
+                self.number2 = groups.get("number2") or ""
                 self.unit = groups.get("unit") or ""
                 self.rad_diam = groups.get("rad_diam") or ""
                 self.shape = groups.get("shape") or ""
@@ -700,6 +739,11 @@ class AreaOfEffectField(DerivedField):
             rad_diam_ratio = (
                 find_ratio(self.rad_diam, ["rad", "diam"]) if self.rad_diam else 1.0
             )
+
+            # for calculating X by X blocks or areas
+            if self.number2:
+                area = int(self.number) * int(self.number2)
+                return area * unit_ratio * rad_diam_ratio
 
             return int(self.number) * unit_ratio * rad_diam_ratio
 
@@ -739,13 +783,13 @@ DERIVED_FIELDS: list = [
     RANGE_,
     DURATION,
     CASTING_TIME,
+    UPCAST,
 ]
 SCALAR_FIELDS: list = [
     # NAME,
     LEVEL,
     CONCENTRATION,
     RITUAL,
-    UPCASTABLE,
 ]
 
 

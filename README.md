@@ -25,4 +25,13 @@ I'm taking this personal project on as a Python and related tools (e.g., FastAPI
 e.g., immunity/resistance, healing, support effects, debuff effects
 - start working on the front end (ideally moving to React)
 
+# known quirks
+- **Web** shows up if you search for :orange-badge[dt:fire], because the web is flammable
+and deals fire damage to creatures stuck in it if burned.          
+- Don't expect to find any references to Tasha, Otiluke, or Mordenkainen in spell names;
+these are proprietary D&D names, and source data for this tool is the SRD.
+- A few weirdly written spells may not match on some searches, such as **Hallow**
+("nor can such creatures charm, frighten or possess") or **Arcane Hand** ("attempts to grapple").
+- Some conditions result in others (e.g., a paralyzed creature is also incapacitated), and the
+tool will only match the one you actually search for.
 

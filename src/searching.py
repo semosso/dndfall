@@ -258,3 +258,11 @@ def orchestrate_search(query: str):
     for pq in parsed_queries:
         results.append(pq.validate_field().compose_command().execute())
     return set.intersection(*results)
+
+
+print(INDICES["aoe_size"])
+test_spell = SPELLS["Lightning Bolt"]
+desc_str = " ".join(test_spell.description)
+print(desc_str)
+result = dndspecs.AOE_SIZE.process_patterns(desc_str)
+print(f"Result: {result}")
