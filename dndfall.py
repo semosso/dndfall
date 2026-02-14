@@ -3,7 +3,6 @@ import streamlit as st
 st.set_page_config(
     page_title="dndfall | an advanced D&D search tool",
     page_icon="🔎",
-    layout="centered",
 )
 
 pages = [

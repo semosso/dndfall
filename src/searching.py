@@ -18,21 +18,21 @@ class SearchEngine:
         Input: user query
         Return: one ParsedQuery object per (f, o, v) match"""
         parsed_inputs: list = []
-        pattern = r"(\w+)(<=|>=|!=|<|>|:)\(([^)]+)\)|(\w+)(<=|>=|!=|<|>|:)([^\s()]+)"
+        pattern = r"(\w+)([<>!=:]+)\(([^)]+)\)|(\w+)([<>=!=:]+)([^\s()]+)"
         for match in re.finditer(pattern, self.user_input):
             if match.group(1):
                 f_: str = match.group(1)
                 o_: str = match.group(2)
                 v_: list = match.group(3).split()
                 parsed_inputs.append(
-                    ParsedQuery(p_field=f_, p_operator=o_, p_values=v_)
+                    ParsedQuery(p_field=f_.lower(), p_operator=o_, p_values=v_)
                 )
             else:
                 f_: str = match.group(4)
                 o_: str = match.group(5)
                 v_: list = match.group(6).split()
                 parsed_inputs.append(
-                    ParsedQuery(p_field=f_, p_operator=o_, p_values=v_)
+                    ParsedQuery(p_field=f_.lower(), p_operator=o_, p_values=v_)
                 )
         return parsed_inputs
 
@@ -139,7 +139,7 @@ class SearchCommand:
                 return True
 
     def compose_command(self):
-        comm_field: str = self.field_rules.name
+        comm_field: str = self.field_rules.name.lower()
         comm_operator: StrEnum = self.sc_operator
         comm_values: set = self.validate_values()
         if self.validate_operator() and self.validate_values():

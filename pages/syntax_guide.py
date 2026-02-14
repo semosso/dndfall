@@ -34,8 +34,11 @@ st.markdown("### basic behavior")
 col1, col2 = st.columns([2, 1])
 with col1:
     st.markdown("""
-Search terms must be in **`<field><operator><value>`** format, so this is how you
-would search for all 3rd level spells, or spells that do not cause fire damage, or those
+Search terms must follow this format:
+
+**`<field><operator><value>`**
+                
+So this is how you would search for all 3rd level spells, or spells that do not cause fire damage, or those
 that require concentration.
 
 Most keywords have some form of shorthand notation. E.g., you can use :violet-badge[l]
@@ -531,7 +534,7 @@ EXAMPLE_SEARCHES = [
             ("red", "school:conjuration"),
             ("blue", "duration>=600"),
             ("red", "gp_cost:0"),
-            ("blue", "cast<=360"),
+            ("blue", "cast<=60"),
         ],
         "Quick and cheap summons for exploration",
     ),
