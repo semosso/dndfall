@@ -60,16 +60,22 @@ def create_indices(
     """Creates reverse indices from spell attributes, including tags.
     Input: a NormalizedSpell object, lists of spell attributes (scalar and derived).
     Return: reverse lookup indices dictionary"""
-    indices: dict = {field.name: defaultdict(set) for field in scalar_f} | {
-        field.name: defaultdict(set) for field in derived_f
-    }
+    indices: dict = (
+        {field.name: defaultdict(set) for field in scalar_f}
+        | {
+            field.name: defaultdict(set)
+            for field in derived_f
+            if field.name != "spell_name"
+        }
+        | {"spell_name": set()}
+    )
     for spell_name, spell in spells.items():
         # scalar fields
+        indices["spell_name"].add(spell.name)
         for field in scalar_f:
-            field_value = (
-                getattr(spell, field.name) if field.name != "name" else "spell_names"
-            )
-            indices[field.name][field_value].add(spell_name)
+            if field.name != "spell_name":
+                field_value = getattr(spell, field.name)
+                indices[field.name][field_value].add(spell_name)
         # derived fields, i.e., tags
         for field in derived_f:
             for tag in spell.tags.get(field.name, []):

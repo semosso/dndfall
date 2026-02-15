@@ -1,10 +1,12 @@
 from __future__ import annotations
+from altair import Parse
 import re
 from enum import StrEnum
 from dataclasses import dataclass
 
 from src import dndspecs
 from pages.cached_data import SPELLS, INDICES
+import rich  # debug
 
 
 class SearchEngine:
@@ -18,7 +20,7 @@ class SearchEngine:
         Input: user query
         Return: one ParsedQuery object per (f, o, v) match"""
         parsed_inputs: list = []
-        pattern = r"(\w+)([<>!=:]+)\(([^)]+)\)|(\w+)([<>=!=:]+)([^\s()]+)"
+        pattern = r"(\w+)([<>!=:]+)\(([^)]+)\)|(\w+)([<>=!=:]+)([^\s()]+)|(!)?(\w+)"
         for match in re.finditer(pattern, self.user_input):
             if match.group(1):
                 f_: str = match.group(1)
@@ -27,12 +29,19 @@ class SearchEngine:
                 parsed_inputs.append(
                     ParsedQuery(p_field=f_.lower(), p_operator=o_, p_values=v_)
                 )
-            else:
+            elif match.group(4):
                 f_: str = match.group(4)
                 o_: str = match.group(5)
                 v_: list = match.group(6).split()
                 parsed_inputs.append(
                     ParsedQuery(p_field=f_.lower(), p_operator=o_, p_values=v_)
+                )
+            else:
+                negation = match.group(7)
+                o_: str = "!=" if negation else ":"
+                v_: list = match.group(8).split()
+                parsed_inputs.append(
+                    ParsedQuery(p_field="spell_name", p_operator=o_, p_values=v_)
                 )
         return parsed_inputs
 
@@ -47,9 +56,10 @@ class ParsedQuery:
     p_operator: str
     p_values: list[str]
 
-    # think of error messages
     def validate_field(self) -> SearchCommand:
-        if self.p_field in dndspecs.FIELD_BY_ALIAS:
+        if self.p_field == "spell_name":
+            return SearchCommand(p_query=self, field_rules=dndspecs.NAME)
+        elif self.p_field in dndspecs.FIELD_BY_ALIAS:
             field_rules = dndspecs.FIELD_BY_ALIAS[self.p_field]
             return SearchCommand(p_query=self, field_rules=field_rules)
         else:
@@ -63,7 +73,6 @@ class SearchCommand:
         self.sc_values: list = p_query.p_values
         self.field_rules: dndspecs.SpellField = field_rules
 
-    # think of error messages
     def validate_operator(self):
         try:
             self.field_rules.operator(self.sc_operator)
@@ -73,7 +82,6 @@ class SearchCommand:
             )
         return True
 
-    # think of error messages
     def validate_values(self):
         validated_values = set()
         for value in self.sc_values:
@@ -139,13 +147,11 @@ class SearchCommand:
                 return True
 
     def compose_command(self):
-        comm_field: str = self.field_rules.name.lower()
-        comm_operator: StrEnum = self.sc_operator
         comm_values: set = self.validate_values()
         if self.validate_operator() and self.validate_values():
             return SearchExecution(
-                field=comm_field,
-                operator=comm_operator,
+                field=self.field_rules.name.lower(),
+                operator=self.sc_operator,
                 values=comm_values,
                 rules=self.field_rules,
             )
@@ -188,12 +194,26 @@ class SearchExecution:
     # create different strategies for num vs text, too many convert to int things
     # or adapt like in final section of search creation
     def direct_lookup(self):
+        if self.c_field == "spell_name":
+            return {
+                spell
+                for spell in INDICES["spell_name"]
+                if any(v in spell.lower() for v in self.c_values)
+            }
         matches = {
             self._extract_ratio(v) if isinstance(v, str) else v for v in self.c_values
         }
-        return set().union(*(INDICES[self.c_field][v] for v in matches))
+        return set().union(
+            *(INDICES[self.c_field][v] for v in matches),
+        )
 
     def exclusion_lookup(self):
+        if self.c_field == "spell_name":
+            return set(SPELLS.keys()) - {
+                spell
+                for spell in INDICES["spell_name"]
+                if any(v in spell.lower() for v in self.c_values)
+            }
         matches = {
             self._extract_ratio(v) if isinstance(v, str) else v for v in self.c_values
         }

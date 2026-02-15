@@ -146,12 +146,12 @@ class ScalarField(SpellField):
     pass
 
 
-# NAME: ScalarField = ScalarField(
-#     name="name",
-#     aliases={"name", "n"},
-#     operator=TextOp,
-#     values="spell_name",
-# )
+NAME: ScalarField = ScalarField(
+    name="spell_name",
+    aliases={"name", "n"},
+    operator=TextOp,
+    values=set(),
+)
 
 LEVEL: ScalarField = ScalarField(
     name="level",
@@ -786,7 +786,7 @@ DERIVED_FIELDS: list = [
     UPCAST,
 ]
 SCALAR_FIELDS: list = [
-    # NAME,
+    NAME,
     LEVEL,
     CONCENTRATION,
     RITUAL,
