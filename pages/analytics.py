@@ -147,7 +147,7 @@ def track_search(
 
 
 def track_result_click(
-    item_type: str, item_name: str, position: int, search_query: Optional[str] = None
+    item_type: str, item_name: str, search_query: Optional[str] = None
 ):
     """
     Track when user clicks on a search result.
@@ -155,16 +155,14 @@ def track_result_click(
     Args:
         item_type: Type of content (e.g., "spell", "monster", "item")
         item_name: Name of the clicked item (e.g., "Fireball", "Ancient Red Dragon")
-        position: Position in search results (1-indexed)
         search_query: The search query that led to this result (optional)
 
     Example:
-        track_result_click("spell", "Fireball", position=1, search_query="fire damage")
+        track_result_click("spell", "Fireball", search_query="fire damage")
     """
     params = {
         "content_type": item_type,
         "item_id": item_name,
-        "position": position,
     }
 
     if search_query:

@@ -3,7 +3,7 @@ import uuid
 
 from pages.cached_data import SPELLS
 from src.searching import orchestrate_search
-from analytics import track_page_view, track_search, track_result_click
+from pages.analytics import track_page_view, track_search, track_result_click
 
 track_page_view("search_results", "/search_results")
 
@@ -44,7 +44,6 @@ def display_handler(spell):
         track_result_click(
             item_type="spell",
             item_name=spell.name,
-            position=list(results).index(spell),
             search_query=query,
         )
         for string in spell.description:

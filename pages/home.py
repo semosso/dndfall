@@ -1,5 +1,5 @@
 import streamlit as st
-from analytics import track_page_view, track_search
+from pages.analytics import track_page_view, track_search
 
 track_page_view("Home", "/")
 
@@ -39,7 +39,8 @@ relies on the [D&D 5e API](https://www.dnd5eapi.co/) for source data.
 
 #### what's new?
 **_02/15/2026:_** Added new functionalities. Just like all other terms, you can mix
-and match between them to create some really specific searches:
+and match between them to create some really specific searches. I also revised the syntax guide
+to reflect these changes.
 - **name search:** `fire` will look for any match in spell names, `-fire` for non-matches. NO
 operator needed, just type and enter.
 - **<any> and <not> modifiers for applicable fields**
@@ -49,7 +50,6 @@ operator needed, just type and enter.
 with Scryfall's syntax. So instead of `dt!=fire`, use `-dt:fire` to see all spells except
 those that deal fire damage
 - **description search:** `desc` or `description` looks for matches in spells descriptions  
-I also revised the syntax guide to reflect these changes.
 
 **_v. 0.1 (beta):_** supports all [SRD](https://www.dndbeyond.com/srd) spells! Additional
 functionality to follow soon (monsters, class abilities, features, etc.).

@@ -79,6 +79,8 @@ class ParsedQuery:
             field_rules = dndspecs.NAME
         elif self.p_field in dndspecs.FIELD_BY_ALIAS:
             field_rules = dndspecs.FIELD_BY_ALIAS[self.p_field]
+        elif self.p_field in ["description", "desc"]:
+            field_rules = dndspecs.DESCRIPTION
         else:
             raise ValueError(f"'{self.p_field}' is not a valid search field")
         return SearchCommand(
@@ -298,7 +300,12 @@ class SearchExecution:
                 return set(SPELLS.keys()) - all_field_values
             return set(SPELLS.keys()) - pre_result
         if self.modifier == "ANY":
-            return set().union(*(INDICES[self.c_field].values()))
+            if self.c_field in ["condition", "saving_throw", "damage_type"]:
+                return set().union(*(INDICES[self.c_field].values()))
+            else:
+                raise ValueError(
+                    f"'*' modifier incompatible with '{self.c_field}' searches"
+                )
         return pre_result
 
 

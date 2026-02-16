@@ -1,5 +1,5 @@
 import streamlit as st
-from analytics import track_page_view, track_feature_usage
+from pages.analytics import track_page_view, track_feature_usage
 
 track_page_view("syntax_guide", "/syntax_guide")
 
