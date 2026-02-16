@@ -72,7 +72,6 @@ def create_indices(
     for spell_name, spell in spells.items():
         # scalar fields
         indices["spell_name"].add(spell.name)
-        indices[""]
         for field in scalar_f:
             if field.name != "spell_name":
                 field_value = getattr(spell, field.name)

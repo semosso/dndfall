@@ -789,7 +789,6 @@ DERIVED_FIELDS: list = [
     DURATION,
     CASTING_TIME,
     UPCAST,
-    DESCRIPTION,
 ]
 
 SCALAR_FIELDS: list = [

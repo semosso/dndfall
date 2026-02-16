@@ -1,4 +1,7 @@
 import streamlit as st
+from pages.analytics import initialize_tracking
+
+initialize_tracking()
 
 st.set_page_config(
     page_title="dndfall | an advanced D&D search tool",

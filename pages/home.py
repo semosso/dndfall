@@ -1,5 +1,7 @@
 import streamlit as st
-from pages.analytics import track_search
+from analytics import track_page_view, track_search
+
+track_page_view("Home", "/")
 
 st.title("dndfall", text_alignment="center")
 st.subheader("an advanced D&D search tool", text_alignment="center", anchor=False)

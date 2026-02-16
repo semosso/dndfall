@@ -3,9 +3,9 @@ import uuid
 
 from pages.cached_data import SPELLS
 from src.searching import orchestrate_search
-from pages.analytics import track_search
+from analytics import track_page_view, track_search, track_result_click
 
-st.set_page_config(layout="wide")
+track_page_view("search_results", "/search_results")
 
 # for tracking purposes
 if "client_id" not in st.session_state:
@@ -15,7 +15,7 @@ if "client_id" not in st.session_state:
 def handle_search():
     query = st.session_state.search_input_widget
     st.session_state.query = query
-    track_search(query)
+    track_search(query, result_count=len(results))
 
 
 st.title("search results")
@@ -41,6 +41,12 @@ def display_handler(spell):
     **Classes:** {spell.classes}  
     **SRD API url:** {spell.url}""")
     with st.expander("Description"):
+        track_result_click(
+            item_type="spell",
+            item_name=spell.name,
+            position=list(results).index(spell),
+            search_query=query,
+        )
         for string in spell.description:
             st.write(string)
 

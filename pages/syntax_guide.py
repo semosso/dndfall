@@ -1,5 +1,7 @@
 import streamlit as st
-from pages.analytics import track_search
+from analytics import track_page_view, track_feature_usage
+
+track_page_view("syntax_guide", "/syntax_guide")
 
 
 def clickables(badges, comment=None):
@@ -10,7 +12,7 @@ def clickables(badges, comment=None):
 
     if st.button(label, use_container_width=True):
         st.session_state.query = query
-        track_search(query)
+        track_feature_usage("syntax_guide_example", query)
         st.switch_page("pages/search_results.py")
 
     if comment:
