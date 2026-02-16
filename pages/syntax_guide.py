@@ -20,13 +20,13 @@ def clickables(badges, comment=None):
 st.header("syntax guide", divider=True)
 st.markdown(
     """**dndfall** offers keywords and expressions you can use to search through
-D&D resources. See below for a quick overwivew of basic commands, and jump to the other specific
+D&D resources. See below for a quick overview of basic commands, and jump to the other specific
 sections as needed. We're in beta and new functionalities are added almost everyday,
 so make sure to review the guide from time to time."""
 )
 st.markdown(
     """Jump to [supported fields](#supported-fields-new-ones-added-almost-daily) for
-field-specific detials, or see a [list of search examples](#supported-fields-new-ones-added-almost-daily)
+field-specific details, or see a [list of search examples](#search-examples)
 below for a glimpse into how powerful this tool can be."""
 )
 
@@ -34,11 +34,11 @@ st.markdown("### basic behavior")
 col1, col2 = st.columns([2, 1])
 with col1:
     st.markdown("""
-Search terms must follow this format:
+A good place to start is with searches that follow this format:
 
 **`<field><operator><value>`**
                 
-So this is how you would search for all 3rd level spells, or spells that do not cause fire damage, or those
+So this is how you would search for all 3rd level spells, spells that cause fire damage, or those
 that require concentration.
 
 Most keywords have some form of shorthand notation. E.g., you can use :violet-badge[l]
@@ -49,7 +49,7 @@ for :violet-badge[level], :green-badge[st] for :green-badge[saving_throw], or :o
 with col2:
     examples = [
         [("violet", "level:3")],
-        [("orange", "dt!=fire")],
+        [("orange", "dt:fire")],
         [("blue", "concentration:yes")],
     ]
     for badges in examples:
@@ -89,8 +89,8 @@ st.caption("""No matches on the first one, no 3rd level spells deal **BOTH** fir
 col1, col2 = st.columns([2, 1])
 with col1:
     st.markdown("""**Operators are a big part of the magic.** All searchable fields accept
-equality or inequality operators (:violet-badge[:] or :violet-badge[!=]), and numeric fields also accept
-comparison operators (:violet-badge[>], :violet-badge[>=], :violet-badge[<], or :violet-badge[<=]).
+equality operators (:violet-badge[:]). Numeric fields also accept comparison operators (:violet-badge[>], :violet-badge[>=],
+:violet-badge[<], or :violet-badge[<=]).  
                 
 Most values have been worked on to allow custom comparisons you wouldn't expect, such as range and
 casting time between different time and D&D units.""")
@@ -105,14 +105,17 @@ with col2:
             "Casting time of a single action, bonus or reaction.",
         ),
     ]
-
     for badges, comments in range_ct_dur_examples:
         clickables(badges, comments)
 
-st.markdown(
-    """Acceptable values follow D&D 5e rules, or better, those rules as they are part of
-the [SRD](https://www.dndbeyond.com/srd), so this first one is a valid search command:"""
-)
+"""You can **negate** certain field searches by prefixing them with :violet-badge[-] 
+(e.g., :orange-badge[-dt:fire] for "not fire damage"), or expand them to find **any** value associatied
+with their domain by prefixing them with :violet-badge[*] (e.g., :green-badge[*saving_throw] for spells
+that force any save)."""
+
+st.markdown("""
+**As for values**, they follow D&D 5e rules, or better, those rules as they are part of
+the [SRD](https://www.dndbeyond.com/srd), so this first one is a valid search command:""")
 clickables([("green", "saving_throw:constitution"), ("grey", "cond:deafened")])
 st.markdown("""While this second one isn't, since the values don't match the fields. Go ahead,
 try it and you'll get an error message:""")
@@ -127,7 +130,7 @@ if st.button(
 st.markdown("""
 Numeric fields accept only numbers as input (e.g., `3`, not `three`), and accept
 different ranges (e.g., :violet-badge[level] supports numbers from :violet-badge[0] (cantrips)
-to :violet-badge[9]). In addition to equality and inequality, numeric fields also accept
+to :violet-badge[9]). In addition to equality, numeric fields also accept
 comparison operators (:violet-badge[>], :violet-badge[>=], :violet-badge[<], or :violet-badge[<=]).""")
 
 range_examples = [
@@ -150,6 +153,35 @@ for badges, comment in range_examples:
     clickables(badges, comment)
 
 st.divider()
+st.markdown("### free-form search")
+
+col1, col2 = st.columns([1, 2])
+with col1:
+    freeform_examples = [
+        ([("violet", "ray")], "All the ray spells"),
+        (
+            [("violet", "protection")],
+            "Every protection spell in one search",
+        ),
+        (
+            [("violet", "cure"), ("violet", "class:cleric")],
+            "Cleric healing spells",
+        ),
+    ]
+
+    for badges, comment in freeform_examples:
+        clickables(badges, comment)
+with col2:
+    st.markdown("""
+**Don't want to bother with operators?** Just type a spell name (or part of it) and we'll find matches!  
+                
+This is perfect when you remember what a spell is called but want to quickly pull up its details, or when you
+want to find all spells with similar names.  
+
+**Mix and match!** You can combine free-form
+spell name searches with field operators for even more precision.""")
+
+st.divider()
 st.markdown("""
 ### supported fields (new ones added almost daily)""")
 with st.expander("**Spell characteristics**"):
@@ -166,7 +198,10 @@ always as digits (e.g., `3`, not `three`).
 :violet-badge[bard], :violet-badge[druid], or :violet-badge[warlock].
                
 **Upcastable:** :yellow-badge[upcast] or :yellow-badge[up], for spells that scale when casted at
-higher slots. Accepts only `true`/`false` (or `yes`/`no`) as values.""")
+higher slots. Accepts only `true`/`false` (or `yes`/`no`) as values.
+
+**Description:** :blue-badge[description] or :blue-badge[desc]. Search for specific text within a spell's 
+description. Perfect for finding spells with specific mechanics or effects mentioned in their text.""")
 
 with st.expander("**Targeting and effects**"):
     st.markdown("""
@@ -193,8 +228,8 @@ that force a save (e.g., you wouldn't want to see **Bless** as a result of this 
                 
 **Area of Effect (_size_):** :green-badge[aoe_size] or :green-badge[asz]. Accepts only numbers, and
 sizes have been normalized to feet (i.e., :green-badge[range:5280] finds range of 1 mile) to
-accommodate comparison opeations. Shapes have also been normalized to diameter (e.g., **Fireball**
-covers a 20-foot sphere, you'll find it here as a 40-food diameter one). Finally, for shapes that
+accommodate comparison operations. Shapes have also been normalized to diameter (e.g., **Fireball**
+covers a 20-foot sphere, you'll find it here as a 40-foot diameter one). Finally, for shapes that
 have multiple measures (e.g., distance, height, depth), it returns whichever makes more practical
 sense in-game (e.g., length of line, rather than height or width).  
 
@@ -217,7 +252,7 @@ not `three`), plus :blue-badge[self] (normalized to 1 foot) and :blue-badge[touc
 **Ritual:** :green-badge[ritual] or :green-badge[r]. Accepts only `true`/`false`
 (or `yes`/`no`) as values.
                 
-**Casting Time:** :red-badge[casting time] or :red-badge[cast]. Time periods have been normalized to
+**Casting Time:** :red-badge[casting_time] or :red-badge[cast]. Time periods have been normalized to
 seconds (i.e., :red-badge[cast:60] matches casting time of 1 minute). Accepts any number, always as digits (e.g., `3`,
 not `three`), plus :red-badge[instantaneous] (equivalent to 1 second), and :red-badge[action], :red-badge[bonus],
 or :red-badge[reaction] (each equivalent to 6 seconds).
@@ -229,6 +264,26 @@ st.markdown("""### search examples
 Notice how things can escalate quickly, you can easily compose quite complex search terms.""")
 
 EXAMPLE_SEARCHES = [
+    # Free-form searches
+    ([("violet", "wall")], "All wall spells"),
+    ([("violet", "blade")], "Every blade-related spell"),
+    # Description searches
+    (
+        [("blue", "desc:teleport")],
+        "Spells that mention teleportation",
+    ),
+    (
+        [("blue", "desc:bonus action"), ("violet", "level<=3")],
+        "Low-level spells with bonus action mechanics",
+    ),
+    (
+        [("blue", "desc:advantage")],
+        "Spells that grant advantage",
+    ),
+    (
+        [("blue", "desc:invisible"), ("red", "school:illusion")],
+        "Illusion spells dealing with invisibility",
+    ),
     # Level
     (
         [("violet", "level:0"), ("yellow", "up:yes")],
@@ -278,7 +333,7 @@ EXAMPLE_SEARCHES = [
         [("blue", "duration>=3600"), ("violet", "level<=3")],
         "Long-lasting low-level buffs (1+ hour)",
     ),
-    ([("blue", "duration>=60"), ("orange", "dt:fire")], "Continued fire damage"),
+    ([("blue", "duration>=60"), ("orange", "*dt")], "Continued damage of any kind"),
     # Casting Time
     (
         [("blue", "cast:action"), ("yellow", "da>=25")],
@@ -297,18 +352,27 @@ EXAMPLE_SEARCHES = [
         [("red", "school:conjuration"), ("blue", "duration>=3600")],
         "Long-lasting summons (1+ hour)",
     ),
+    # Negation examples
+    (
+        [("violet", "level<=3"), ("orange", "-dt:fire"), ("orange", "-dt:cold")],
+        "Low-level spells without fire or cold damage",
+    ),
+    (
+        [("yellow", "da>20"), ("orange", "-dt:(fire cold lightning)")],
+        "Strong damage without common elemental types",
+    ),
     # Class
     (
         [("violet", "class:paladin"), ("violet", "class:cleric")],
         "Spells available to both holy warriors",
     ),
-    ([("violet", "class:wizard"), ("violet", "class!=sorcerer")], "Wizard exclusives"),
+    ([("violet", "class:wizard"), ("violet", "-class:sorcerer")], "Wizard exclusives"),
     # Condition
     (
-        [("gray", "condition:paralyzed"), ("green", "st:wisdom")],
-        "Paralysis effects with CON saves",
+        [("gray", "cond:paralyzed"), ("green", "*st")],
+        "Paralysis effects requiring any saves",
     ),
-    ([("gray", "condition:(frightened charmed)")], "Fear or charm spells"),
+    ([("gray", "cond:(frightened charmed)")], "Fear or charm spells"),
     # Saving Throw
     (
         [("green", "st:wisdom"), ("violet", "level<=2")],
@@ -320,7 +384,7 @@ EXAMPLE_SEARCHES = [
         "Good cleric, bad cleric",
     ),
     (
-        [("orange", "dt!=(fire cold lightning)")],
+        [("orange", "-dt:(fire cold lightning)")],
         "Non-elemental damage (bypassing common resistances)",
     ),
     # Area of Effect (shape)
@@ -345,6 +409,15 @@ EXAMPLE_SEARCHES = [
         "Information-gathering rituals",
     ),
     ([("green", "ritual:yes"), ("red", "gp_cost:0")], "Free ritual spells"),
+    # Mixed free-form and field searches
+    (
+        [("violet", "desc:cure"), ("violet", "level>=5")],
+        "High-level healing spells",
+    ),
+    (
+        [("violet", "summon"), ("red", "-school:necromancy")],
+        "Summon spells that aren't necromancy",
+    ),
     # Character Build Optimization
     (
         [
@@ -405,7 +478,7 @@ EXAMPLE_SEARCHES = [
     (
         [
             ("green", "st:wisdom"),
-            ("gray", "condition:(frightened charmed)"),
+            ("gray", "cond:(frightened charmed)"),
             ("violet", "level<=4"),
             ("blue", "duration>=60"),
         ],
@@ -445,14 +518,14 @@ EXAMPLE_SEARCHES = [
             ("blue", "cast<=action"),
             ("blue", "concentration:no"),
             ("yellow", "da>=20"),
-            ("orange", "dt!=(fire cold lightning)"),
+            ("orange", "-dt:(fire cold lightning)"),
         ],
         "Fast non-elemental damage without concentration tax",
     ),
     (
         [
             ("blue", "cast:action"),
-            ("gray", "condition:(paralyzed restrained)"),
+            ("gray", "cond:(paralyzed restrained)"),
             ("blue", "duration>=60"),
         ],
         "Instant lockdown lasting rounds",
@@ -469,9 +542,9 @@ EXAMPLE_SEARCHES = [
     (
         [
             ("blue", "concentration:no"),
-            ("green", "duration>=3600"),
+            ("blue", "duration>=3600"),
             ("violet", "level<=2"),
-            ("yellow", "cast:action"),
+            ("blue", "cast:action"),
         ],
         "Fast set-and-forget low-level buffs (1+ hour)",
     ),
@@ -496,7 +569,7 @@ EXAMPLE_SEARCHES = [
     # Battlefield Control
     (
         [
-            ("gray", "condition:(paralyzed incapacitated)"),
+            ("gray", "cond:(paralyzed incapacitated)"),
             ("blue", "concentration:yes"),
             ("blue", "duration>=600"),
         ],
@@ -547,6 +620,22 @@ EXAMPLE_SEARCHES = [
             ("blue", "cast:action"),
         ],
         "Instant all-day dungeon utility buffs",
+    ),
+    # Description-based tactical searches
+    (
+        [
+            ("blue", "desc:attack roll"),
+            ("violet", "level<=2"),
+            ("blue", "cast:action"),
+        ],
+        "Low-level attack roll spells",
+    ),
+    (
+        [
+            ("blue", "desc:resistance"),
+            ("blue", "duration>=3600"),
+        ],
+        "Long-lasting resistance buffs",
     ),
     # Boss Fighting
     (

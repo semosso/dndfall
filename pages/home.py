@@ -35,7 +35,21 @@ form powerful commands, cut through the noise, and quickly find what they need. 
 a personal project I came up with as a programming/Python learning-companion, and
 relies on the [D&D 5e API](https://www.dnd5eapi.co/) for source data.
 
-**v. 0.1 (beta):** supports all [SRD](https://www.dndbeyond.com/srd) spells! Additional
+#### what's new?
+**_02/15/2026:_** Added new functionalities. Just like all other terms, you can mix
+and match between them to create some really specific searches:
+- **name search:** `fire` will look for any match in spell names, `-fire` for non-matches. NO
+operator needed, just type and enter.
+- **<any> and <not> modifiers for applicable fields**
+    - `*dt` will return spells that deal any damage type
+    - `-st` will return spells that force any saving throw
+- **inequality operator:** changed it from `!=` to `-` in front of the search field, aligned
+with Scryfall's syntax. So instead of `dt!=fire`, use `-dt:fire` to see all spells except
+those that deal fire damage
+- **description search:** `desc` or `description` looks for matches in spells descriptions  
+I also revised the syntax guide to reflect these changes.
+
+**_v. 0.1 (beta):_** supports all [SRD](https://www.dndbeyond.com/srd) spells! Additional
 functionality to follow soon (monsters, class abilities, features, etc.).
 """,
     text_alignment="justify",

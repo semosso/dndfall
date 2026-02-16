@@ -84,7 +84,7 @@ class DiceRoll:
 
 class NumericOp(StrEnum):
     EQ = ":"
-    N_EQ = "!="
+    N_EQ = "-"
     GT_E = ">="
     GT = ">"
     LT_E = "<="
@@ -93,7 +93,7 @@ class NumericOp(StrEnum):
 
 class TextOp(StrEnum):
     EQ = ":"
-    N_EQ = "!="
+    N_EQ = "-"
 
 
 class BooleanOp(StrEnum):
@@ -174,6 +174,11 @@ RITUAL: ScalarField = ScalarField(
     aliases={"ritual", "r"},
     operator=BooleanOp,
     values={True, False},
+)
+
+
+DESCRIPTION: ScalarField = ScalarField(
+    name="description", aliases={"description", "desc"}, operator=TextOp, values=set()
 )
 
 
@@ -784,13 +789,17 @@ DERIVED_FIELDS: list = [
     DURATION,
     CASTING_TIME,
     UPCAST,
+    DESCRIPTION,
 ]
+
 SCALAR_FIELDS: list = [
     NAME,
     LEVEL,
     CONCENTRATION,
     RITUAL,
 ]
+
+NOT_ANY_FIELDS: list = [CONDITION, DAMAGE_TYPE, SAVING_THROW]
 
 
 def build_field_by_alias():
