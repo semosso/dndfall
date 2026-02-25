@@ -4,7 +4,12 @@ import uuid
 
 from pages.cached_data import SPELLS
 from src.searching import orchestrate_search
-from pages.analytics import track_page_view, track_search, track_result_click
+from pages.analytics import (
+    track_page_view,
+    track_search,
+    track_result_click,
+    track_feature_usage,
+)
 
 st.set_page_config(layout="wide")
 
@@ -94,6 +99,7 @@ elif results:
 table_view = st.toggle(label="Show as table; select spells for additional detail")
 
 if table_view:
+    track_feature_usage("table_view_toggle", "toggled")
     if results:
         st.session_state.view_mode = "table"
         table = st.dataframe(

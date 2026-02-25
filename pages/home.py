@@ -6,7 +6,10 @@ st.set_page_config(layout="centered")
 track_page_view("Home", "/")
 
 if "latest_update" not in st.session_state:
-    st.toast("Check out our latest update: XX", icon="🔥")
+    st.toast(
+        "Check out our latest update: support for non-SRD spells, plus table visualization in search results!",
+        icon="🔥",
+    )
     st.session_state.msg_shown = True
 
 st.title("dndfall", text_alignment="center")
@@ -50,17 +53,18 @@ and quickly find what they need. This is a personal project inspired by the amaz
 those from the PHB, TCE and XGE in a way that complies with Wizards of the Coast's Fan Content Policy.
 """
 )
-with st.expander(
-    "_**02/28/2026:** support for non-SRD spells, table visualization, new fields"
-):
+with st.expander("_**02/25/2026:** table visualization_"):
     st.markdown("""
-    - Search through non-SRD spells! Your search will match (e.g., `dt:necrotic` will match Hex),
-    but the tool won't display the full information for that spell, only name, level, school,
-    and a URL to an official spell resource. This is compliant with Wizards' Fan Content Policy, so enjoy! 
-    - You can choose to visualize the results as a table, and sort them however you want (e.g., by
+    - Added support for non-SRD spells from the PHB, TCE and XGE, in a way that is
+    fully compliant with Wizards' Fan Content Policy. It will look through those spells (e.g.,
+    `dt:necrotic` will match **Hex**), but will display only its name, level, school, and
+    a URL to an official spell resource.
+    - You can now choose to visualize the results as a table, and sort them however you want (e.g., by
     level or spell name, in ascending or descending order), and get additional detail only for
     the spells you select.
-                """)
+                
+    I also added my personal email for any feedback you have, please reach out!
+    """)
 
 with st.expander("_**02/15/2026:** name and description search, any/not modifiers_"):
     st.markdown(
