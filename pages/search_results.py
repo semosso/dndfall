@@ -1,9 +1,14 @@
 import streamlit as st
+import pandas as pd
 import uuid
 
 from pages.cached_data import SPELLS
 from src.searching import orchestrate_search
 from pages.analytics import track_page_view, track_search, track_result_click
+
+st.set_page_config(layout="wide")
+
+## initialization
 
 track_page_view("search_results", "/search_results")
 
@@ -11,15 +16,23 @@ track_page_view("search_results", "/search_results")
 if "client_id" not in st.session_state:
     st.session_state.client_id = str(uuid.uuid4())
 
+if "selected_spell" not in st.session_state:
+    st.session_state.selected_spell = None
 
-def handle_search():
+if "view_mode" not in st.session_state:
+    st.session_state.view_mode = "grid"
+
+st.title("search results")
+query = st.session_state.get("query")
+
+## searching functions
+
+
+def execute_search():
     query = st.session_state.search_input_widget
     st.session_state.query = query
     track_search(query, result_count=len(results))
 
-
-st.title("search results")
-query = st.session_state.get("query")
 
 input_query = st.text_input(
     "Search",
@@ -27,19 +40,36 @@ input_query = st.text_input(
     label_visibility="hidden",
     value=query,
     key="search_input_widget",
-    on_change=handle_search,
+    on_change=execute_search,
 )
+
+## search processing
+
+# results = set()
+
+if query:
+    try:
+        results: set = orchestrate_search(query)
+    except Exception as e:
+        st.error(f"An error occurred: {type(e).__name__}: {str(e)}")
+    else:
+        if results:
+            data: list = [SPELLS[name].__dict__ for name in results]
+            df = pd.DataFrame(data=data, columns=["name", "level", "school", "url"])
+
+
+## display helpers
 
 
 def display_handler(spell):
     st.subheader(f"**{spell.name}** _(Level {spell.level} {spell.school})_")
     st.write(f"""**Casting Time:** {spell.casting_time}  
-    **Range:** {spell.range_}  
+    **Range:** {spell.range}  
     **Components:** {spell.components}  
     **Duration:** {spell.duration}  
     **Concentration:** {spell.concentration}  
     **Classes:** {spell.classes}  
-    **SRD API url:** {spell.url}""")
+    **Url:** {spell.url}""")
     with st.expander("Description"):
         track_result_click(
             item_type="spell",
@@ -50,25 +80,49 @@ def display_handler(spell):
             st.write(string)
 
 
-if query:
-    try:
-        results: set = orchestrate_search(query)
-    except Exception as e:
-        st.error(f"An error occurred: {type(e).__name__}: {str(e)}")
+## display logic
+
+if query and not results:
+    st.warning(f"no matches for '{query}'")
+elif results:
+    if len(results) == 1:
+        st.success(f"Found 1 match for query '{query}'")
     else:
-        if not results:
-            st.warning(f"no matches for '{query}'")
-        else:
-            st.success(f"Found {len(results)} matches for query '{query}'")
-            col1, col2 = st.columns(2)
-            sorted_results = sorted(list(results))
-            with col1:
-                for name in sorted(results)[::2]:
-                    spell = SPELLS[name]
-                    display_handler(spell)
-            with col2:
-                for name in sorted(results)[1::2]:
-                    spell = SPELLS[name]
-                    display_handler(spell)
+        st.success(f"Found {len(results)} matches for query '{query}'")
+
+# table view
+table_view = st.toggle(label="Show as table; select spells for additional detail")
+
+if table_view:
+    if results:
+        st.session_state.view_mode = "table"
+        table = st.dataframe(
+            df,
+            hide_index=True,
+            key="spell_table",
+            use_container_width=True,
+            on_select="rerun",
+            selection_mode="multi-row",
+        )
+        # detailed view on selected spells
+        st.subheader("selected spells")
+        selected_rows = table.selection.rows
+        col1, col2 = st.columns(2)
+        for num, index in enumerate(selected_rows):
+            spell_name = df.iloc[index]["name"]
+            with col1 if num % 2 == 0 else col2:
+                display_handler(SPELLS[spell_name])
+
+    else:
+        st.info("No results to display. Try searching for 'level:3 dt:fire'!")
+
+# basic view
+else:
+    sorted_results = sorted(list(results))
+    col1, col2 = st.columns(2)
+    for num, name in enumerate(sorted(results)):
+        with col1 if num % 2 == 0 else col2:
+            display_handler(SPELLS[name])
+
 
 st.page_link("pages/home.py", label="**[<] Back to search**")

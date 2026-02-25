@@ -16,7 +16,7 @@ def normalizing_spells(database: list):
             concentration=sp["concentration"],
             ritual=sp["ritual"],
             school=sp["school"]["name"],
-            range_=sp["range"],
+            range=sp["range"],
             components=", ".join(sp["components"]) + f". {sp.get('material', '')}",
             duration=sp["duration"],
             casting_time=sp["casting_time"],

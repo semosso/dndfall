@@ -110,7 +110,7 @@ class NormalizedSpell:
     concentration: bool
     ritual: bool
     school: str
-    range_: str
+    range: str
     components: str
     # material: str | None
     duration: str
@@ -317,7 +317,7 @@ DAMAGE_TYPE: DerivedField = DerivedField(
 
 
 @dataclass
-class DamageAmountField(DerivedField):
+class DiceAmountField(DerivedField):
     pattern = re.compile(
         pattern=r"""(?x)
         \b(?P<number>[0-9]+)
@@ -345,7 +345,7 @@ class DamageAmountField(DerivedField):
         return DiceRoll.avg_damage(self.number, self.die) + int(self.fixed)
 
 
-DAMAGE_AVERAGE: DamageAmountField = DamageAmountField(
+DAMAGE_AVERAGE: DiceAmountField = DiceAmountField(
     name="damage_amount",
     aliases={"damage_amount", "da"},
     operator=NumericOp,
@@ -355,7 +355,7 @@ DAMAGE_AVERAGE: DamageAmountField = DamageAmountField(
 )
 
 
-DAMAGE_MAXIMUM: DamageAmountField = DamageAmountField(
+DAMAGE_MAXIMUM: DiceAmountField = DiceAmountField(
     name="damage_maximum",
     aliases={"damage_maximum", "dmax"},
     operator=NumericOp,
@@ -445,12 +445,12 @@ class RangeField(DerivedField):
             return text_ratio
 
 
-RANGE_: RangeField = RangeField(
+RANGE: RangeField = RangeField(
     name="range",
     aliases={"range", "rg"},
     operator=NumericOp,
     values=set(),
-    source="range_",
+    source="range",
     patterns=set(),
 )
 
@@ -785,7 +785,7 @@ DERIVED_FIELDS: list = [
     SCHOOL,
     AOE_SIZE,
     AOE_SHAPE,
-    RANGE_,
+    RANGE,
     DURATION,
     CASTING_TIME,
     UPCAST,

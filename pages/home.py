@@ -1,10 +1,16 @@
 import streamlit as st
 from pages.analytics import track_page_view, track_search
 
+st.set_page_config(layout="centered")
+
 track_page_view("Home", "/")
 
+if "latest_update" not in st.session_state:
+    st.toast("Check out our latest update: XX", icon="🔥")
+    st.session_state.msg_shown = True
+
 st.title("dndfall", text_alignment="center")
-st.subheader("an advanced D&D search tool", text_alignment="center", anchor=False)
+st.subheader("an advanced search tool for D&D", text_alignment="center", anchor=False)
 
 query = st.text_input(
     "Search",
@@ -31,33 +37,59 @@ with col_github:
 st.markdown(
     """
 #### about dndfall
-Inspired by the amazing [Scryfall](https://scryfall.com/), **dndfall** is a search tool that
-understands how D&D is actually played. Players and DMs can mix and match criteria to
-form powerful commands, cut through the noise, and quickly find what they need. This is
-a personal project I came up with as a programming/Python learning-companion, and
-relies on the [D&D 5e API](https://www.dnd5eapi.co/) for source data.
+**dndfall** is a search tool that understands how D&D is actually played, allows
+players and DMs can mix and match criteria to form powerful commands, cut through the noise,
+and quickly find what they need. This is a personal project inspired by the amazing [Scryfall](https://scryfall.com/).
+
+**Feedback, bugs or comments?** Please [email](mailto:vnazambuja@gmail.com) me directly or send them via
+[this form](https://forms.gle/hiVD5N5gQ45pAQBV7).
 
 #### what's new?
-**_02/15/2026:_** Added new functionalities. Just like all other terms, you can mix
-and match between them to create some really specific searches. I also revised the syntax guide
-to reflect these changes.
-- **name search:** `fire` will look for any match in spell names, `-fire` for non-matches. NO
-operator needed, just type and enter.
-- **<any> and <not> modifiers for applicable fields**
-    - `*dt` will return spells that deal any damage type
-    - `-st` will return spells that force any saving throw
-- **inequality operator:** changed it from `!=` to `-` in front of the search field, aligned
-with Scryfall's syntax. So instead of `dt!=fire`, use `-dt:fire` to see all spells except
-those that deal fire damage
-- **description search:** `desc` or `description` looks for matches in spells descriptions  
 
-**_v. 0.1 (beta):_** supports all [SRD](https://www.dndbeyond.com/srd) spells! Additional
-functionality to follow soon (monsters, class abilities, features, etc.).
-""",
-    text_alignment="justify",
+**v. 0.2 (beta):** currently supports all [SRD 5.1](https://www.dndbeyond.com/srd) spells, plus
+those from the PHB, TCE and XGE in a way that complies with Wizards of the Coast's Fan Content Policy.
+"""
 )
+with st.expander(
+    "_**02/28/2026:** support for non-SRD spells, table visualization, new fields"
+):
+    st.markdown("""
+    - Search through non-SRD spells! Your search will match (e.g., `dt:necrotic` will match Hex),
+    but the tool won't display the full information for that spell, only name, level, school,
+    and a URL to an official spell resource. This is compliant with Wizards' Fan Content Policy, so enjoy! 
+    - You can choose to visualize the results as a table, and sort them however you want (e.g., by
+    level or spell name, in ascending or descending order), and get additional detail only for
+    the spells you select.
+                """)
+
+with st.expander("_**02/15/2026:** name and description search, any/not modifiers_"):
+    st.markdown(
+        """
+    Added new functionalities. Just like all other terms, you can mix
+    and match between them to create some really specific searches. I also revised the syntax guide
+    to reflect these changes.
+    - **name search:** `fire` will look for any match in spell names, `-fire` for non-matches. NO
+    operator needed, just type and enter.
+    - **<any> and <not> modifiers for applicable fields**
+        - `*dt` will return spells that deal any damage type
+        - `-st` will return spells that do not force any saving throw
+    - **inequality operator:** changed it from `!=` to `-` in front of the search field, aligned
+    with Scryfall's syntax. So instead of `dt!=fire`, use `-dt:fire` to see all spells except
+    those that deal fire damage
+    - **description search:** `desc` or `description` looks for matches in spells descriptions  
+    """,
+        text_alignment="justify",
+    )
 
 if query:
     track_search(query)
     st.session_state.query = query
     st.switch_page("pages/search_results.py")
+
+st.divider()
+st.caption(
+    """**dndfall** is unofficial Fan Content permitted under the Fan Content Policy.
+Not approved/endorsed by Wizards. Portions of the materials used are property of Wizards
+of the Coast. ©Wizards of the Coast LLC.""",
+    text_alignment="center",
+)

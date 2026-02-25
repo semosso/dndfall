@@ -1,8 +1,9 @@
 import streamlit as st
 from pages.analytics import track_page_view, track_feature_usage
 
-track_page_view("syntax_guide", "/syntax_guide")
+st.set_page_config(layout="centered")
 
+track_page_view("syntax_guide", "/syntax_guide")
 
 def clickables(badges, comment=None):
     if isinstance(badges[0], str):
@@ -273,10 +274,6 @@ EXAMPLE_SEARCHES = [
     (
         [("blue", "desc:teleport")],
         "Spells that mention teleportation",
-    ),
-    (
-        [("blue", "desc:bonus action"), ("violet", "level<=3")],
-        "Low-level spells with bonus action mechanics",
     ),
     (
         [("blue", "desc:advantage")],
@@ -624,14 +621,6 @@ EXAMPLE_SEARCHES = [
         "Instant all-day dungeon utility buffs",
     ),
     # Description-based tactical searches
-    (
-        [
-            ("blue", "desc:attack roll"),
-            ("violet", "level<=2"),
-            ("blue", "cast:action"),
-        ],
-        "Low-level attack roll spells",
-    ),
     (
         [
             ("blue", "desc:resistance"),
