@@ -7,7 +7,8 @@ track_page_view("Home", "/")
 
 if "latest_update" not in st.session_state:
     st.toast(
-        "Check out our latest update: support for non-SRD spells, plus table visualization in search results!",
+        """Feb 26: Added support to ~200 non-SRD spells, plus table visualization
+        for search results!""",
         icon="🔥",
     )
     st.session_state.msg_shown = True
@@ -17,7 +18,7 @@ st.subheader("an advanced search tool for D&D", text_alignment="center", anchor=
 
 query = st.text_input(
     "Search",
-    placeholder="e.g., level:3 dt:fire",
+    placeholder="level:3 dt:fire",
     label_visibility="hidden",
 )
 
@@ -53,17 +54,19 @@ and quickly find what they need. This is a personal project inspired by the amaz
 those from the PHB, TCE and XGE in a way that complies with Wizards of the Coast's Fan Content Policy.
 """
 )
-with st.expander("_**02/25/2026:** table visualization_"):
+with st.expander(
+    "_**02/26/2026:** added ~200 non-SRD spells, plus table visualization_"
+):
     st.markdown("""
-    - Added support for non-SRD spells from the PHB, TCE and XGE, in a way that is
-    fully compliant with Wizards' Fan Content Policy. It will look through those spells (e.g.,
-    `dt:necrotic` will match **Hex**), but will display only its name, level, school, and
-    a URL to an official spell resource.
+    - Added support for spells from the PHB, TCE, XGE and Strixhaven, in a way that is
+    fully compliant with Wizards' Fan Content Policy. You can use our magic search on those
+    spells (e.g., `dt:necrotic` will match **Hex**, a PHB spell), but we will only display
+    its basic info and a URL to the official resource.
     - You can now choose to visualize the results as a table, and sort them however you want (e.g., by
     level or spell name, in ascending or descending order), and get additional detail only for
     the spells you select.
                 
-    I also added my personal email for any feedback you have, please reach out!
+    I also added my personal email for any feedback you might have, please reach out!
     """)
 
 with st.expander("_**02/15/2026:** name and description search, any/not modifiers_"):

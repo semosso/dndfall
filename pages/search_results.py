@@ -3,6 +3,7 @@ import pandas as pd
 import uuid
 
 from pages.cached_data import SPELLS
+from src.data.non_SRD_handlers import SRD_spells
 from src.searching import orchestrate_search
 from pages.analytics import (
     track_page_view,
@@ -36,7 +37,6 @@ query = st.session_state.get("query")
 def execute_search():
     query = st.session_state.search_input_widget
     st.session_state.query = query
-    track_search(query, result_count=len(results))
 
 
 input_query = st.text_input(
@@ -50,8 +50,6 @@ input_query = st.text_input(
 
 ## search processing
 
-# results = set()
-
 if query:
     try:
         results: set = orchestrate_search(query)
@@ -59,6 +57,7 @@ if query:
         st.error(f"An error occurred: {type(e).__name__}: {str(e)}")
     else:
         if results:
+            track_search(query, result_count=len(results))
             data: list = [SPELLS[name].__dict__ for name in results]
             df = pd.DataFrame(data=data, columns=["name", "level", "school", "url"])
 
@@ -75,14 +74,20 @@ def display_handler(spell):
     **Concentration:** {spell.concentration}  
     **Classes:** {spell.classes}  
     **Url:** {spell.url}""")
-    with st.expander("Description"):
-        track_result_click(
-            item_type="spell",
-            item_name=spell.name,
-            search_query=query,
-        )
-        for string in spell.description:
-            st.write(string)
+    if spell.name.lower() in SRD_spells:
+        with st.expander("Description"):
+            track_result_click(
+                item_type="spell",
+                item_name=spell.name,
+                search_query=query,
+            )
+            for string in spell.description:
+                st.write(string)
+            if spell.higher_level:
+                st.markdown(spell.higher_level)
+    else:
+        st.markdown("""**Since this spell is not in the SRD, we can't display its full
+        content. You can find it at the official D&D Beyond search link above!**""")
 
 
 ## display logic
@@ -96,7 +101,7 @@ elif results:
         st.success(f"Found {len(results)} matches for query '{query}'")
 
 # table view
-table_view = st.toggle(label="Show as table; select spells for additional detail")
+table_view = st.toggle(label="Show as table (select spells for additional detail)")
 
 if table_view:
     track_feature_usage("table_view_toggle", "toggled")

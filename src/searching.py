@@ -321,3 +321,6 @@ def orchestrate_search(query: str):
         pre_result: set = search_execution.execute()
         results.append(search_execution.applying_modifier(pre_result))
     return set.intersection(*results)
+
+
+print(SPELLS["Arcane Sword"])

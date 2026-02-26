@@ -10,23 +10,36 @@ def normalizing_spells(database: list):
     spells: dict[str, dndspecs.NormalizedSpell] = {}
 
     for sp in database:
+        if isinstance(sp["classes"], list):
+            names = [c["name"] for c in sp["classes"]]
+            if len(names) != len(set(names)):
+                print(f"Duplicate classes in source: {sp['name']} → {names}")
+
+    for sp in database:
         spell: dndspecs.NormalizedSpell = dndspecs.NormalizedSpell(
             name=sp["name"],
             level=sp["level"],
             concentration=sp["concentration"],
             ritual=sp["ritual"],
-            school=sp["school"]["name"],
+            school=sp["school"]["name"]
+            if isinstance(sp["school"], dict)
+            else sp["school"],
             range=sp["range"],
-            components=", ".join(sp["components"]) + f". {sp.get('material', '')}",
+            components=", ".join(sp["components"]) + f". {sp.get('material', '')}"
+            if isinstance(sp["components"], list)
+            else sp["components"],
             duration=sp["duration"],
             casting_time=sp["casting_time"],
-            classes=", ".join([c["name"] for c in sp["classes"]]),
-            higher_level=False if not sp["higher_level"] else True,
-            description=sp["desc"]
-            + [f"At Higher Levels: {' '.join(' '.join(sp['higher_level']).split())}"]
-            if sp["higher_level"]
-            else sp["desc"],
-            url="https://www.dnd5eapi.co" + sp["url"],
+            classes=", ".join([c["name"] for c in sp["classes"]])
+            if isinstance(sp["classes"], list)
+            else sp["classes"],
+            description=sp["desc"],
+            higher_level=f"**At Higher Levels:** {' '.join(' '.join(sp['higher_level']).split())}"
+            if isinstance(sp["higher_level"], list) and sp["higher_level"]
+            else sp.get("higher_level", False),
+            url="https://www.dnd5eapi.co" + sp["url"]
+            if sp.get("url")
+            else sp["beyond_url"],
         )
         spell.tags = add_tags(spell=spell, derived_f=dndspecs.DERIVED_FIELDS)
         spells[spell.name] = spell

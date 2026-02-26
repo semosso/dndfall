@@ -1,3 +1,7 @@
 __pycache__/
 .vscode/
 .venv/
+src/data/RAW_non_srd_spells.json
+src/data/non_srd_spells.json
+src/data/class_sources.json
+src/data/non_SRD_handlers.py

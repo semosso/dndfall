@@ -112,11 +112,10 @@ class NormalizedSpell:
     school: str
     range: str
     components: str
-    # material: str | None
     duration: str
     casting_time: str
     classes: list[str]
-    higher_level: bool | tuple[bool, str]
+    higher_level: str | bool
     description: list
     url: str
     tags: dict[str, list[str] | bool] = field(init=False)
@@ -310,7 +309,7 @@ DAMAGE_TYPE: DerivedField = DerivedField(
     },
     source="description",
     patterns={
-        r"\b[0-9]+\s?d\s?[0-9]+\s?(\+\s?[0-9]+)?\s?{value} damage\b",
+        r"\b[0-9]+\s?d\s?[0-9]+.\s?(\+\s?[0-9]+.)?\s?{value} damage\b",
         r"\btake(s)? {value} damage\b",
     },
 )
@@ -616,6 +615,7 @@ CLASS_: DerivedField = DerivedField(
         "bard",
         "druid",
         "warlock",
+        "artificer",
     },
     source="classes",
     patterns={r"\b{value}\b"},
