@@ -5,6 +5,7 @@ st.set_page_config(layout="centered")
 
 track_page_view("syntax_guide", "/syntax_guide")
 
+
 def clickables(badges, comment=None):
     if isinstance(badges[0], str):
         badges = [badges]
@@ -117,8 +118,7 @@ with their domain by prefixing them with :violet-badge[*] (e.g., :green-badge[*s
 that force any save)."""
 
 st.markdown("""
-**As for values**, they follow D&D 5e rules, or better, those rules as they are part of
-the [SRD](https://www.dndbeyond.com/srd), so this first one is a valid search command:""")
+**As for values**, they follow D&D 5e rules, so this first one is a valid search command:""")
 clickables([("green", "saving_throw:constitution"), ("grey", "cond:deafened")])
 st.markdown("""While this second one isn't, since the values don't match the fields. Go ahead,
 try it and you'll get an error message:""")

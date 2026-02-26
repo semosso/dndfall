@@ -51,7 +51,7 @@ and quickly find what they need. This is a personal project inspired by the amaz
 #### what's new?
 
 **v. 0.2 (beta):** currently supports all [SRD 5.1](https://www.dndbeyond.com/srd) spells, plus
-those from the PHB, TCE and XGE in a way that complies with Wizards of the Coast's Fan Content Policy.
+~200 spells from the PHB, TCE, XGE and Strixhaven, under Wizards' Fan Content Policy.
 """
 )
 with st.expander(
