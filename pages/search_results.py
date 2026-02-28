@@ -3,7 +3,7 @@ import pandas as pd
 import uuid
 
 from pages.cached_data import SPELLS
-from src.data.non_SRD_handlers import SRD_spells
+from src.data.json_handlers import SRD_spells
 from src.searching import orchestrate_search
 from pages.analytics import (
     track_page_view,

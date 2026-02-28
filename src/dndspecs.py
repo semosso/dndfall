@@ -118,6 +118,7 @@ class NormalizedSpell:
     higher_level: str | bool
     description: list
     url: str
+    srd_flag: bool
     tags: dict[str, list[str] | bool] = field(init=False)
 
 

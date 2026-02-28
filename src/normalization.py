@@ -10,12 +10,6 @@ def normalizing_spells(database: list):
     spells: dict[str, dndspecs.NormalizedSpell] = {}
 
     for sp in database:
-        if isinstance(sp["classes"], list):
-            names = [c["name"] for c in sp["classes"]]
-            if len(names) != len(set(names)):
-                print(f"Duplicate classes in source: {sp['name']} → {names}")
-
-    for sp in database:
         spell: dndspecs.NormalizedSpell = dndspecs.NormalizedSpell(
             name=sp["name"],
             level=sp["level"],
@@ -37,9 +31,8 @@ def normalizing_spells(database: list):
             higher_level=f"**At Higher Levels:** {' '.join(' '.join(sp['higher_level']).split())}"
             if isinstance(sp["higher_level"], list) and sp["higher_level"]
             else sp.get("higher_level", False),
-            url="https://www.dnd5eapi.co" + sp["url"]
-            if sp.get("url")
-            else sp["beyond_url"],
+            url=sp["url"],
+            srd_flag=sp["srd_flag"],
         )
         spell.tags = add_tags(spell=spell, derived_f=dndspecs.DERIVED_FIELDS)
         spells[spell.name] = spell
