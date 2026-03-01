@@ -121,9 +121,10 @@ with open(file="src/data/NORMALIZED_srd_spells.json", mode="w") as normalized_SR
 def eliminating_SRD_duplicates():
     with open(file="src/data/RAW_non_srd_spells.json", mode="r") as non_SRD_source:
         non_SRD_spells: list[dict] = json.load(non_SRD_source)
+    srd_names = {s["name"] for s in SRD_spell_list}
     non_duplicates = []
     for spell in non_SRD_spells:
-        if spell["name"] not in SRD_spell_list:
+        if spell["name"] not in srd_names:
             non_duplicates.append(spell)
     return non_duplicates
 
@@ -193,23 +194,34 @@ def extract_tags(
         matches: list = []
         matches.extend(field.derive_tags(spell))
         tags[field.name] = matches
-    return add_tags_to_JSON(spell, tags)
+    return tags
 
 
 def add_tags_to_JSON(spell, spell_tags):
+    # k, v = spell_tags.items()
     for k, v in spell_tags.items():
-        if k in ["damage_amount", "damage_maximum", "damage_type"]:
+        if k == "damage":
             spell["tags"]["damage"][k] = v
         else:
             spell["tags"][k] = v
+        if k in {
+            "gp_cost",
+            "range",
+            "duration",
+            "casting_time",
+        }:
+            spell["tags"][k] = v[0] if len(v) == 1 else 0.0
+            # upcastabl
+        if k in {"school", "aoe_size", "aoe_shape", "upcastable"}:
+            spell["tags"][k] = v[0] if len(v) == 1 else None
 
 
 spells = SRD_spell_list + non_SRD_spell_list
 sorted_list = sorted(spells, key=lambda x: x["name"])
 
 for spell in sorted_list:
-    extract_tags(spell)
+    add_tags_to_JSON(spell, extract_tags(spell))
 
 # writing the curated and consolidated JSON, with tags
 with open(file="src/data/TAGGED_spells.json", mode="w") as tagged_spells:
-    json.dump(spells, fp=tagged_spells, indent=2)
+    json.dump(sorted_list, fp=tagged_spells, indent=2)

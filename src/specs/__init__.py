@@ -2,8 +2,8 @@ import src.specs.regex as regex
 import src.specs.units as units
 from src.specs.schema import ScalarField, DerivedField
 from src.specs.fields import (
-    UpcastField,
-    DiceAmountField,
+    DamageField,
+    UpcastableField,
     GpCostField,
     RangeField,
     DurationField,
@@ -49,12 +49,12 @@ DESCRIPTION: ScalarField = ScalarField(
     values=set(),
 )
 
-UPCAST: UpcastField = UpcastField(
-    name="upcast",
+UPCAST: UpcastableField = UpcastableField(
+    name="upcastable",
     aliases={"upcast", "up"},
     operator=units.BooleanOp,
-    values=set(),
-    source="description",
+    values="set()",
+    source="higher_level",
     patterns=set(),
 )
 
@@ -68,34 +68,34 @@ CONDITION: DerivedField = DerivedField(
 )
 
 
-DAMAGE_TYPE: DerivedField = DerivedField(
-    name="damage_type",
+DAMAGE: DamageField = DamageField(
+    name="damage",
     aliases={"damage_type", "dt"},
     operator=units.TextOp,
-    values=units.DAMAGE_TYPES,
-    source="description",
-    patterns=regex.DAMAGE_TYPE_PATTERNS,
-)
-
-DAMAGE_AVERAGE: DiceAmountField = DiceAmountField(
-    name="damage_amount",
-    aliases={"damage_amount", "da"},
-    operator=units.NumericOp,
     values=set(),
     source="description",
     patterns=set(),
 )
 
+# DAMAGE_AVERAGE: DiceAmountField = DiceAmountField(
+#     name="damage_amount",
+#     aliases={"damage_amount", "da"},
+#     operator=units.NumericOp,
+#     values=set(),
+#     source="description",
+#     patterns=set(),
+# )
 
-DAMAGE_MAXIMUM: DiceAmountField = DiceAmountField(
-    name="damage_maximum",
-    aliases={"damage_maximum", "dmax"},
-    operator=units.NumericOp,
-    values=set(),
-    source="description",
-    patterns=set(),
-    modifier=True,
-)
+
+# DAMAGE_MAXIMUM: DiceAmountField = DiceAmountField(
+#     name="damage_maximum",
+#     aliases={"damage_maximum", "dmax"},
+#     operator=units.NumericOp,
+#     values=set(),
+#     source="description",
+#     patterns=set(),
+#     modifier=True,
+# )
 
 
 MATERIAL_GP_COST: GpCostField = GpCostField(
@@ -189,9 +189,9 @@ AOE_SHAPE: AreaOfEffectField = AreaOfEffectField(
 
 DERIVED_FIELDS: list = [
     CONDITION,
-    DAMAGE_AVERAGE,
-    DAMAGE_MAXIMUM,
-    DAMAGE_TYPE,
+    # DAMAGE_AVERAGE,
+    # DAMAGE_MAXIMUM,
+    DAMAGE,
     SAVING_THROW,
     MATERIAL_GP_COST,
     CLASS_,
@@ -211,7 +211,7 @@ SCALAR_FIELDS: list = [
     RITUAL,
 ]
 
-NOT_ANY_FIELDS: list = [CONDITION, DAMAGE_TYPE, SAVING_THROW]
+NOT_ANY_FIELDS: list = [CONDITION, SAVING_THROW]  # DAMAGE_TYPE
 
 
 def build_field_by_alias():

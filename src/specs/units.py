@@ -113,11 +113,11 @@ DICE_UNITS: dict = {
 
 class DiceRoll:
     @staticmethod
-    def avg_damage(number, die):
+    def avg_roll(number, die):
         return DICE_UNITS[die]["average"] * int(number)
 
     @staticmethod
-    def max_damage(number, die):
+    def max_roll(number, die):
         return DICE_UNITS[die]["max"] * int(number)
 
 

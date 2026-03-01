@@ -42,7 +42,7 @@
     "components": "V, S",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Artificer, Wizard, Sorcerer",
+    "classes": "Wizard, Artificer, Sorcerer",
     "higher_level": false,
     "description": [
       "You hurl a bubble of acid. Choose one creature within range, or choose two creatures within range that are within 5 feet of each other. A target must succeed on a dexterity saving throw or take 1d6 acid damage.",
@@ -96,7 +96,7 @@
     "components": "V, S, M. A tiny bell and a piece of fine silver wire.",
     "duration": "8 hours",
     "casting_time": "1 minute",
-    "classes": "Ranger, Artificer, Wizard",
+    "classes": "Wizard, Artificer, Ranger",
     "higher_level": false,
     "description": [
       "You set an alarm against unwanted intrusion. Choose a door, a window, or an area within range that is no larger than a 20-foot cube. Until the spell ends, an alarm alerts you whenever a Tiny or larger creature touches or enters the warded area. When you cast the spell, you can designate creatures that won't set off the alarm. You also choose whether the alarm is mental or audible.",
@@ -122,7 +122,7 @@
     "components": "V, S",
     "duration": "Up to 1 hour",
     "casting_time": "1 action",
-    "classes": "Artificer, Wizard, Sorcerer",
+    "classes": "Wizard, Artificer, Sorcerer",
     "higher_level": false,
     "description": [
       "You assume a different form. When you cast the spell, choose one of the following options, the effects of which last for the duration of the spell. While the spell lasts, you can end one option as an action to gain the benefits of a different one.",
@@ -149,7 +149,7 @@
     "components": "V, S, M. A morsel of food.",
     "duration": "24 hours",
     "casting_time": "1 action",
-    "classes": "Ranger, Bard, Druid",
+    "classes": "Bard, Druid, Ranger",
     "higher_level": false,
     "description": [
       "This spell lets you convince a beast that you mean it no harm. Choose a beast that you can see within range. It must see and hear you. If the beast's Intelligence is 4 or higher, the spell fails. Otherwise, the beast must succeed on a wisdom saving throw or be charmed by you for the spell's duration. If you or one of your companions harms the target, the spells ends."
@@ -173,7 +173,7 @@
     "components": "V, S, M. A morsel of food.",
     "duration": "24 hours",
     "casting_time": "1 action",
-    "classes": "Ranger, Bard, Druid",
+    "classes": "Bard, Druid, Ranger",
     "higher_level": "**At Higher Levels:** If you cast this spell using a spell slot of 3nd level or higher, the duration of the spell increases by 48 hours for each slot level above 2nd.",
     "description": [
       "By means of this spell, you use an animal to deliver a message. Choose a Tiny beast you can see within range, such as a squirrel, a blue jay, or a bat. You specify a location, which you must have visited, and a recipient who matches a general description, such as \"a man or woman dressed in the uniform of the town guard\" or \"a red-haired dwarf wearing a pointed hat.\" You also speak a message of up to twenty-five words. The target beast travels for the duration of the spell toward the specified location, covering about 50 miles per 24 hours for a flying messenger, or 25 miles for other animals.",
@@ -224,7 +224,7 @@
     "components": "V, S, M. A drop of blood, a piece of flesh, and a pinch of bone dust.",
     "duration": "Instantaneous",
     "casting_time": "1 minute",
-    "classes": "Cleric, Wizard",
+    "classes": "Wizard, Cleric",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 4th level or higher, you animate or reassert control over two additional undead creatures for each slot level above 3rd. Each of the creatures must come from a different corpse or pile of bones.",
     "description": [
       "This spell creates an undead servant. Choose a pile of bones or a corpse of a Medium or Small humanoid within range. Your spell imbues the target with a foul mimicry of life, raising it as an undead creature. The target becomes a skeleton if you chose bones or a zombie if you chose a corpse (the GM has the creature's game statistics).",
@@ -250,7 +250,7 @@
     "components": "V, S",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Artificer, Bard, Wizard, Sorcerer",
+    "classes": "Wizard, Artificer, Sorcerer, Bard",
     "higher_level": "**At Higher Levels:** If you cast this spell using a spell slot of 6th level or higher, you can animate two additional objects for each slot level above 5th.",
     "description": [
       "Objects come to life at your command. Choose up to ten nonmagical objects within range that are not being worn or carried. Medium targets count as two objects, Large targets count as four objects, Huge targets count as eight objects. You can't animate any object larger than Huge. Each target animates and becomes a creature under your control until the spell ends or until reduced to 0 hit points.",
@@ -311,7 +311,7 @@
     "components": "V, S, M. A pinch of powdered iron or iron filings.",
     "duration": "Up to 1 hour",
     "casting_time": "1 action",
-    "classes": "Cleric, Wizard",
+    "classes": "Wizard, Cleric",
     "higher_level": false,
     "description": [
       "A 10-foot-radius invisible sphere of antimagic surrounds you. This area is divorced from the magical energy that suffuses the multiverse. Within the sphere, spells can't be cast, summoned creatures disappear, and even magic items become mundane. Until the spell ends, the sphere moves with you, centered on you.",
@@ -344,7 +344,7 @@
     "components": "V, S, M. Either a lump of alum soaked in vinegar for the antipathy effect or a drop of honey for the sympathy effect.",
     "duration": "10 days",
     "casting_time": "1 hour",
-    "classes": "Druid, Wizard",
+    "classes": "Wizard, Druid",
     "higher_level": false,
     "description": [
       "This spell attracts or repels creatures of your choice. You target something within range, either a Huge or smaller object or creature or an area that is no larger than a 200-foot cube. Then specify a kind of intelligent creature, such as red dragons, goblins, or vampires. You invest the target with an aura that either attracts or repels the specified creatures for the duration. Choose antipathy or sympathy as the aura's effect.",
@@ -373,7 +373,7 @@
     "components": "V, S, M. A bit of bat fur.",
     "duration": "Up to 1 hour",
     "casting_time": "1 action",
-    "classes": "Artificer, Wizard",
+    "classes": "Wizard, Artificer",
     "higher_level": false,
     "description": [
       "You create an invisible, magical eye within range that hovers in the air for the duration.",
@@ -429,7 +429,7 @@
     "components": "V, S, M. Gold dust worth at least 25gp, which the spell consumes.",
     "duration": "Until dispelled",
     "casting_time": "1 action",
-    "classes": "Artificer, Wizard",
+    "classes": "Wizard, Artificer",
     "higher_level": false,
     "description": [
       "You touch a closed door, window, gate, chest, or other entryway, and it becomes locked for the duration. You and the creatures you designate when you cast this spell can open the object normally. You can also set a password that, when spoken within 5 feet of the object, suppresses this spell for 1 minute. Otherwise, it is impassable until it is broken or the spell is dispelled or suppressed. Casting knock on the object suppresses arcane lock for 10 minutes.",
@@ -508,7 +508,7 @@
     "components": "V, S, M. For each creature you affect with this spell, you must provide one jacinth worth at least 1,000gp and one ornately carved bar of silver worth at least 100gp, all of which the spell consumes.",
     "duration": "Special",
     "casting_time": "1 hour",
-    "classes": "Monk, Warlock, Cleric, Wizard",
+    "classes": "Wizard, Cleric, Monk, Warlock",
     "higher_level": false,
     "description": [
       "You and up to eight willing creatures within range project your astral bodies into the Astral Plane (the spell fails and the casting is wasted if you are already on that plane). The material body you leave behind is unconscious and in a state of suspended animation; it doesn't need food or air and doesn't age.",
@@ -592,7 +592,7 @@
     "components": "V, S, M. A drop of blood.",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Bard, Cleric",
+    "classes": "Cleric, Bard",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 2nd level or higher, you can target one additional creature for each slot level above 1st.",
     "description": [
       "Up to three creatures of your choice that you can see within range must make charisma saving throws. Whenever a target that fails this saving throw makes an attack roll or a saving throw before the spell ends, the target must roll a d4 and subtract the number rolled from the attack roll or saving throw."
@@ -616,7 +616,7 @@
     "components": "V, S, M. An item distasteful to the target.",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Cleric, Wizard, Paladin, Sorcerer, Warlock",
+    "classes": "Wizard, Sorcerer, Warlock, Paladin, Cleric",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 5th level or higher, you can target one additional creature for each slot level above 4th.",
     "description": [
       "You attempt to send one creature that you can see within range to another plane of existence. The target must succeed on a charisma saving throw or be banished.",
@@ -642,7 +642,7 @@
     "components": "V, S, M. A handful of oak bark.",
     "duration": "Up to 1 hour",
     "casting_time": "1 action",
-    "classes": "Ranger, Druid",
+    "classes": "Druid, Ranger",
     "higher_level": false,
     "description": [
       "You touch a willing creature. Until the spell ends, the target's skin has a rough, bark-like appearance, and the target's AC can't be less than 16, regardless of what kind of armor it is wearing."
@@ -690,7 +690,7 @@
     "components": "V, S",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Bard, Cleric, Wizard",
+    "classes": "Wizard, Cleric, Bard",
     "higher_level": "**At Higher Levels:** If you cast this spell using a spell slot of 4th level or higher, the duration is concentration, up to 10 minutes. If you use a spell slot of 5th level or higher, the duration is 8 hours. If you use a spell slot of 7th level or higher, the duration is 24 hours. If you use a 9th level spell slot, the spell lasts until it is dispelled. Using a spell slot of 5th level or higher grants a duration that doesn't require concentration.",
     "description": [
       "You touch a creature, and that creature must succeed on a wisdom saving throw or become cursed for the duration of the spell. When you cast this spell, choose the nature of the curse from the following options:",
@@ -798,7 +798,7 @@
     "components": "V, S",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Warlock, Wizard, Druid, Sorcerer",
+    "classes": "Wizard, Sorcerer, Druid, Warlock",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 5th level of higher, the damage increases by 1d8 for each slot level above 4th.",
     "description": [
       "Necromantic energy washes over a creature of your choice that you can see within range, draining moisture and vitality from it. The target must make a constitution saving throw. The target takes 8d8 necrotic damage on a failed save, or half as much damage on a successful one. The spell has no effect on undead or constructs.",
@@ -831,7 +831,7 @@
     "components": "V",
     "duration": "1 minute",
     "casting_time": "1 action",
-    "classes": "Bard, Wizard, Cleric, Sorcerer",
+    "classes": "Wizard, Cleric, Sorcerer, Bard",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 3rd level or higher, you can target one additional creature for each slot level above 2nd.",
     "description": [
       "You can blind or deafen a foe. Choose one creature that you can see within range to make a constitution saving throw. If it fails, the target is either blinded or deafened (your choice) for the duration. At the end of each of its turns, the target can make a constitution saving throw. On a success, the spell ends."
@@ -855,7 +855,7 @@
     "components": "V, S",
     "duration": "1 minute",
     "casting_time": "1 action",
-    "classes": "Artificer, Wizard, Sorcerer",
+    "classes": "Wizard, Artificer, Sorcerer",
     "higher_level": false,
     "description": [
       "Roll a d20 at the end of each of your turns for the duration of the spell. On a roll of 11 or higher, you vanish from your current plane of existence and appear in the Ethereal Plane (the spell fails and the casting is wasted if you were already on that plane). At the start of your next turn, and when the spell ends if you are on the Ethereal Plane, you return to an unoccupied space of your choice that you can see within 10 feet of the space you vanished from. If no unoccupied space is available within that range, you appear in the nearest unoccupied space (chosen at random if more than one space is equally near). You can dismiss this spell as an action.",
@@ -880,7 +880,7 @@
     "components": "V",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Artificer, Wizard, Sorcerer",
+    "classes": "Wizard, Artificer, Sorcerer",
     "higher_level": false,
     "description": [
       "Your body becomes blurred, shifting and wavering to all who can see you. For the duration, any creature has disadvantage on attack rolls against you. An attacker is immune to this effect if it doesn't rely on sight, as with blindsight, or can see through illusions, as with truesight."
@@ -1006,7 +1006,7 @@
     "components": "V, S",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Bard, Cleric",
+    "classes": "Cleric, Bard",
     "higher_level": false,
     "description": [
       "You attempt to suppress strong emotions in a group of people. Each humanoid in a 20-foot-radius sphere centered on a point you choose within range must make a charisma saving throw; a creature can choose to fail this saving throw if it wishes. If a creature fails its saving throw, choose one of the following two effects. You can suppress any effect causing a target to be charmed or frightened. When this spell ends, any suppressed effect resumes, provided that its duration has not expired in the meantime.",
@@ -1058,7 +1058,7 @@
     "components": "V, S",
     "duration": "1 hour",
     "casting_time": "1 action",
-    "classes": "Bard, Druid, Wizard, Sorcerer, Warlock",
+    "classes": "Wizard, Sorcerer, Bard, Warlock, Druid",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 2nd level or higher, you can target one additional creature for each slot level above 1st. The creatures must be within 30 feet of each other when you target them.",
     "description": [
       "You attempt to charm a humanoid you can see within range. It must make a wisdom saving throw, and does so with advantage if you or your companions are fighting it. If it fails the saving throw, it is charmed by you until the spell ends or until you or your companions do anything harmful to it. The charmed creature regards you as a friendly acquaintance. When the spell ends, the creature knows it was charmed by you."
@@ -1082,7 +1082,7 @@
     "components": "V, S",
     "duration": "1 round",
     "casting_time": "1 action",
-    "classes": "Wizard, Warlock, Sorcerer",
+    "classes": "Wizard, Sorcerer, Warlock",
     "higher_level": false,
     "description": [
       "You create a ghostly, skeletal hand in the space of a creature within range. Make a ranged spell attack against the creature to assail it with the chill of the grave. On a hit, the target takes 1d8 necrotic damage, and it can't regain hit points until the start of your next turn. Until then, the hand clings to the target.",
@@ -1113,7 +1113,7 @@
     "components": "V, S, M. The powder of a crushed black pearl worth at least 500 gp.",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Wizard, Warlock, Sorcerer",
+    "classes": "Wizard, Sorcerer, Warlock",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 7th level or higher, the damage increases by 2d6 for each slot level above 6th.",
     "description": [
       "A sphere of negative energy ripples out in a 60-foot radius sphere from a point within range. Each creature in that area must make a constitution saving throw. A target takes 8d6 necrotic damage on a failed save, or half as much damage on a successful one."
@@ -1142,7 +1142,7 @@
     "components": "V, S, M. A focus worth at least 100gp, either a jeweled horn for hearing or a glass eye for seeing.",
     "duration": "Up to 10 minutes",
     "casting_time": "10 minutes",
-    "classes": "Bard, Wizard, Cleric, Sorcerer",
+    "classes": "Wizard, Cleric, Sorcerer, Bard",
     "higher_level": false,
     "description": [
       "You create an invisible sensor within range in a location familiar to you (a place you have visited or seen before) or in an obvious location that is unfamiliar to you (such as behind a door, around a corner, or in a grove of trees). The sensor remains in place for the duration, and it can't be attacked or otherwise interacted with.",
@@ -1337,7 +1337,7 @@
     "components": "V, S, M. A pinch of soot and salt.",
     "duration": "1 hour",
     "casting_time": "1 action",
-    "classes": "Wizard, Bard, Warlock, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard, Warlock",
     "higher_level": false,
     "description": [
       "For the duration, you understand the literal meaning of any spoken language that you hear. You also understand any written language that you see, but you must be touching the surface on which the words are written. It takes about 1 minute to read one page of text.",
@@ -1418,7 +1418,7 @@
     "components": "V, S, M. Three walnut shells.",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Wizard, Bard, Druid, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard, Druid",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 5th level or higher, the radius of the sphere increases by 5 feet for each slot level above 4th.",
     "description": [
       "This spell assaults and twists creatures' minds, spawning delusions and provoking uncontrolled action. Each creature in a 10-foot-radius sphere centered on a point you choose within range must succeed on a Wisdom saving throw when you cast this spell or be affected by it.",
@@ -1450,7 +1450,7 @@
     "components": "V, S",
     "duration": "Up to 1 hour",
     "casting_time": "1 action",
-    "classes": "Ranger, Druid",
+    "classes": "Druid, Ranger",
     "higher_level": "**At Higher Levels:** When you cast this spell using certain higher-level spell slots, you choose one of the summoning options above, and more creatures appear: twice as many with a 5th-level slot, three times as many with a 7th-level.",
     "description": [
       "You summon fey spirits that take the form of beasts and appear in unoccupied spaces that you can see within range. Choose one of the following options for what appears:",
@@ -1507,7 +1507,7 @@
     "components": "V, S, M. Burning incense for air, soft clay for earth, sulfur and phosphorus for fire, or water and sand for water.",
     "duration": "Up to 1 hour",
     "casting_time": "1 minute",
-    "classes": "Druid, Wizard",
+    "classes": "Wizard, Druid",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 6th level or higher, the challenge rating increases by 1 for each slot level above 5th.",
     "description": [
       "You call forth an elemental servant. Choose an area of air, earth, fire, or water that fills a 10-foot cube within range. An elemental of challenge rating 5 or lower appropriate to the area you chose appears in an unoccupied space within 10 feet of it. For example, a fire elemental emerges from a bonfire, and an earth elemental rises up from the ground. The elemental disappears when it drops to 0 hit points or when the spell ends.",
@@ -1561,7 +1561,7 @@
     "components": "V, S",
     "duration": "Up to 1 hour",
     "casting_time": "1 minute",
-    "classes": "Druid, Wizard",
+    "classes": "Wizard, Druid",
     "higher_level": "**At Higher Levels:** When you cast this spell using certain higher-level spell slots, you choose one of the summoning options above, and more creatures appear: twice as many with a 6th-level slot and three times as many with an 8th-level slot.",
     "description": [
       "You summon elementals that appear in unoccupied spaces that you can see within range. You choose one the following options for what appears:",
@@ -1592,7 +1592,7 @@
     "components": "V, S, M. One holly berry per creature summoned.",
     "duration": "Up to 1 hour",
     "casting_time": "1 action",
-    "classes": "Ranger, Druid",
+    "classes": "Druid, Ranger",
     "higher_level": "**At Higher Levels:** When you cast this spell using certain higher-level spell slots, you choose one of the summoning options above, and more creatures appear: twice as many with a 6th-level slot and three times as many with an 8th-level slot.",
     "description": [
       "You summon fey creatures that appear in unoccupied spaces that you can see within range. Choose one of the following options for what appears:",
@@ -1623,7 +1623,7 @@
     "components": "V",
     "duration": "1 minute",
     "casting_time": "1 minute",
-    "classes": "Warlock, Wizard",
+    "classes": "Wizard, Warlock",
     "higher_level": false,
     "description": [
       "You mentally contact a demigod, the spirit of a long-dead sage, or some other mysterious entity from another plane. Contacting this extraplanar intelligence can strain or even break your mind. When you cast this spell, make a DC 15 intelligence saving throw. On a failure, you take 6d6 psychic damage and are insane until you finish a long rest. While insane, you can't take actions, can't understand what other creatures say, can't read, and speak only in gibberish. A greater restoration spell cast on you ends this effect.",
@@ -1648,7 +1648,7 @@
     "components": "V, S",
     "duration": "7 days",
     "casting_time": "1 action",
-    "classes": "Druid, Cleric",
+    "classes": "Cleric, Druid",
     "higher_level": false,
     "description": [
       "Your touch inflicts disease. Make a melee spell attack against a creature within your reach. On a hit, you afflict the creature with a disease of your choice from any of the ones described below.",
@@ -1706,7 +1706,7 @@
     "components": "V, S, M. Ruby dust worth 50 gp, which the spell consumes.",
     "duration": "Until dispelled",
     "casting_time": "1 action",
-    "classes": "Artificer, Cleric, Wizard",
+    "classes": "Wizard, Artificer, Cleric",
     "higher_level": false,
     "description": [
       "A flame, equivalent in brightness to a torch, springs forth from an object that you touch. The effect looks like a regular flame, but it creates no heat and doesn't use oxygen. A continual flame can be covered or hidden but not smothered or quenched."
@@ -1730,7 +1730,7 @@
     "components": "V, S, M. A drop of water and a pinch of dust.",
     "duration": "Up to 10 minutes",
     "casting_time": "1 action",
-    "classes": "Druid, Cleric, Wizard",
+    "classes": "Wizard, Cleric, Druid",
     "higher_level": false,
     "description": [
       "Until the spell ends, you control any freestanding water inside an area you choose that is a cube up to 100 feet on a side. You can choose from any of the following effects when you cast this spell. As an action on your turn, you can repeat the same effect or choose a different one.",
@@ -1764,7 +1764,7 @@
     "components": "V, S, M. Burning incense and bits of earth and wood mixed in water.",
     "duration": "Up to 8 hours",
     "casting_time": "10 minutes",
-    "classes": "Druid, Cleric, Wizard",
+    "classes": "Wizard, Cleric, Druid",
     "higher_level": false,
     "description": [
       "You take control of the weather within 5 miles of you for the duration. You must be outdoors to cast this spell. Moving to a place where you don't have a clear path to the sky ends the spell early.",
@@ -1815,7 +1815,7 @@
     "components": "S",
     "duration": "Instantaneous",
     "casting_time": "1 reaction",
-    "classes": "Wizard, Warlock, Sorcerer",
+    "classes": "Wizard, Sorcerer, Warlock",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 4th level or higher, the interrupted spell has no effect if its level is less than or equal to the level of the spell slot you used.",
     "description": [
       "You attempt to interrupt a creature in the process of casting a spell. If the creature is casting a spell of 3rd level or lower, its spell fails and has no effect. If it is casting a spell of 4th level or higher, make an ability check using your spellcasting ability. The DC equals 10 + the spell's level. On a success, the creature's spell fails and has no effect."
@@ -1863,7 +1863,7 @@
     "components": "V, S, M. A drop of water if creating water, or a few grains of sand if destroying it.",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Druid, Cleric",
+    "classes": "Cleric, Druid",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 2nd level or higher, you create or destroy 10 additional gallons of water, or the size of the cube increases by 5 feet, for each slot level above 1st.",
     "description": [
       "You either create or destroy water.",
@@ -1889,7 +1889,7 @@
     "components": "V, S, M. One clay pot filled with grave dirt, one clay pot filled with brackish water, and one 150 gp black onyx stone for each corpse.",
     "duration": "Instantaneous",
     "casting_time": "1 minute",
-    "classes": "Warlock, Cleric, Wizard",
+    "classes": "Wizard, Cleric, Warlock",
     "higher_level": "**At Higher Levels:** When you cast this spell using a 7th-level spell slot, you can animate or reassert control over four ghouls. When you cast this spell using an 8th-level spell slot, you can animate or reassert control over five ghouls or two ghasts or wights. When you cast this spell using a 9th-level spell slot, you can animate or reassert control over six ghouls, three ghasts or wights, or two mummies.",
     "description": [
       "You can cast this spell only at night. Choose up to three corpses of Medium or Small humanoids within range. Each corpse becomes a ghoul under your control. (The GM has game statistics for these creatures.)",
@@ -1915,7 +1915,7 @@
     "components": "V, S, M. A tiny piece of matter of the same type of the item you plan to create.",
     "duration": "Special",
     "casting_time": "1 minute",
-    "classes": "Artificer, Wizard, Sorcerer",
+    "classes": "Wizard, Artificer, Sorcerer",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 6th level or higher, the cube increases by 5 feet for each slot level above 5th.",
     "description": [
       "You pull wisps of shadow material from the Shadowfell to create a nonliving object of vegetable matter within range: soft goods, rope, wood, or something similar. You can also use this spell to create mineral objects such as stone, crystal, or metal. The object created must be no larger than a 5-foot cube, and the object must be of a form and material that you have seen before.",
@@ -1948,7 +1948,7 @@
     "components": "V, S",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Ranger, Bard, Druid, Cleric, Paladin, Artificer",
+    "classes": "Artificer, Bard, Ranger, Paladin, Cleric, Druid",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 2nd level or higher, the healing increases by 1d8 for each slot level above 1st.",
     "description": [
       "A creature you touch regains a number of hit points equal to 1d8 + your spellcasting ability modifier. This spell has no effect on undead or constructs."
@@ -1972,7 +1972,7 @@
     "components": "V, S, M. A bit of phosphorus or wychwood, or a glowworm.",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Artificer, Bard, Wizard, Sorcerer",
+    "classes": "Wizard, Artificer, Sorcerer, Bard",
     "higher_level": false,
     "description": [
       "You create up to four torch-sized lights within range, making them appear as torches, lanterns, or glowing orbs that hover in the air for the duration. You can also combine the four lights into one glowing vaguely humanoid form of Medium size. Whichever form you choose, each light sheds dim light in a 10-foot radius.",
@@ -1997,7 +1997,7 @@
     "components": "V, M. Bat fur and a drop of pitch or piece of coal.",
     "duration": "Up to 10 minutes",
     "casting_time": "1 action",
-    "classes": "Wizard, Warlock, Sorcerer",
+    "classes": "Wizard, Sorcerer, Warlock",
     "higher_level": false,
     "description": [
       "Magical darkness spreads from a point you choose within range to fill a 15-foot-radius sphere for the duration. The darkness spreads around corners. A creature with darkvision can't see through this darkness, and nonmagical light can't illuminate it.",
@@ -2023,7 +2023,7 @@
     "components": "V, S, M. Either a pinch of dried carrot or an agate.",
     "duration": "8 hours",
     "casting_time": "1 action",
-    "classes": "Ranger, Druid, Wizard, Sorcerer, Artificer",
+    "classes": "Wizard, Artificer, Sorcerer, Ranger, Druid",
     "higher_level": false,
     "description": [
       "You touch a willing creature to grant it the ability to see in the dark. For the duration, that creature has darkvision out to a range of 60 feet."
@@ -2047,7 +2047,7 @@
     "components": "V, S",
     "duration": "1 hour",
     "casting_time": "1 action",
-    "classes": "Ranger, Druid, Cleric, Paladin, Sorcerer",
+    "classes": "Sorcerer, Ranger, Paladin, Cleric, Druid",
     "higher_level": false,
     "description": [
       "A 60-foot-radius sphere of light spreads out from a point you choose within range. The sphere is bright light and sheds dim light for an additional 60 feet.",
@@ -2130,7 +2130,7 @@
     "components": "S",
     "duration": "1 hour",
     "casting_time": "1 action",
-    "classes": "Warlock, Wizard",
+    "classes": "Wizard, Warlock",
     "higher_level": false,
     "description": [
       "You create a shadowy door on a flat solid surface that you can see within range. The door is large enough to allow Medium creatures to pass through unhindered. When opened, the door leads to a demiplane that appears to be an empty room 30 feet in each dimension, made of wood or stone. When the spell ends, the door disappears, and any creatures or objects inside the demiplane remain trapped there, as the door also disappears from the other side.",
@@ -2180,7 +2180,7 @@
     "components": "V, S",
     "duration": "Up to 10 minutes",
     "casting_time": "1 action",
-    "classes": "Ranger, Bard, Druid, Cleric, Wizard, Paladin, Sorcerer, Artificer",
+    "classes": "Wizard, Artificer, Bard, Sorcerer, Ranger, Paladin, Cleric, Druid",
     "higher_level": false,
     "description": [
       "For the duration, you sense the presence of magic within 30 feet of you. If you sense magic in this way, you can use your action to see a faint aura around any visible creature or object in the area that bears magic, and you learn its school of magic, if any.",
@@ -2205,7 +2205,7 @@
     "components": "V, S, M. A yew leaf.",
     "duration": "Up to 10 minutes",
     "casting_time": "1 action",
-    "classes": "Ranger, Paladin, Druid, Cleric",
+    "classes": "Paladin, Cleric, Druid, Ranger",
     "higher_level": false,
     "description": [
       "For the duration, you can sense the presence and location of poisons, poisonous creatures, and diseases within 30 feet of you. You also identify the kind of poison, poisonous creature, or disease in each case.",
@@ -2230,7 +2230,7 @@
     "components": "V, S, M. A copper coin.",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Bard, Wizard, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard",
     "higher_level": false,
     "description": [
       "For the duration, you can read the thoughts of certain creatures. When you cast the spell and as your action on each turn until the spell ends, you can focus your mind on any one creature that you can see within 30 feet of you. If the creature you choose has an Intelligence of 3 or lower or doesn't speak any language, the creature is unaffected.",
@@ -2258,7 +2258,7 @@
     "components": "V",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Wizard, Bard, Warlock, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard, Warlock",
     "higher_level": false,
     "description": [
       "You teleport yourself from your current location to any other spot within range. You arrive at exactly the spot desired. It can be a place you can see, one you can visualize, or one you can describe by stating distance and direction, such as \"200 feet straight downward\" or \"upward to the northwest at a 45-degree angle, 300 feet.\"",
@@ -2286,7 +2286,7 @@
     "components": "V, S",
     "duration": "1 hour",
     "casting_time": "1 action",
-    "classes": "Artificer, Bard, Wizard, Sorcerer",
+    "classes": "Wizard, Artificer, Sorcerer, Bard",
     "higher_level": false,
     "description": [
       "You make yourself--including your clothing, armor, weapons, and other belongings on your person--look different until the spell ends or until you use your action to dismiss it. You can seem 1 foot shorter or taller and can appear thin, fat, or in between. You can't change your body type, so you must adopt a form that has the same basic arrangement of limbs. Otherwise, the extent of the illusion is up to you.",
@@ -2368,7 +2368,7 @@
     "components": "V, S",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Bard, Druid, Cleric, Wizard, Paladin, Sorcerer, Artificer, Warlock",
+    "classes": "Wizard, Artificer, Sorcerer, Bard, Warlock, Paladin, Cleric, Druid",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 4th level or higher, you automatically end the effects of a spell on the target if the spell's level is equal to or less than the level of the spell slot you used.",
     "description": [
       "Choose one creature, object, or magical effect within range. Any spell of 3rd level or lower on the target ends. For each spell of 4th level or higher on the target, make an ability check using your spellcasting ability. The DC equals 10 + the spell's level. On a successful check, the spell ends."
@@ -2473,7 +2473,7 @@
     "components": "V, S",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Druid, Sorcerer",
+    "classes": "Sorcerer, Druid",
     "higher_level": "**At Higher Levels:** When you cast this spell with a 9th level spell slot, the duration is concentration, up to 8 hours.",
     "description": [
       "You attempt to beguile a creature that you can see within range. It must succeed on a wisdom saving throw or be charmed by you for the duration. If you or creatures that are friendly to you are fighting it, it has advantage on the saving throw.",
@@ -2499,7 +2499,7 @@
     "components": "V, S",
     "duration": "Up to 1 hour",
     "casting_time": "1 action",
-    "classes": "Wizard, Bard, Warlock, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard, Warlock",
     "higher_level": "**At Higher Levels:** When you cast this spell with a 9th-level spell slot, the duration is concentration, up to 8 hours.",
     "description": [
       "You attempt to beguile a creature that you can see within range. It must succeed on a wisdom saving throw or be charmed by you for the duration. If you or creatures that are friendly to you are fighting it, it has advantage on the saving throw.",
@@ -2526,7 +2526,7 @@
     "components": "V, S",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Bard, Wizard, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard",
     "higher_level": "**At Higher Levels:** When you cast this spell using a 6th-level spell slot, the duration is concentration, up to 10 minutes. When you use a 7th-level spell slot, the duration is concentration, up to 1 hour. When you use a spell slot of 8th level or higher, the duration is concentration, up to 8 hours.",
     "description": [
       "You attempt to beguile a humanoid that you can see within range. It must succeed on a wisdom saving throw or be charmed by you for the duration. If you or creatures that are friendly to you are fighting it, it has advantage on the saving throw.",
@@ -2553,7 +2553,7 @@
     "components": "V, S, M. A handful of sand, a dab of ink, and a writing quill plucked from a sleeping bird.",
     "duration": "8 hours",
     "casting_time": "1 minute",
-    "classes": "Bard, Warlock, Wizard",
+    "classes": "Wizard, Bard, Warlock",
     "higher_level": false,
     "description": [
       "This spell shapes a creature's dreams. Choose a creature known to you as the target of this spell. The target must be on the same plane of existence as you. Creatures that don't sleep, such as elves, can't be contacted by this spell. You, or a willing creature you touch, enters a trance state, acting as a messenger.",
@@ -2611,7 +2611,7 @@
     "components": "V, S, M. A pinch of dirt, a piece of rock, and a lump of clay.",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Druid, Cleric, Sorcerer",
+    "classes": "Cleric, Sorcerer, Druid",
     "higher_level": false,
     "description": [
       "You create a seismic disturbance at a point on the ground that you can see within range. For the duration, an intense tremor rips through the ground in a 100-foot-radius circle centered on that point and shakes creatures and structures in contact with the ground in that area.",
@@ -2670,7 +2670,7 @@
     "components": "V, S, M. Fur or a feather from a beast.",
     "duration": "Up to 1 hour",
     "casting_time": "1 action",
-    "classes": "Bard, Druid, Cleric, Sorcerer, Artificer",
+    "classes": "Artificer, Sorcerer, Bard, Cleric, Druid",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 3rd level or higher, you can target one additional creature for each slot level above 2nd.",
     "description": [
       "You touch a creature and bestow upon it a magical enhancement. Choose one of the following effects; the target gains that effect until the spell ends.",
@@ -2700,7 +2700,7 @@
     "components": "V, S, M. A pinch iron powder.",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Artificer, Wizard, Sorcerer",
+    "classes": "Wizard, Artificer, Sorcerer",
     "higher_level": false,
     "description": [
       "You cause a creature or an object you can see within range to grow larger or smaller for the duration. Choose either a creature or an object that is neither worn nor carried. If the target is unwilling, it can make a Constitution saving throw. On a success, the spell has no effect.",
@@ -2777,7 +2777,7 @@
     "components": "V, S",
     "duration": "8 hours",
     "casting_time": "1 action",
-    "classes": "Bard, Cleric, Wizard, Sorcerer, Warlock",
+    "classes": "Wizard, Sorcerer, Bard, Warlock, Cleric",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 8th level or higher, you can target up to three willing creatures (including you) for each slot level above 7th. The creatures must be within 10 feet of you when you cast the spell.",
     "description": [
       "You step into the border regions of the Ethereal Plane, in the area where it overlaps with your current plane. You remain in the Border Ethereal for the duration or until you use your action to dismiss the spell. During this time, you can move in any direction. If you move up or down, every foot of movement costs an extra foot. You can see and hear the plane you originated from, but everything there looks gray, and you can't see anything more than 60 feet away.",
@@ -2805,7 +2805,7 @@
     "components": "V, S",
     "duration": "Up to 10 minutes",
     "casting_time": "1 bonus action",
-    "classes": "Wizard, Artificer, Warlock, Sorcerer",
+    "classes": "Wizard, Artificer, Sorcerer, Warlock",
     "higher_level": false,
     "description": [
       "This spell allows you to move at an incredible pace. When you cast this spell, and then as a bonus action on each of your turns until the spell ends, you can take the Dash action."
@@ -2829,7 +2829,7 @@
     "components": "V, S",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Wizard, Bard, Warlock, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard, Warlock",
     "higher_level": false,
     "description": [
       "For the spell's duration, your eyes become an inky void imbued with dread power. One creature of your choice within 60 feet of you that you can see must succeed on a wisdom saving throw or be affected by one of the following effects of your choice for the duration. On each of your turns until the spell ends, you can use your action to target another creature but can't target a creature again if it has succeeded on a saving throw against this casting of eyebite.",
@@ -2856,7 +2856,7 @@
     "components": "V, S",
     "duration": "Instantaneous",
     "casting_time": "10 minutes",
-    "classes": "Artificer, Wizard",
+    "classes": "Wizard, Artificer",
     "higher_level": false,
     "description": [
       "You convert raw materials into products of the same material. For example, you can fabricate a wooden bridge from a clump of trees, a rope from a patch of hemp, and clothes from flax or wool.",
@@ -2935,7 +2935,7 @@
     "components": "V, S, M. A small amount of alcohol or distilled spirits.",
     "duration": "1 hour",
     "casting_time": "1 action",
-    "classes": "Artificer, Wizard, Sorcerer",
+    "classes": "Wizard, Artificer, Sorcerer",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 2nd level or higher, you gain 5 additional temporary hit points for each slot level above 1st.",
     "description": [
       "Bolstering yourself with a necromantic facsimile of life, you gain 1d4 + 4 temporary hit points for the duration."
@@ -2959,7 +2959,7 @@
     "components": "V, S, M. A white feather or the heart of a hen.",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Wizard, Bard, Warlock, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard, Warlock",
     "higher_level": false,
     "description": [
       "You project a phantasmal image of a creature's worst fears. Each creature in a 30-foot cone must succeed on a wisdom saving throw or drop whatever it is holding and become frightened for the duration.",
@@ -2984,7 +2984,7 @@
     "components": "V, M. A small feather or a piece of down.",
     "duration": "1 minute",
     "casting_time": "1 reaction",
-    "classes": "Artificer, Bard, Wizard, Sorcerer",
+    "classes": "Wizard, Artificer, Sorcerer, Bard",
     "higher_level": false,
     "description": [
       "Choose up to five falling creatures within range. A falling creature's rate of descent slows to 60 feet per round until the spell ends. If the creature lands before the spell ends, it takes no falling damage and can land on its feet, and the spell ends for that creature."
@@ -3095,7 +3095,7 @@
     "components": "V, S, M. A set of divinatory tools--such as bones, ivory sticks, cards, teeth, or carved runes--worth 100gp and an object from the location you wish to find.",
     "duration": "Up to 24 hours",
     "casting_time": "1 minute",
-    "classes": "Bard, Druid, Cleric",
+    "classes": "Cleric, Bard, Druid",
     "higher_level": false,
     "description": [
       "This spell allows you to find the shortest, most direct physical route to a specific fixed location that you are familiar with on the same plane of existence. If you name a destination on another plane of existence, a destination that moves (such as a mobile fortress), or a destination that isn't specific (such as \"a green dragon's lair\"), the spell fails.",
@@ -3120,7 +3120,7 @@
     "components": "V, S",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Ranger, Druid, Cleric",
+    "classes": "Cleric, Druid, Ranger",
     "higher_level": false,
     "description": [
       "You sense the presence of any trap within range that is within line of sight. A trap, for the purpose of this spell, includes anything that would inflict a sudden or unexpected effect you consider harmful or undesirable, which was specifically intended as such by its creator. Thus, the spell would sense an area affected by the alarm spell, a glyph of warding, or a mechanical pit trap, but it would not reveal a natural weakness in the floor, an unstable ceiling, or a hidden sinkhole.",
@@ -3145,7 +3145,7 @@
     "components": "V, S",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Wizard, Warlock, Sorcerer",
+    "classes": "Wizard, Sorcerer, Warlock",
     "higher_level": false,
     "description": [
       "You send negative energy coursing through a creature that you can see within range, causing it searing pain. The target must make a constitution saving throw. It takes 7d8 + 30 necrotic damage on a failed save, or half as much damage on a successful one.",
@@ -3172,7 +3172,7 @@
     "components": "V, S",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Artificer, Wizard, Sorcerer",
+    "classes": "Wizard, Artificer, Sorcerer",
     "higher_level": false,
     "description": [
       "You hurl a mote of fire at a creature or object within range. Make a ranged spell attack against the target. On a hit, the target takes 1d10 fire damage. A flammable object hit by this spell ignites if it isn't being worn or carried.",
@@ -3230,7 +3230,7 @@
     "components": "V, S",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Druid, Cleric, Sorcerer",
+    "classes": "Cleric, Sorcerer, Druid",
     "higher_level": false,
     "description": [
       "A storm made up of sheets of roaring flame appears in a location you choose within range. The area of the storm consists of up to ten 10-foot cubes, which you can arrange as you wish. Each cube must have at least one face adjacent to the face of another cube. Each creature in the area must make a dexterity saving throw. It takes 7d10 fire damage on a failed save, or half as much damage on a successful one.",
@@ -3351,7 +3351,7 @@
     "components": "V, S, M. A bit of tallow, a pinch of brimstone, and a dusting of powdered iron.",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Druid, Wizard",
+    "classes": "Wizard, Druid",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 3rd level or higher, the damage increases by 1d6 for each slot level above 2nd.",
     "description": [
       "A 5-foot-diameter sphere of fire appears in an unoccupied space of your choice within range and lasts for the duration. Any creature that ends its turn within 5 feet of the sphere must make a dexterity saving throw. The creature takes 2d6 fire damage on a failed save, or half as much damage on a successful one.",
@@ -3386,7 +3386,7 @@
     "components": "V, S, M. A pinch of lime, water, and earth.",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Warlock, Wizard",
+    "classes": "Wizard, Warlock",
     "higher_level": false,
     "description": [
       "You attempt to turn one creature that you can see within range into stone. If the target's body is made of flesh, the creature must make a constitution saving throw. On a failed save, it is restrained as its flesh begins to harden. On a successful save, the creature isn't affected.",
@@ -3439,7 +3439,7 @@
     "components": "V, S, M. A wing feather from any bird.",
     "duration": "Up to 10 minutes",
     "casting_time": "1 action",
-    "classes": "Wizard, Artificer, Warlock, Sorcerer",
+    "classes": "Wizard, Artificer, Sorcerer, Warlock",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 4th level or higher, you can target one additional creature for each slot level above 3rd.",
     "description": [
       "You touch a willing creature. The target gains a flying speed of 60 feet for the duration. When the spell ends, the target falls if it is still aloft, unless it can stop the fall."
@@ -3463,7 +3463,7 @@
     "components": "V, S",
     "duration": "Up to 1 hour",
     "casting_time": "1 action",
-    "classes": "Wizard, Ranger, Druid, Sorcerer",
+    "classes": "Wizard, Sorcerer, Druid, Ranger",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 2nd level or higher, the radius of the fog increases by 20 feet for each slot level above 1st.",
     "description": [
       "You create a 20-foot-radius sphere of fog centered on a point within range. The sphere spreads around corners, and its area is heavily obscured. It lasts for the duration or until a wind of moderate or greater speed (at least 10 miles per hour) disperses it."
@@ -3514,7 +3514,7 @@
     "components": "V, S, M. Ruby dust worth 1,500 gp.",
     "duration": "1 hour",
     "casting_time": "1 action",
-    "classes": "Bard, Warlock, Wizard",
+    "classes": "Wizard, Bard, Warlock",
     "higher_level": false,
     "description": [
       "An immobile, invisible, cube-shaped prison composed of magical force springs into existence around an area you choose within range. The prison can be a cage or a solid box, as you choose.",
@@ -3568,7 +3568,7 @@
     "components": "V, S, M. A leather strap, bound around the arm or a similar appendage.",
     "duration": "1 hour",
     "casting_time": "1 action",
-    "classes": "Ranger, Bard, Druid, Cleric, Artificer",
+    "classes": "Artificer, Bard, Ranger, Cleric, Druid",
     "higher_level": false,
     "description": [
       "You touch a willing creature. For the duration, the target's movement is unaffected by difficult terrain, and spells and other magical effects can neither reduce the target's speed nor cause the target to be paralyzed or restrained.",
@@ -3621,7 +3621,7 @@
     "components": "V, S, M. A bit of gauze and a wisp of smoke.",
     "duration": "Up to 1 hour",
     "casting_time": "1 action",
-    "classes": "Wizard, Warlock, Sorcerer",
+    "classes": "Wizard, Sorcerer, Warlock",
     "higher_level": false,
     "description": [
       "You transform a willing creature you touch, along with everything it's wearing and carrying, into a misty cloud for the duration. The spell ends if the creature drops to 0 hit points. An incorporeal creature isn't affected.",
@@ -3674,7 +3674,7 @@
     "components": "V",
     "duration": "30 days",
     "casting_time": "1 minute",
-    "classes": "Bard, Druid, Cleric, Wizard, Paladin",
+    "classes": "Wizard, Bard, Paladin, Cleric, Druid",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 7th or 8th level, the duration is 1 year. When you cast this spell using a spell slot of 9th level, the spell lasts until it is ended by one of the spells mentioned above.",
     "description": [
       "You place a magical command on a creature that you can see within range, forcing it to carry out some service or refrain from some action or course of activity as you decide. If the creature can understand you, it must succeed on a wisdom saving throw or become charmed by you for the duration. While the creature is charmed by you, it takes 5d10 psychic damage each time it acts in a manner directly counter to your instructions, but no more than once each day. A creature that can't understand you is unaffected by the spell.",
@@ -3700,7 +3700,7 @@
     "components": "V, S, M. A pinch of salt and one copper piece placed on each of the corpse's eyes, which must remain there for the duration.",
     "duration": "10 days",
     "casting_time": "1 action",
-    "classes": "Cleric, Wizard",
+    "classes": "Wizard, Cleric",
     "higher_level": false,
     "description": [
       "You touch a corpse or other remains. For the duration, the target is protected from decay and can't become undead.",
@@ -3801,7 +3801,7 @@
     "components": "V, S, M. Incense and powdered diamond worth at least 200 gp, which the spell consumes.",
     "duration": "Until dispelled",
     "casting_time": "1 hour",
-    "classes": "Bard, Artificer, Cleric, Wizard",
+    "classes": "Wizard, Artificer, Cleric, Bard",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 4th level or higher, the damage of an explosive runes glyph increases by 1d8 for each slot level above 3rd. If you create a spell glyph, you can store any spell of up to the same level as the slot you use for the glyph of warding.",
     "description": [
       "When you cast this spell, you inscribe a glyph that harms other creatures, either upon a surface (such as a table or a section of floor or wall) or within an object that can be closed (such as a book, a scroll, or a treasure chest) to conceal the glyph. If you choose a surface, the glyph can cover an area of the surface no larger than 10 feet in diameter. If you choose an object, that object must remain in its place; if the object is moved more than 10 feet from where you cast this spell, the glyph is broken, and the spell ends without being triggered.",
@@ -3831,7 +3831,7 @@
     "components": "V, S, M. A sprig of mistletoe.",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Ranger, Druid",
+    "classes": "Druid, Ranger",
     "higher_level": false,
     "description": [
       "Up to ten berries appear in your hand and are infused with magic for the duration. A creature can use its action to eat one berry. Eating a berry restores 1 hit point, and the berry provides enough nourishment to sustain a creature for a day.",
@@ -3856,7 +3856,7 @@
     "components": "V, S, M. A bit of pork rind or butter.",
     "duration": "1 minute",
     "casting_time": "1 action",
-    "classes": "Artificer, Wizard",
+    "classes": "Wizard, Artificer",
     "higher_level": false,
     "description": [
       "Slick grease covers the ground in a 10-foot square centered on a point within range and turns it into difficult terrain for the duration.",
@@ -3881,7 +3881,7 @@
     "components": "V, S",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Bard, Wizard, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard",
     "higher_level": false,
     "description": [
       "You or a creature you touch becomes invisible until the spell ends. Anything the target is wearing or carrying is invisible as long as it is on the target's person."
@@ -3905,7 +3905,7 @@
     "components": "V, S, M. Diamond dust worth at least 100gp, which the spell consumes.",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Artificer, Bard, Druid, Cleric",
+    "classes": "Artificer, Cleric, Bard, Druid",
     "higher_level": false,
     "description": [
       "You imbue a creature you touch with positive energy to undo a debilitating effect. You can reduce the target's exhaustion level by one, or end one of the following effects on the target:",
@@ -3960,7 +3960,7 @@
     "components": "V, S, M. Burning incense, a small measure of brimstone and oil, a knotted string, a small amount of umber hulk blood, and a small silver rod worth at least 10 gp.",
     "duration": "24 hours",
     "casting_time": "10 minutes",
-    "classes": "Bard, Wizard",
+    "classes": "Wizard, Bard",
     "higher_level": false,
     "description": [
       "You create a ward that protects up to 2,500 square feet of floor space (an area 50 feet square, or one hundred 5-foot squares or twenty-five 10-foot squares). The warded area can be up to 20 feet tall, and shaped as you desire. You can ward several stories of a stronghold by dividing the area among them, as long as you can walk into each contiguous area while you are casting the spell.",
@@ -3997,7 +3997,7 @@
     "components": "V, S",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Artificer, Druid, Cleric",
+    "classes": "Artificer, Cleric, Druid",
     "higher_level": false,
     "description": [
       "You touch one willing creature. Once before the spell ends, the target can roll a d4 and add the number rolled to one ability check of its choice. It can roll the die before or after making the ability check. The spell then ends."
@@ -4055,7 +4055,7 @@
     "components": "V, S, M. A legume seed.",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Wizard, Druid, Sorcerer",
+    "classes": "Wizard, Sorcerer, Druid",
     "higher_level": false,
     "description": [
       "A line of strong wind 60 feet long and 10 feet wide blasts from you in a direction you choose for the spell's duration. Each creature that starts its turn in the line must succeed on a strength saving throw or be pushed 15 feet away from you in a direction following the line.",
@@ -4169,7 +4169,7 @@
     "components": "V, S, M. A shaving of licorice root.",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Artificer, Wizard, Sorcerer",
+    "classes": "Wizard, Artificer, Sorcerer",
     "higher_level": false,
     "description": [
       "Choose a willing creature that you can see within range. Until the spell ends, the target's speed is doubled, it gains a +2 bonus to AC, it has advantage on dexterity saving throws, and it gains an additional action on each of its turns. That action can be used only to take the Attack (one weapon attack only), Dash, Disengage, Hide, or Use an Object action.",
@@ -4194,7 +4194,7 @@
     "components": "V, S",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Druid, Cleric",
+    "classes": "Cleric, Druid",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 7th level or higher, the amount of healing increases by 10 for each slot level above 6th.",
     "description": [
       "Choose a creature that you can see within range. A surge of positive energy washes through the creature, causing it to regain 70 hit points. This spell also ends blindness, deafness, and any diseases affecting the target. This spell has no effect on constructs or undead."
@@ -4218,7 +4218,7 @@
     "components": "V",
     "duration": "Instantaneous",
     "casting_time": "1 bonus action",
-    "classes": "Bard, Druid, Cleric",
+    "classes": "Cleric, Bard, Druid",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 2nd level or higher, the healing increases by 1d4 for each slot level above 1st.",
     "description": [
       "A creature of your choice that you can see within range regains hit points equal to 1d4 + your spellcasting ability modifier. This spell has no effect on undead or constructs."
@@ -4310,7 +4310,7 @@
     "components": "V, S, M. A gem-encrusted bowl worth at least 1,000gp, which the spell consumes.",
     "duration": "Instantaneous",
     "casting_time": "10 minutes",
-    "classes": "Druid, Cleric",
+    "classes": "Cleric, Druid",
     "higher_level": false,
     "description": [
       "You bring forth a great feast, including magnificent food and drink. The feast takes 1 hour to consume and disappears at the end of that time, and the beneficial effects don't set in until this hour is over. Up to twelve other creatures can partake of the feast.",
@@ -4335,7 +4335,7 @@
     "components": "V, S",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Bard, Paladin",
+    "classes": "Paladin, Bard",
     "higher_level": false,
     "description": [
       "A willing creature you touch is imbued with bravery. Until the spell ends, the creature is immune to being frightened and gains temporary hit points equal to your spellcasting ability modifier at the start of each of its turns. When the spell ends, the target loses any remaining temporary hit points from this spell."
@@ -4384,7 +4384,7 @@
     "components": "V, S, M. A small piece of iron.",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Wizard, Bard, Warlock, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard, Warlock",
     "higher_level": "**At Higher Levels:** When you cast this spell using a level 6 or higher location, you can target an additional creature for each level of location beyond the fifth. The creatures must be within 30 feet o f each other when you target them.",
     "description": [
       "Choose a creature you can see and reach. The target must make a saving throw of Wisdom or be paralyzed for the duration of the spell. This spell has no effect against the undead. At the end of each round, the target can make a new saving throw of Wisdom. If successful, the spell ends for the creature."
@@ -4408,7 +4408,7 @@
     "components": "V, S, M. A small, straight piece of iron.",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Bard, Druid, Cleric, Wizard, Sorcerer, Warlock",
+    "classes": "Wizard, Sorcerer, Bard, Warlock, Cleric, Druid",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 3rd level or higher, you can target one additional humanoid for each slot level above 2nd. The humanoids must be within 30 feet of each other when you target them.",
     "description": [
       "Choose a humanoid that you can see within range. The target must succeed on a wisdom saving throw or be paralyzed for the duration. At the end of each of its turns, the target can make another wisdom saving throw. On a success, the spell ends on the target."
@@ -4480,7 +4480,7 @@
     "components": "S, M. A glowing stick of incense or a crystal vial filled with phosphorescent material.",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Wizard, Bard, Warlock, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard, Warlock",
     "higher_level": false,
     "description": [
       "You create a twisting pattern of colors that weaves through the air inside a 30-foot cube within range. The pattern appears for a moment and vanishes. Each creature in the area who sees the pattern must make a wisdom saving throw. On a failed save, the creature becomes charmed for the duration. While charmed by this spell, the creature is incapacitated and has a speed of 0.",
@@ -4505,7 +4505,7 @@
     "components": "V, S, M. A pinch of dust and a few drops of water.",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Wizard, Druid, Sorcerer",
+    "classes": "Wizard, Sorcerer, Druid",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 5th level or higher, the bludgeoning damage increases by 1d8 for each slot level above 4th.",
     "description": [
       "A hail of rock-hard ice pounds to the ground in a 20-foot-radius, 40-foot-high cylinder centered on a point within range. Each creature in the cylinder must make a dexterity saving throw. A creature takes 2d8 bludgeoning damage and 4d6 cold damage on a failed save, or half as much damage on a successful one.",
@@ -4537,7 +4537,7 @@
     "components": "V, S, M. A pearl worth at least 100gp and an owl feather.",
     "duration": "Instantaneous",
     "casting_time": "1 minute",
-    "classes": "Bard, Artificer, Wizard",
+    "classes": "Wizard, Artificer, Bard",
     "higher_level": false,
     "description": [
       "You choose one object that you must touch throughout the casting of the spell. If it is a magic item or some other magic-imbued object, you learn its properties and how to use them, whether it requires attunement to use, and how many charges it has, if any. You learn whether any spells are affecting the item and what they are. If the item was created by a spell, you learn which spell created it.",
@@ -4562,7 +4562,7 @@
     "components": "S, M. A lead-based ink worth at least 10gp, which this spell consumes.",
     "duration": "10 days",
     "casting_time": "1 minute",
-    "classes": "Bard, Warlock, Wizard",
+    "classes": "Wizard, Bard, Warlock",
     "higher_level": false,
     "description": [
       "You write on parchment, paper, or some other suitable writing material and imbue it with a potent illusion that lasts for the duration.",
@@ -4589,7 +4589,7 @@
     "components": "V, S, M. A vellum depiction or a carved statuette in the likeness of the target, and a special component that varies according to the version of the spell you choose, worth at least 500gp per Hit Die of the target.",
     "duration": "Until dispelled",
     "casting_time": "1 minute",
-    "classes": "Warlock, Wizard",
+    "classes": "Wizard, Warlock",
     "higher_level": false,
     "description": [
       "You create a magical restraint to hold a creature that you can see within range. The target must succeed on a wisdom saving throw or be bound by the spell; if it succeeds, it is immune to this spell if you cast it again. While affected by this spell, the creature doesn't need to breathe, eat, or drink, and it doesn't age. Divination spells can't locate or perceive the target.",
@@ -4689,7 +4689,7 @@
     "components": "V, S, M. A few grains of sugar, some kernels of grain, and a smear of fat.",
     "duration": "Up to 10 minutes",
     "casting_time": "1 action",
-    "classes": "Druid, Cleric, Sorcerer",
+    "classes": "Cleric, Sorcerer, Druid",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 6th level or higher, the damage increases by 1d10 for each slot level above 5th.",
     "description": [
       "Swarming, biting locusts fill a 20-foot-radius sphere centered on a point you choose within range. The sphere spreads around corners. The sphere remains for the duration, and its area is lightly obscured. The sphere's area is difficult terrain.",
@@ -4747,7 +4747,7 @@
     "components": "V, S, M. An eyelash encased in gum arabic.",
     "duration": "Up to 1 hour",
     "casting_time": "1 action",
-    "classes": "Bard, Wizard, Sorcerer, Artificer, Warlock",
+    "classes": "Wizard, Artificer, Sorcerer, Bard, Warlock",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 3rd level or higher, you can target one additional creature for each slot level above 2nd.",
     "description": [
       "A creature you touch becomes invisible until the spell ends. Anything the target is wearing or carrying is invisible as long as it is on the target's person. The spell ends for a target that attacks or casts a spell."
@@ -4796,7 +4796,7 @@
     "components": "V, S, M. A grasshopper's hind leg.",
     "duration": "1 minute",
     "casting_time": "1 action",
-    "classes": "Ranger, Druid, Wizard, Sorcerer, Artificer",
+    "classes": "Wizard, Artificer, Sorcerer, Ranger, Druid",
     "higher_level": false,
     "description": [
       "You touch a creature. The creature's jump distance is tripled until the spell ends."
@@ -4820,7 +4820,7 @@
     "components": "V",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Bard, Wizard, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard",
     "higher_level": false,
     "description": [
       "Choose an object that you can see within range. The object can be a door, a box, a chest, a set of manacles, a padlock, or another object that contains a mundane or magical means that prevents access.",
@@ -4847,7 +4847,7 @@
     "components": "V, S, M. Incense worth at least 250 gp, which the spell consumes, and four ivory strips worth at least 50 gp each.",
     "duration": "Instantaneous",
     "casting_time": "10 minutes",
-    "classes": "Bard, Cleric, Wizard",
+    "classes": "Wizard, Cleric, Bard",
     "higher_level": false,
     "description": [
       "Name or describe a person, place, or object. The spell brings to your mind a brief summary of the significant lore about the thing you named. The lore might consist of current tales, forgotten stories, or even secret lore that has never been widely known. If the thing you named isn't of legendary importance, you gain no information. The more information you already have about the thing, the more precise and detailed the information you receive is.",
@@ -4872,7 +4872,7 @@
     "components": "V, S",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Ranger, Bard, Druid, Cleric, Paladin, Artificer",
+    "classes": "Artificer, Bard, Ranger, Paladin, Cleric, Druid",
     "higher_level": false,
     "description": [
       "You touch a creature and can end either one disease or one condition afflicting it. The condition can be blinded, deafened, paralyzed, or poisoned."
@@ -4896,7 +4896,7 @@
     "components": "V, S, M. Either a small leather loop or a piece of golden wire bent into a cup shape with a long shank on one end.",
     "duration": "Up to 10 minutes",
     "casting_time": "1 action",
-    "classes": "Artificer, Wizard, Sorcerer",
+    "classes": "Wizard, Artificer, Sorcerer",
     "higher_level": false,
     "description": [
       "One creature or object of your choice that you can see within range rises vertically, up to 20 feet, and remains suspended there for the duration. The spell can levitate a target that weighs up to 500 pounds. An unwilling creature that succeeds on a constitution saving throw is unaffected.",
@@ -4922,7 +4922,7 @@
     "components": "V, M. A firefly or phosphorescent moss.",
     "duration": "1 hour",
     "casting_time": "1 action",
-    "classes": "Bard, Cleric, Wizard, Sorcerer, Artificer",
+    "classes": "Wizard, Artificer, Sorcerer, Bard, Cleric",
     "higher_level": false,
     "description": [
       "You touch one object that is no larger than 10 feet in any dimension. Until the spell ends, the object sheds bright light in a 20-foot radius and dim light for an additional 20 feet. The light can be colored as you like. Completely covering the object with something opaque blocks the light. The spell ends if you cast it again or dismiss it as an action.",
@@ -4980,7 +4980,7 @@
     "components": "V, S, M. A bit of fur from a bloodhound.",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Ranger, Bard, Druid",
+    "classes": "Bard, Druid, Ranger",
     "higher_level": false,
     "description": [
       "Describe or name a specific kind of beast or plant. Concentrating on the voice of nature in your surroundings, you learn the direction and distance to the closest creature or plant of that kind within 5 miles, if any are present."
@@ -5004,7 +5004,7 @@
     "components": "V, S, M. A bit of fur from a bloodhound.",
     "duration": "Up to 1 hour",
     "casting_time": "1 action",
-    "classes": "Ranger, Bard, Druid, Cleric, Wizard, Paladin",
+    "classes": "Wizard, Bard, Ranger, Paladin, Cleric, Druid",
     "higher_level": false,
     "description": [
       "Describe or name a creature that is familiar to you. You sense the direction to the creature's location, as long as that creature is within 1,000 feet of you. If the creature is moving, you know the direction of its movement.",
@@ -5030,7 +5030,7 @@
     "components": "V, S, M. A forked twig.",
     "duration": "Up to 10 minutes",
     "casting_time": "1 action",
-    "classes": "Ranger, Bard, Druid, Cleric, Wizard, Paladin",
+    "classes": "Wizard, Bard, Ranger, Paladin, Cleric, Druid",
     "higher_level": false,
     "description": [
       "Describe or name an object that is familiar to you. You sense the direction to the object's location, as long as that object is within 1,000 feet of you. If the object is in motion, you know the direction of its movement.",
@@ -5056,7 +5056,7 @@
     "components": "V, S, M. A pinch of dirt.",
     "duration": "1 hour",
     "casting_time": "1 action",
-    "classes": "Ranger, Bard, Druid, Wizard, Artificer",
+    "classes": "Wizard, Artificer, Bard, Ranger, Druid",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 2nd level or higher, you can target one additional creature for each spell slot above 1st.",
     "description": [
       "You touch a creature. The target's speed increases by 10 feet until the spell ends."
@@ -5104,7 +5104,7 @@
     "components": "V, S",
     "duration": "1 minute",
     "casting_time": "1 action",
-    "classes": "Bard, Wizard, Sorcerer, Artificer, Warlock",
+    "classes": "Wizard, Artificer, Sorcerer, Bard, Warlock",
     "higher_level": false,
     "description": [
       "A spectral, floating hand appears at a point you choose within range. The hand lasts for the duration or until you dismiss it as an action. The hand vanishes if it is ever more than 30 feet away from you or if you cast this spell again.",
@@ -5130,7 +5130,7 @@
     "components": "V, S, M. Holy water or powdered silver and iron worth at least 100 gp, which the spell consumes.",
     "duration": "1 hour",
     "casting_time": "1 minute",
-    "classes": "Paladin, Warlock, Cleric, Wizard",
+    "classes": "Paladin, Cleric, Wizard, Warlock",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 4th level or higher, the duration increases by 1 hour for each slot level above 3rd.",
     "description": [
       "You create a 10-foot radius, 20-foot-tall cylinder of magical energy centered on a point on the ground that you can see within range. Glowing runes appear whenever the cylinder intersects with the floor or other surface.",
@@ -5223,7 +5223,7 @@
     "components": "V, S, M. A honeycomb and jade dust of at least 10 inches, the spell consumes.",
     "duration": "Until dispelled",
     "casting_time": "1 minute",
-    "classes": "Bard, Artificer, Wizard",
+    "classes": "Wizard, Artificer, Bard",
     "higher_level": false,
     "description": [
       "You plant a message to an object in the range of the spell. The message is verbalized when the trigger conditions are met. Choose an object that you see, and that is not worn or carried by another creature. Then say the message, which should not exceed 25 words but listening can take up to 10 minutes. Finally, establish the circumstances that trigger the spell to deliver your message.",
@@ -5250,7 +5250,7 @@
     "components": "V, S",
     "duration": "Up to 1 hour",
     "casting_time": "1 bonus action",
-    "classes": "Artificer, Paladin, Wizard",
+    "classes": "Paladin, Artificer, Wizard",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 4th level or higher, the bonus increases to +2. When you use a spell slot of 6th level or higher, the bonus increases to +3.",
     "description": [
       "You touch a nonmagical weapon. Until the spell ends, that weapon becomes a magic weapon with a +1 bonus to attack rolls and damage rolls."
@@ -5300,7 +5300,7 @@
     "components": "V, S, M. A bit of fleece.",
     "duration": "Up to 10 minutes",
     "casting_time": "1 action",
-    "classes": "Wizard, Bard, Warlock, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard, Warlock",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 6th level or higher, the spell lasts until dispelled, without requiring your concentration.",
     "description": [
       "You create the image of an object, a creature, or some other visible phenomenon that is no larger than a 20-foot cube. The image appears at a spot that you can see within range and lasts for the duration. It seems completely real, including sounds, smells, and temperature appropriate to the thing depicted. You can't create sufficient heat or cold to cause damage, a sound loud enough to deal thunder damage or deafen a creature, or a smell that might sicken a creature (like a troglodyte's stench).",
@@ -5326,7 +5326,7 @@
     "components": "V, S",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Bard, Druid, Cleric",
+    "classes": "Cleric, Bard, Druid",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 6th level or higher, the healing increases by 1d8 for each slot level above 5th.",
     "description": [
       "A wave of healing energy washes out from a point of your choice within range. Choose up to six creatures in a 30-foot-radius sphere centered on that point. Each target regains hit points equal to 3d8 + your spellcasting ability modifier. This spell has no effect on undead or constructs."
@@ -5398,7 +5398,7 @@
     "components": "V, M. A snake's tongue and either a bit of honeycomb or a drop of sweet oil.",
     "duration": "24 hours",
     "casting_time": "1 action",
-    "classes": "Wizard, Bard, Warlock, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard, Warlock",
     "higher_level": "**At Higher Levels:** When you cast this spell using a 7th-level spell slot, the duration is 10 days. When you use an 8th-level spell slot, the duration is 30 days. When you use a 9th-level spell slot, the duration is a year and a day.",
     "description": [
       "You suggest a course of activity (limited to a sentence or two) and magically influence up to twelve creatures of your choice that you can see within range and that can hear and understand you. Creatures that can't be charmed are immune to this effect. The suggestion must be worded in such a manner as to make the course of action sound reasonable. Asking the creature to stab itself, throw itself onto a spear, immolate itself, or do some other obviously harmful act automatically negates the effect of the spell.",
@@ -5477,7 +5477,7 @@
     "components": "V, S, M. Two lodestones.",
     "duration": "Instantaneous",
     "casting_time": "1 minute",
-    "classes": "Bard, Druid, Cleric, Wizard, Sorcerer, Artificer",
+    "classes": "Wizard, Artificer, Sorcerer, Bard, Cleric, Druid",
     "higher_level": false,
     "description": [
       "This spell repairs a single break or tear in an object you touch, such as a broken key, a torn cloak, or a leaking wineskin. As long as the break or tear is no longer than 1 foot in any dimension, you mend it, leaving no trace of the former damage.",
@@ -5502,7 +5502,7 @@
     "components": "V, S, M. A short piece of copper wire.",
     "duration": "1 round",
     "casting_time": "1 action",
-    "classes": "Artificer, Bard, Wizard, Sorcerer",
+    "classes": "Wizard, Artificer, Sorcerer, Bard",
     "higher_level": false,
     "description": [
       "You point your finger toward a creature within range and whisper a message. The target (and only the target) hears the message and can reply in a whisper that only you can hear.",
@@ -5554,7 +5554,7 @@
     "components": "V, S",
     "duration": "24 hours",
     "casting_time": "1 action",
-    "classes": "Bard, Wizard",
+    "classes": "Wizard, Bard",
     "higher_level": false,
     "description": [
       "Until the spell ends, one willing creature you touch is immune to psychic damage, any effect that would sense its emotions or read its thoughts, divination spells, and the charmed condition. The spell even foils wish spells and spells or effects of similar power used to affect the target's mind or to gain information about the target."
@@ -5578,7 +5578,7 @@
     "components": "S, M. A bit of fleece.",
     "duration": "1 minute",
     "casting_time": "1 action",
-    "classes": "Wizard, Bard, Warlock, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard, Warlock",
     "higher_level": false,
     "description": [
       "You create a sound or an image of an object within range that lasts for the duration. The illusion also ends if you dismiss it as an action or cast this spell again.",
@@ -5605,7 +5605,7 @@
     "components": "V, S",
     "duration": "10 days",
     "casting_time": "10 minutes",
-    "classes": "Bard, Druid, Wizard",
+    "classes": "Wizard, Bard, Druid",
     "higher_level": false,
     "description": [
       "You make terrain in an area up to 1 mile square look, sound, smell, and even feel like some other sort of terrain. The terrain's general shape remains the same, however. Open fields or a road could be made to resemble a swamp, hill, crevasse, or some other difficult or impassable terrain. A pond can be made to seem like a grassy meadow, a precipice like a gentle slope, or a rock-strewn gully like a wide and smooth road.",
@@ -5632,7 +5632,7 @@
     "components": "V, S",
     "duration": "1 minute",
     "casting_time": "1 action",
-    "classes": "Wizard, Warlock, Sorcerer",
+    "classes": "Wizard, Sorcerer, Warlock",
     "higher_level": false,
     "description": [
       "Three illusory duplicates of yourself appear in your space. Until the spell ends, the duplicates move with you and mimic your actions, shifting position so it's impossible to track which image is real. You can use your action to dismiss the illusory duplicates.",
@@ -5660,7 +5660,7 @@
     "components": "S",
     "duration": "Up to 1 hour",
     "casting_time": "1 action",
-    "classes": "Bard, Wizard",
+    "classes": "Wizard, Bard",
     "higher_level": false,
     "description": [
       "You become invisible at the same time that an illusory double of you appears where you are standing. The double lasts for the duration, but the invisibility ends if you attack or cast a spell.",
@@ -5686,7 +5686,7 @@
     "components": "V",
     "duration": "Instantaneous",
     "casting_time": "1 bonus action",
-    "classes": "Wizard, Warlock, Sorcerer",
+    "classes": "Wizard, Sorcerer, Warlock",
     "higher_level": false,
     "description": [
       "Briefly surrounded by silvery mist, you teleport up to 30 feet to an unoccupied space that you can see."
@@ -5710,7 +5710,7 @@
     "components": "V, S",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Bard, Wizard",
+    "classes": "Wizard, Bard",
     "higher_level": "**At Higher Levels:** If you cast this spell using a spell slot of 6th level or higher, you can alter the target's memories of an event that took place up to 7 days ago (6th level), 30 days ago (7th level), 1 year ago (8th level), or any time in the creature's past (9th level).",
     "description": [
       "You attempt to reshape another creature's memories. One creature that you can see must make a wisdom saving throw. If you are fighting the creature, it has advantage on the saving throw. On a failed save, the target becomes charmed by you for the duration. The charmed target is incapacitated and unaware of its surroundings, though it can still hear you. If it takes any damage or is targeted by another spell, this spell ends, and none of the target's memories are modified.",
@@ -5774,7 +5774,7 @@
     "components": "V, S, M. An iron blade and a small bag containing a mixture of soils--clay, loam, and sand.",
     "duration": "Up to 2 hours",
     "casting_time": "1 action",
-    "classes": "Wizard, Druid, Sorcerer",
+    "classes": "Wizard, Sorcerer, Druid",
     "higher_level": false,
     "description": [
       "Choose an area of terrain no larger than 40 feet on a side within range. You can reshape dirt, sand, or clay in the area in any manner you choose for the duration. You can raise or lower the area's elevation, create or fill in a trench, erect or flatten a wall, or form a pillar. The extent of any such changes can't exceed half the area's largest dimension. So, if you affect a 40-foot square, you can create a pillar up to 20 feet high, raise or lower the square's elevation by up to 20 feet, dig a trench up to 20 feet deep, and so on. It takes 10 minutes for these changes to complete.",
@@ -5802,7 +5802,7 @@
     "components": "V, S, M. A pinch of diamond dust worth 25 gp sprinkled over the target, which the spell consumes.",
     "duration": "8 hours",
     "casting_time": "1 action",
-    "classes": "Ranger, Bard, Wizard",
+    "classes": "Wizard, Bard, Ranger",
     "higher_level": false,
     "description": [
       "For the duration, you hide a target that you touch from divination magic. The target can be a willing creature or a place or an object no larger than 10 feet in any dimension. The target can't be targeted by any divination magic or perceived through magical scrying sensors."
@@ -5955,7 +5955,7 @@
     "components": "V, S, M. A jewel worth at least 1,000 gp, which the spell consumes.",
     "duration": "24 hours",
     "casting_time": "1 hour",
-    "classes": "Bard, Druid, Cleric, Wizard",
+    "classes": "Wizard, Cleric, Bard, Druid",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of a higher level, the duration increases to 10 days with a 6th-level slot, to 30 days with a 7th-level slot, to 180 days with an 8th-level slot, and to a year and a day with a 9th-level spell slot.",
     "description": [
       "With this spell, you attempt to bind a celestial, an elemental, a fey, or a fiend to your service. The creature must be within range for the entire casting of the spell. (Typically, the creature is first summoned into the center of an inverted magic circle in order to keep it trapped while this spell is cast.) At the completion of the casting, the target must make a charisma saving throw. On a failed save, it is bound to serve you for the duration. If the creature was summoned or created by another spell, that spell's duration is extended to match the duration of this spell.",
@@ -5980,7 +5980,7 @@
     "components": "V, S, M. A forked, metal rod worth at least 250 gp, attuned to a particular plane of existence.",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Druid, Cleric, Wizard, Sorcerer, Warlock",
+    "classes": "Wizard, Sorcerer, Warlock, Cleric, Druid",
     "higher_level": false,
     "description": [
       "You and up to eight willing creatures who link hands in a circle are transported to a different plane of existence. You can specify a target destination in general terms, such as the City of Brass on the Elemental Plane of Fire or the palace of Dispater on the second level of the Nine Hells, and you appear in or near that destination. If you are trying to reach the City of Brass, for example, you might arrive in its Street of Steel, before its Gate of Ashes, or looking at the city from across the Sea of Fire, at the GM's discretion.",
@@ -6006,7 +6006,7 @@
     "components": "V, S",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Ranger, Bard, Druid",
+    "classes": "Bard, Druid, Ranger",
     "higher_level": false,
     "description": [
       "This spell channels vitality into plants within a specific area. There are two possible uses for the spell, granting either immediate or long-term benefits.",
@@ -6033,7 +6033,7 @@
     "components": "V, S",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Druid, Wizard, Sorcerer, Artificer, Warlock",
+    "classes": "Wizard, Artificer, Sorcerer, Warlock, Druid",
     "higher_level": false,
     "description": [
       "You extend your hand toward a creature you can see within range and project a puff of noxious gas from your palm. The creature must succeed on a constitution saving throw or take 1d12 poison damage.",
@@ -6063,7 +6063,7 @@
     "components": "V, S, M. A caterpillar cocoon.",
     "duration": "Up to 1 hour",
     "casting_time": "1 action",
-    "classes": "Wizard, Bard, Druid, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard, Druid",
     "higher_level": false,
     "description": [
       "This spell transforms a creature that you can see within range into a new form. An unwilling creature must make a wisdom saving throw to avoid the effect. A shapechanger automatically succeeds on this saving throw.",
@@ -6091,7 +6091,7 @@
     "components": "V",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Wizard, Bard, Warlock, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard, Warlock",
     "higher_level": false,
     "description": [
       "You utter a word of power that can compel one creature you can see within range to die instantly. If the creature you choose has 100 hit points or fewer, it dies. Otherwise, the spell has no effect."
@@ -6115,7 +6115,7 @@
     "components": "V",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Wizard, Bard, Warlock, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard, Warlock",
     "higher_level": false,
     "description": [
       "You speak a word of power that can overwhelm the mind of one creature you can see within range, leaving it dumbfounded. If the target has 150 hit points or fewer, it is stunned. Otherwise, the spell has no effect.",
@@ -6164,7 +6164,7 @@
     "components": "V, S",
     "duration": "1 hour",
     "casting_time": "1 action",
-    "classes": "Bard, Wizard, Sorcerer, Artificer, Warlock",
+    "classes": "Wizard, Artificer, Sorcerer, Bard, Warlock",
     "higher_level": false,
     "description": [
       "This spell is a minor magical trick that novice spellcasters use for practice. You create one of the following magical effects within 'range':",
@@ -6327,7 +6327,7 @@
     "components": "V, S, M. A bit of fleece and jade dust worth at least 25 gp.",
     "duration": "Until dispelled",
     "casting_time": "1 action",
-    "classes": "Bard, Wizard",
+    "classes": "Wizard, Bard",
     "higher_level": false,
     "description": [
       "You create an illusion of an object, a creature, or some other visible phenomenon within range that activates when a specific condition occurs. The illusion is imperceptible until then. It must be no larger than a 30-foot cube, and you decide when you cast the spell how the illusion behaves and what sounds it makes. This scripted performance can last up to 5 minutes.",
@@ -6354,7 +6354,7 @@
     "components": "V, S, M. A small replica of you made from materials worth at least 5 gp.",
     "duration": "Up to 24 hours",
     "casting_time": "1 action",
-    "classes": "Bard, Wizard",
+    "classes": "Wizard, Bard",
     "higher_level": false,
     "description": [
       "You create an illusory copy of yourself that lasts for the duration. The copy can appear at any location within range that you have seen before, regardless of intervening obstacles. The illusion looks and sounds like you but is intangible. If the illusion takes any damage, it disappears, and the spell ends.",
@@ -6405,7 +6405,7 @@
     "components": "V, S, M. Holy water or powdered silver and iron, which the spell consumes.",
     "duration": "Up to 10 minutes",
     "casting_time": "1 action",
-    "classes": "Paladin, Warlock, Cleric, Wizard",
+    "classes": "Paladin, Cleric, Wizard, Warlock",
     "higher_level": false,
     "description": [
       "Until the spell ends, one willing creature you touch is protected against certain types of creatures: aberrations, celestials, elementals, fey, fiends, and undead.",
@@ -6430,7 +6430,7 @@
     "components": "V, S",
     "duration": "1 hour",
     "casting_time": "1 action",
-    "classes": "Ranger, Druid, Cleric, Paladin, Artificer",
+    "classes": "Artificer, Ranger, Paladin, Cleric, Druid",
     "higher_level": false,
     "description": [
       "You touch a creature. If it is poisoned, you neutralize the poison. If more than one poison afflicts the target, you neutralize one poison that you know is present, or you neutralize one at random.",
@@ -6455,7 +6455,7 @@
     "components": "V, S",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Paladin, Artificer, Druid, Cleric",
+    "classes": "Paladin, Artificer, Cleric, Druid",
     "higher_level": false,
     "description": [
       "All nonmagical food and drink within a 5-foot radius sphere centered on a point of your choice within range is purified and rendered free of poison and disease."
@@ -6479,7 +6479,7 @@
     "components": "V, S, M. A diamond worth at least 500gp, which the spell consumes.",
     "duration": "Instantaneous",
     "casting_time": "1 hour",
-    "classes": "Paladin, Bard, Cleric",
+    "classes": "Paladin, Cleric, Bard",
     "higher_level": false,
     "description": [
       "You return a dead creature you touch to life, provided that it has been dead no longer than 10 days. If the creature's soul is both willing and at liberty to rejoin the body, the creature returns to life with 1 hit point.",
@@ -6506,7 +6506,7 @@
     "components": "V, S",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Warlock, Wizard",
+    "classes": "Wizard, Warlock",
     "higher_level": false,
     "description": [
       "A black beam of enervating energy springs from your finger toward a creature within range. Make a ranged spell attack against the target. On a hit, the target deals only half damage with weapon attacks that use Strength until the spell ends.",
@@ -6531,7 +6531,7 @@
     "components": "V, S",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Artificer, Wizard, Sorcerer",
+    "classes": "Wizard, Artificer, Sorcerer",
     "higher_level": false,
     "description": [
       "A frigid beam of blue-white light streaks toward a creature within range. Make a ranged spell attack against the target. On a hit, it takes 1d8 cold damage, and its speed is reduced by 10 feet until the start of your next turn.",
@@ -6561,7 +6561,7 @@
     "components": "V, S, M. A prayer wheel and holy water.",
     "duration": "1 hour",
     "casting_time": "1 minute",
-    "classes": "Bard, Druid, Cleric",
+    "classes": "Cleric, Bard, Druid",
     "higher_level": false,
     "description": [
       "You touch a creature and stimulate its natural healing ability. The target regains 4d8 + 15 hit points. For the duration of the spell, the target regains 1 hit point at the start of each of its turns (10 hit points each minute).",
@@ -6628,7 +6628,7 @@
     "components": "V, S",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Paladin, Warlock, Cleric, Wizard",
+    "classes": "Paladin, Cleric, Wizard, Warlock",
     "higher_level": false,
     "description": [
       "At your touch, all curses affecting one creature or object end. If the object is a cursed magic item, its curse remains, but the spell breaks its owner's attunement to the object so it can be removed or discarded."
@@ -6679,7 +6679,7 @@
     "components": "V, S, M. A miniature cloak.",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Artificer, Druid, Cleric",
+    "classes": "Artificer, Cleric, Druid",
     "higher_level": false,
     "description": [
       "You touch one willing creature. Once before the spell ends, the target can roll a d4 and add the number rolled to one saving throw of its choice. It can roll the die before or after making the saving throw. The spell then ends."
@@ -6703,7 +6703,7 @@
     "components": "V, S, M. A diamond worth at least 1,000gp, which the spell consumes.",
     "duration": "Instantaneous",
     "casting_time": "1 hour",
-    "classes": "Bard, Cleric",
+    "classes": "Cleric, Bard",
     "higher_level": false,
     "description": [
       "You touch a dead creature that has been dead for no more than a century, that didn't die of old age, and that isn't undead. If its soul is free and willing, the target returns to life with all its hit points.",
@@ -6731,7 +6731,7 @@
     "components": "V, S, M. A lodestone and iron filings.",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Wizard, Druid, Sorcerer",
+    "classes": "Wizard, Sorcerer, Druid",
     "higher_level": false,
     "description": [
       "This spell reverses gravity in a 50-foot-radius, 100-foot high cylinder centered on a point within range. All creatures and objects that aren't somehow anchored to the ground in the area fall upward and reach the top of the area when you cast this spell. A creature can make a dexterity saving throw to grab onto a fixed object it can reach, thus avoiding the fall.",
@@ -6781,7 +6781,7 @@
     "components": "V, S, M. Powdered corn extract and a twisted loop of parchment.",
     "duration": "1 hour",
     "casting_time": "1 action",
-    "classes": "Artificer, Wizard",
+    "classes": "Wizard, Artificer",
     "higher_level": false,
     "description": [
       "You touch a length of rope that is up to 60 feet long. One end of the rope then rises into the air until the whole rope hangs perpendicular to the ground. At the upper end of the rope, an invisible entrance opens to an extradimensional space that lasts until the spell ends.",
@@ -6890,7 +6890,7 @@
     "components": "V, S, M. A focus worth at least 1,000 gp, such as a crystal ball, a silver mirror, or a font filled with holy water.",
     "duration": "Up to 10 minutes",
     "casting_time": "10 minutes",
-    "classes": "Bard, Druid, Cleric, Wizard, Warlock",
+    "classes": "Wizard, Bard, Warlock, Cleric, Druid",
     "higher_level": false,
     "description": [
       "You can see and hear a particular creature you choose that is on the same plane of existence as you. The target must make a wisdom saving throw, which is modified by how well you know the target and the sort of physical connection you have to it. If a target knows you're casting this spell, it can fail the saving throw voluntarily if it wants to be observed.",
@@ -6954,7 +6954,7 @@
     "components": "V, S, M. A dash of talc and a small amount of silver powder.",
     "duration": "1 hour",
     "casting_time": "1 action",
-    "classes": "Artificer, Bard, Wizard, Sorcerer",
+    "classes": "Wizard, Artificer, Sorcerer, Bard",
     "higher_level": false,
     "description": [
       "For the duration of the spell, you see invisible creatures and objects as if they were visible, and you can see through Ethereal. The ethereal objects and creatures appear ghostly translucent."
@@ -6978,7 +6978,7 @@
     "components": "V, S",
     "duration": "8 hours",
     "casting_time": "1 action",
-    "classes": "Bard, Wizard, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard",
     "higher_level": false,
     "description": [
       "This spell allows you to change the appearance of any number of creatures that you can see within range. You give each target you choose a new, illusory appearance. An unwilling target can make a charisma saving throw, and if it succeeds, it is unaffected by this spell.",
@@ -7005,7 +7005,7 @@
     "components": "V, S, M. A short piece of fine copper wire.",
     "duration": "1 round",
     "casting_time": "1 action",
-    "classes": "Bard, Cleric, Wizard",
+    "classes": "Wizard, Cleric, Bard",
     "higher_level": false,
     "description": [
       "You send a short message of twenty-five words or less to a creature with which you are familiar. The creature hears the message in its mind, recognizes you as the sender if it knows you, and can answer in a like manner immediately. The spell enables creatures with Intelligence scores of at least 1 to understand the meaning of your message.",
@@ -7056,7 +7056,7 @@
     "components": "V, S, M. A jade circlet worth at least 1,500 gp, which you must place on your head before you cast the spell.",
     "duration": "Up to 1 hour",
     "casting_time": "1 action",
-    "classes": "Druid, Wizard",
+    "classes": "Wizard, Druid",
     "higher_level": false,
     "description": [
       "You assume the form of a different creature for the duration. The new form can be of any creature with a challenge rating equal to your level or lower. The creature can't be a construct or an undead, and you must have seen the sort of creature at least once. You transform into an average example of that creature, one without any class levels or the Spellcasting trait.",
@@ -7085,7 +7085,7 @@
     "components": "V, S, M. A burst of mica.",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Wizard, Bard, Warlock, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard, Warlock",
     "higher_level": "**At Higher Levels:** When you cast this spell using a 3 or higher level spell slot, the damage of the spell increases by 1d8 for each level of higher spell slot 2.",
     "description": [
       "A sudden loud ringing noise, painfully intense, erupts from a point of your choice within range. Each creature in a 10-foot-radius sphere centered on that point must make a Constitution saving throw. A creature takes 3d8 thunder damage on a failed save, or half as much damage on a successful one. A creature made of inorganic material such as stone, crystal, or metal has disadvantage on this saving throw.",
@@ -7191,7 +7191,7 @@
     "components": "V, S",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Artificer, Wizard, Sorcerer",
+    "classes": "Wizard, Artificer, Sorcerer",
     "higher_level": false,
     "description": [
       "Lightning springs from your hand to deliver a shock to a creature you try to touch. Make a melee spell attack against the target. You have advantage on the attack roll if the target is wearing armor made of metal. On a hit, the target takes 1d8 lightning damage, and it can't take reactions until the start of its next turn.",
@@ -7221,7 +7221,7 @@
     "components": "V, S",
     "duration": "Up to 10 minutes",
     "casting_time": "1 action",
-    "classes": "Ranger, Bard, Cleric",
+    "classes": "Cleric, Bard, Ranger",
     "higher_level": false,
     "description": [
       "For the duration, no sound can be created within or pass through a 20-foot-radius sphere centered on a point you choose within range. Any creature or object entirely inside the sphere is immune to thunder damage, and creatures are deafened while entirely inside it.",
@@ -7246,7 +7246,7 @@
     "components": "V, S, M. A bit of fleece.",
     "duration": "Up to 10 minutes",
     "casting_time": "1 action",
-    "classes": "Bard, Wizard, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard",
     "higher_level": false,
     "description": [
       "You create the image of an object, a creature, or some other visible phenomenon that is no larger than a 15-foot cube. The image appears at a spot within range and lasts for the duration. The image is purely visual; it isn't accompanied by sound, smell, or other sensory effects.",
@@ -7299,7 +7299,7 @@
     "components": "V, S, M. A pinch of fine sand, rose petals, or a cricket.",
     "duration": "1 minute",
     "casting_time": "1 action",
-    "classes": "Bard, Wizard, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 2nd level or higher, roll an additional 2d8 for each slot level above 1st.",
     "description": [
       "This spell sends creatures into a magical slumber. Roll 5d8; the total is how many hit points of creatures this spell can affect. Creatures within 20 feet of a point you choose within range are affected in ascending order of their current hit points (ignoring unconscious creatures).",
@@ -7327,7 +7327,7 @@
     "components": "V, S, M. A pinch of dust and a few drops of water.",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Wizard, Druid, Sorcerer",
+    "classes": "Wizard, Sorcerer, Druid",
     "higher_level": false,
     "description": [
       "Until the spell ends, freezing rain and sleet fall in a 20-foot-tall cylinder with a 40-foot radius centered on a point you choose within range. The area is heavily obscured, and exposed flames in the area are doused.",
@@ -7404,7 +7404,7 @@
     "components": "V, S",
     "duration": "10 minutes",
     "casting_time": "1 action",
-    "classes": "Ranger, Bard, Druid",
+    "classes": "Bard, Druid, Ranger",
     "higher_level": false,
     "description": [
       "You gain the ability to comprehend and verbally communicate with beasts for the duration. The knowledge and awareness of many beasts is limited by their intelligence, but at a minimum, beasts can give you information about nearby locations and monsters, including whatever they can perceive or have perceived within the past day. You might be able to persuade a beast to perform a small favor for you, at the GM's discretion."
@@ -7428,7 +7428,7 @@
     "components": "V, S, M. Burning incense.",
     "duration": "10 minutes",
     "casting_time": "1 action",
-    "classes": "Bard, Cleric",
+    "classes": "Cleric, Bard",
     "higher_level": false,
     "description": [
       "You grant the semblance of life and intelligence to a corpse of your choice within range, allowing it to answer the questions you pose. The corpse must still have a mouth and can't be undead. The spell fails if the corpse was the target of this spell within the last 10 days.",
@@ -7453,7 +7453,7 @@
     "components": "V, S",
     "duration": "10 minutes",
     "casting_time": "1 action",
-    "classes": "Ranger, Bard, Druid",
+    "classes": "Bard, Druid, Ranger",
     "higher_level": false,
     "description": [
       "You imbue plants within 30 feet of you with limited sentience and animation, giving them the ability to communicate with you and follow your simple commands. You can question plants about events in the spell's area within the past day, gaining information about creatures that have passed, weather, and other circumstances.",
@@ -7481,7 +7481,7 @@
     "components": "V, S, M. A drop of bitumen and a spider.",
     "duration": "Up to 1 hour",
     "casting_time": "1 action",
-    "classes": "Wizard, Artificer, Warlock, Sorcerer",
+    "classes": "Wizard, Artificer, Sorcerer, Warlock",
     "higher_level": false,
     "description": [
       "Until the spell ends, one willing creature you touch gains the ability to move up, down, and across vertical surfaces and upside down along ceilings, while leaving its hands free. The target also gains a climbing speed equal to its walking speed."
@@ -7505,7 +7505,7 @@
     "components": "V, S, M. Seven sharp thorns or seven small twigs, each sharpened to a point.",
     "duration": "Up to 10 minutes",
     "casting_time": "1 action",
-    "classes": "Ranger, Druid",
+    "classes": "Druid, Ranger",
     "higher_level": false,
     "description": [
       "The ground in a 20-foot radius centered on a point within range twists and sprouts hard spikes and thorns. The area becomes difficult terrain for the duration. When a creature moves into or within the area, it takes 2d4 piercing damage for every 5 feet it travels.",
@@ -7590,7 +7590,7 @@
     "components": "V, S, M. A rotten egg or several skunk cabbage leaves.",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Bard, Wizard, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard",
     "higher_level": false,
     "description": [
       "You create a 20-foot-radius sphere of yellow, nauseating gas centered on a point within range. The cloud spreads around corners, and its area is heavily obscured. The cloud lingers in the air for the duration.",
@@ -7616,7 +7616,7 @@
     "components": "V, S, M. Soft clay, to be crudely worked into the desired shape for the stone object.",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Artificer, Druid, Cleric, Wizard",
+    "classes": "Wizard, Artificer, Cleric, Druid",
     "higher_level": false,
     "description": [
       "You touch a stone object of Medium size or smaller or a section of stone no more than 5 feet in any dimension and form it into any shape that suits your purpose. So, for example, you could shape a large rock into a weapon, idol, or coffer, or make a small passage through a wall, as long as the wall is less than 5 feet thick. You could also shape a stone door or its frame to seal the door shut. The object you create can have up to two hinges and a latch, but finer mechanical detail isn't possible."
@@ -7640,7 +7640,7 @@
     "components": "V, S, M. Diamond dust worth 100 gp, which the spell consumes.",
     "duration": "Up to 1 hour",
     "casting_time": "1 action",
-    "classes": "Ranger, Druid, Wizard, Sorcerer, Artificer",
+    "classes": "Wizard, Artificer, Sorcerer, Ranger, Druid",
     "higher_level": false,
     "description": [
       "This spell turns the flesh of a willing creature you touch as hard as stone. Until the spell ends, the target has resistance to nonmagical bludgeoning, piercing, and slashing damage."
@@ -7695,7 +7695,7 @@
     "components": "V, M. A snake's tongue and either a bit of honeycomb or a drop of sweet oil.",
     "duration": "Up to 8 hours",
     "casting_time": "1 action",
-    "classes": "Wizard, Bard, Warlock, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard, Warlock",
     "higher_level": false,
     "description": [
       "You suggest a course of activity (limited to a sentence or two) and magically influence a creature you can see within range that can hear and understand you. Creatures that can't be charmed are immune to this effect. The suggestion must be worded in such a manner as to make the course of action sound reasonable. Asking the creature to stab itself, throw itself onto a spear, immolate itself, or do some other obviously harmful act ends the spell.",
@@ -7722,7 +7722,7 @@
     "components": "V, S, M. A magnifying glass.",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Wizard, Druid, Sorcerer",
+    "classes": "Wizard, Sorcerer, Druid",
     "higher_level": false,
     "description": [
       "A beam of brilliant light flashes out from your hand in a 5-foot-wide, 60-foot-long line. Each creature in the line must make a constitution saving throw. On a failed save, a creature takes 6d8 radiant damage and is blinded until your next turn. On a successful save, it takes half as much damage and isn't blinded by this spell. Undead and oozes have disadvantage on this saving throw.",
@@ -7750,7 +7750,7 @@
     "components": "V, S, M. Fire and a piece of sunstone.",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Wizard, Druid, Sorcerer",
+    "classes": "Wizard, Sorcerer, Druid",
     "higher_level": false,
     "description": [
       "Brilliant sunlight flashes in a 60-foot radius centered on a point you choose within range. Each creature in that light must make a constitution saving throw. On a failed save, a creature takes 12d6 radiant damage and is blinded for 1 minute. On a successful save, it takes half as much damage and isn't blinded by this spell. Undead and oozes have disadvantage on this saving throw.",
@@ -7778,7 +7778,7 @@
     "components": "V, S, M. Mercury, phosphorus, and powdered diamond and opal with a total value of at least 1,000 gp, which the spell consumes.",
     "duration": "Until dispelled",
     "casting_time": "1 minute",
-    "classes": "Bard, Cleric, Wizard",
+    "classes": "Wizard, Cleric, Bard",
     "higher_level": false,
     "description": [
       "When you cast this spell, you inscribe a harmful glyph either on a surface (such as a section of floor, a wall, or a table) or within an object that can be closed to conceal the glyph (such as a book, a scroll, or a treasure chest). If you choose a surface, the glyph can cover an area of the surface no larger than 10 feet in diameter. If you choose an object, that object must remain in its place; if the object is moved more than 10 feet from where you cast this spell, the glyph is broken, and the spell ends without being triggered.",
@@ -7868,7 +7868,7 @@
     "components": "V",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Bard, Wizard, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard",
     "higher_level": false,
     "description": [
       "This spell instantly transports you and up to eight willing creatures of your choice that you can see within range, or a single object that you can see within range, to a destination you select. If you target an object, it must be able to fit entirely inside a 10-foot cube, and it can't be held or carried by an unwilling creature.",
@@ -7913,7 +7913,7 @@
     "components": "V, M. Rare chalks and inks infused with precious gems with 50 gp, which the spell consumes.",
     "duration": "1 round",
     "casting_time": "1 minute",
-    "classes": "Bard, Wizard, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard",
     "higher_level": false,
     "description": [
       "As you cast the spell, you draw a 10-foot-diameter circle on the ground inscribed with sigils that link your location to a permanent teleportation circle of your choice whose sigil sequence you know and that is on the same plane of existence as you. A shimmering portal opens within the circle you drew and remains open until the end of your next turn. Any creature that enters the portal instantly appears within 5 feet of the destination circle or in the nearest unoccupied space if that space is occupied.",
@@ -7970,7 +7970,7 @@
     "components": "V, S",
     "duration": "Instantaneous",
     "casting_time": "1 action",
-    "classes": "Wizard, Bard, Druid, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard, Druid",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 2nd level or higher, the damage increases by 1d8 for each slot level above 1st.",
     "description": [
       "A wave of thunderous force sweeps out from you. Each creature in a 15-foot cube originating from you must make a constitution saving throw. On a failed save, a creature takes 2d8 thunder damage and is pushed 10 feet away from you. On a successful save, the creature takes half as much damage and isn't pushed.",
@@ -8056,7 +8056,7 @@
     "components": "V, M. A small clay model of a ziggurat.",
     "duration": "1 hour",
     "casting_time": "1 action",
-    "classes": "Bard, Cleric, Wizard, Sorcerer, Warlock",
+    "classes": "Wizard, Sorcerer, Bard, Warlock, Cleric",
     "higher_level": false,
     "description": [
       "This spell grants the creature you touch the ability to understand any spoken language it hears. Moreover, when the target speaks, any creature that knows at least one language and can hear the target understands what it says."
@@ -8104,7 +8104,7 @@
     "components": "V, S",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Ranger, Druid",
+    "classes": "Druid, Ranger",
     "higher_level": false,
     "description": [
       "You gain the ability to enter a tree and move from inside it to inside another tree of the same kind within 500 feet. Both trees must be living and at least the same size as you. You must use 5 feet of movement to enter a tree. You instantly know the location of all other trees of the same kind within 500 feet and, as part of the move used to enter the tree, can either pass into one of those trees or step out of the tree you're in. You appear in a spot of your choice within 5 feet of the destination tree, using another 5 feet of movement. If you have no movement left, you appear within 5 feet of the tree you entered.",
@@ -8129,7 +8129,7 @@
     "components": "V, S, M. A drop of mercury, a dollop of gum arabic, and a wisp of smoke.",
     "duration": "Up to 1 hour",
     "casting_time": "1 action",
-    "classes": "Bard, Warlock, Wizard",
+    "classes": "Wizard, Bard, Warlock",
     "higher_level": false,
     "description": [
       "Choose one creature or nonmagical object that you can see within range. You transform the creature into a different creature, the creature into an object, or the object into a creature (the object must be neither worn nor carried by another creature). The transformation lasts for the duration, or until the target drops to 0 hit points or dies. If you concentrate on this spell for the full duration, the transformation becomes permanent.",
@@ -8161,7 +8161,7 @@
     "components": "V, S, M. A sprinkle of holy water and diamonds worth at least 25,000gp, which the spell consumes.",
     "duration": "Instantaneous",
     "casting_time": "1 hour",
-    "classes": "Druid, Cleric",
+    "classes": "Cleric, Druid",
     "higher_level": false,
     "description": [
       "You touch a creature that has been dead for no longer than 200 years and that died for any reason except old age. If the creature's soul is free and willing, the creature is restored to life with all its hit points.",
@@ -8187,7 +8187,7 @@
     "components": "V, S, M. An ointment for the eyes that costs 25gp; is made from mushroom powder, saffron, and fat; and is consumed by the spell.",
     "duration": "1 hour",
     "casting_time": "1 action",
-    "classes": "Bard, Cleric, Wizard, Sorcerer, Warlock",
+    "classes": "Wizard, Sorcerer, Bard, Warlock, Cleric",
     "higher_level": false,
     "description": [
       "This spell gives the willing creature you touch the ability to see things as they actually are. For the duration, the creature has truesight, notices secret doors hidden by magic, and can see into the Ethereal Plane, all out to a range of 120 feet."
@@ -8211,7 +8211,7 @@
     "components": "S",
     "duration": "Up to 1 round",
     "casting_time": "1 action",
-    "classes": "Wizard, Bard, Warlock, Sorcerer",
+    "classes": "Wizard, Sorcerer, Bard, Warlock",
     "higher_level": false,
     "description": [
       "You extend your hand and point a finger at a target in range. Your magic grants you a brief insight into the target's defenses. On your next turn, you gain advantage on your first attack roll against the target, provided that this spell hasn't ended."
@@ -8235,7 +8235,7 @@
     "components": "V, S, M. A piece of string and a bit of wood.",
     "duration": "1 hour",
     "casting_time": "1 action",
-    "classes": "Bard, Warlock, Wizard",
+    "classes": "Wizard, Bard, Warlock",
     "higher_level": false,
     "description": [
       "This spell creates an invisible, mindless, shapeless force that performs simple tasks at your command until the spell ends. The servant springs into existence in an unoccupied space on the ground within range. It has AC 10, 1 hit point, and a Strength of 2, and it can't attack. If it drops to 0 hit points, the spell ends.",
@@ -8261,7 +8261,7 @@
     "components": "V, S",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Warlock, Wizard",
+    "classes": "Wizard, Warlock",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 4th level or higher, the damage increases by 1d6 for each slot level above 3rd.",
     "description": [
       "The touch of your shadow-wreathed hand can siphon life force from others to heal your wounds. Make a melee spell attack against a creature within your reach. On a hit, the target takes 3d6 necrotic damage, and you regain hit points equal to half the amount of necrotic damage dealt. Until the spell ends, you can make the attack again on each of your turns as an action."
@@ -8323,7 +8323,7 @@
     "components": "V, S, M. A small piece of phosphorus.",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Wizard, Druid, Sorcerer",
+    "classes": "Wizard, Sorcerer, Druid",
     "higher_level": "**At Higher Levels:** When you cast this spell using a spell slot of 5th level or higher, the damage increases by 1d8 for each slot level above 4th.",
     "description": [
       "You create a wall of fire on a solid surface within range. You can make the wall up to 60 feet long, 20 feet high, and 1 foot thick, or a ringed wall up to 20 feet in diameter, 20 feet high, and 1 foot thick. The wall is opaque and lasts for the duration.",
@@ -8408,7 +8408,7 @@
     "components": "V, S, M. A small block of granite.",
     "duration": "Up to 10 minutes",
     "casting_time": "1 action",
-    "classes": "Wizard, Artificer, Druid, Sorcerer",
+    "classes": "Wizard, Artificer, Sorcerer, Druid",
     "higher_level": false,
     "description": [
       "A nonmagical wall of solid stone springs into existence at a point you choose within range. The wall is 6 inches thick and is composed of ten 10-foot-by-10-foot panels. Each panel must be contiguous with at least one other panel. Alternatively, you can create 10-foot-by-20-foot panels that are only 3 inches thick.",
@@ -8494,7 +8494,7 @@
     "components": "V, S, M. A short piece of reed or straw.",
     "duration": "24 hours",
     "casting_time": "1 action",
-    "classes": "Ranger, Druid, Wizard, Sorcerer, Artificer",
+    "classes": "Wizard, Artificer, Sorcerer, Ranger, Druid",
     "higher_level": false,
     "description": [
       "This spell gives a maximum of ten willing creatures within range and you can see, the ability to breathe underwater until the end of its term. Affected creatures also retain their normal breathing pattern."
@@ -8518,7 +8518,7 @@
     "components": "V, S, M. A piece of cork.",
     "duration": "1 hour",
     "casting_time": "1 action",
-    "classes": "Ranger, Druid, Cleric, Sorcerer, Artificer",
+    "classes": "Artificer, Sorcerer, Ranger, Cleric, Druid",
     "higher_level": false,
     "description": [
       "This spell grants the ability to move across any liquid surface--such as water, acid, mud, snow, quicksand, or lava--as if it were harmless solid ground (creatures crossing molten lava can still take damage from the heat). Up to ten willing creatures you can see within range gain this ability for the duration.",
@@ -8543,7 +8543,7 @@
     "components": "V, S, M. A bit of spiderweb.",
     "duration": "Up to 1 hour",
     "casting_time": "1 action",
-    "classes": "Artificer, Wizard, Sorcerer",
+    "classes": "Wizard, Artificer, Sorcerer",
     "higher_level": false,
     "description": [
       "You conjure a mass of thick, sticky webbing at a point of your choice within range. The webs fill a 20-foot cube from that point for the duration. The webs are difficult terrain and lightly obscure their area.",
@@ -8620,7 +8620,7 @@
     "components": "V, S, M. A tiny fan and a feather of exotic origin.",
     "duration": "Up to 1 minute",
     "casting_time": "1 action",
-    "classes": "Ranger, Druid",
+    "classes": "Druid, Ranger",
     "higher_level": false,
     "description": [
       "A wall of strong wind rises from the ground at a point you choose within range. You can make the wall up to 50 feet long, 15 feet high, and 1 foot thick. You can shape the wall in any way you choose so long as it makes one continuous path along the ground. The wall lasts for the duration.",
@@ -8706,7 +8706,7 @@
     "components": "V, S",
     "duration": "10 minutes",
     "casting_time": "1 action",
-    "classes": "Paladin, Bard, Cleric",
+    "classes": "Paladin, Cleric, Bard",
     "higher_level": false,
     "description": [
       "You create a magical zone that guards against deception in a 15-foot-radius sphere centered on a point of your choice within range. Until the spell ends, a creature that enters the spell's area for the first time on a turn or starts its turn there must make a Charisma saving throw. On a failed save, a creature can't speak a deliberate lie while in the radius. You know whether each creature succeeds or fails on its saving throw.",

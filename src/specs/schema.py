@@ -51,9 +51,7 @@ class DerivedField(SpellField):
         if source_text is None:
             return []
         source_str = (
-            " ".join(" ".join(source_text).split())
-            if isinstance(source_text, list)
-            else source_text
+            (" ".join(source_text)) if isinstance(source_text, list) else source_text
         )
         matches: list[str] = []
         # for fields that require additional processing, with specific rules
@@ -61,7 +59,9 @@ class DerivedField(SpellField):
             results: list = self.process_patterns(source_str)
             # i.e., let fields decide how and what to return, as long as it's not False
             if results is not None and results is not False:
-                matches.append(results)
+                matches.extend(results) if isinstance(
+                    results, list
+                ) else matches.append(results)
         else:
             patterns: list = [
                 (

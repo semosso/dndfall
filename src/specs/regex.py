@@ -1,6 +1,6 @@
 import src.specs.units as units
 
-# common aliases used throughout patterns
+## common aliases used throughout patterns
 foot_aliases = "|".join(units.LENGTH_UNIT["foot"]["aliases"])
 mile_aliases = "|".join(units.LENGTH_UNIT["mile"]["aliases"])
 rad_aliases = "|".join(units.LENGTH_UNIT["rad"]["aliases"])
@@ -35,18 +35,19 @@ currency_aliases = "|".join(
     )
 )
 
-# regex patterns for each field
+## regex patterns for each field
 UPCAST_PATTERNS = patterns = {
     r"\bwhen you reach \w+\s+level(s)?",
     r"\busing a spell slot of \w+ level or higher",
     r"\bat higher levels",
 }
 
-DICE_AMOUNT_PATTERNS = r"""(?x)
+DAMAGE_PATTERNS = rf"""(?x)
         \b(?P<number>[0-9]+)
         (?P<die>d[0-9]+).\s*
         (?:\+\s*
-        (?P<fixed>[0-9]+).)?\s*\w+\s*damage"""
+        (?P<fixed>[0-9]+).)?\s*
+        (?P<type>{"|".join(units.DAMAGE_TYPES)})\s*damage"""
 
 GP_COST_PATTERNS = rf"""(?x)
     \b(?P<number>[0-9,]+)\s*
@@ -132,10 +133,10 @@ AOE_PATTERNS = {
         """,
 }
 
-DAMAGE_TYPE_PATTERNS = {
-    r"\b[0-9]+\s?d\s?[0-9]+.\s?(\+\s?[0-9]+.)?\s?{value} damage\b",
-    r"\btake(s)? {value} damage\b",
-}
+# DAMAGE_TYPE_PATTERNS = {
+#     r"\b[0-9]+\s?d\s?[0-9]+.\s?(\+\s?[0-9]+.)?\s?{value} damage\b",
+#     r"\btake(s)? {value} damage\b",
+# }
 
 SAVING_THROW_PATTERNS = {
     r"\b(make(s)?|succeed(s)? on|fail(s)?)\s+(?!all\s).*?\b{value} saving throw(s)?",

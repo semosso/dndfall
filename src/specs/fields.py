@@ -7,7 +7,7 @@ from src.specs.schema import DerivedField
 
 
 @dataclass
-class UpcastField(DerivedField):
+class UpcastableField(DerivedField):
     patterns = regex.UPCAST_PATTERNS
 
     compiled_patterns = [
@@ -23,26 +23,48 @@ class UpcastField(DerivedField):
 
 
 @dataclass
-class DiceAmountField(DerivedField):
-    compiled_patterns = re.compile(regex.DICE_AMOUNT_PATTERNS, flags=re.IGNORECASE)
+class DamageField(DerivedField):
+    compiled_patterns = re.compile(regex.DAMAGE_PATTERNS, flags=re.IGNORECASE)
 
-    # see if I broke this
     def process_patterns(self, source_text):
-        self.number, self.die, self.fixed = "", "", ""
-        result = self.compiled_patterns.search(string=source_text)
-        if result:
-            groups = result.groupdict()
-            if "number" in groups:
-                self.number = groups.get("number") or ""
-                self.die = groups.get("die") or ""
-                self.fixed = groups.get("fixed") or "0"
-
-            return self.get_values()
+        self.damage_results = []
+        for match in self.compiled_patterns.finditer(string=source_text):
+            groups = match.groupdict()
+            result = {
+                "number": groups.get("number") or 0,
+                "die": groups.get("die") or 0,
+                "fixed": groups.get("fixed") or 0,
+                "type": groups.get("type") or None,
+            }
+            self.damage_results.append(result)
+        return self.get_values()
 
     def get_values(self):
-        if self.modifier:
-            return units.DiceRoll.max_damage(self.number, self.die) + int(self.fixed)
-        return units.DiceRoll.avg_damage(self.number, self.die) + int(self.fixed)
+        values = []
+        if self.damage_results:
+            for result in self.damage_results:
+                value = {
+                    "damage_type": result["type"],
+                    "damage_amount": units.DiceRoll.avg_roll(
+                        result["number"], result["die"]
+                    )
+                    + int(result["fixed"]),
+                    "damage_maximum": units.DiceRoll.max_roll(
+                        result["number"], result["die"]
+                    )
+                    + int(result["fixed"]),
+                }
+                values.append(value)
+            return values
+        return [
+            {
+                "damage_type": None,
+                "damage_amount": 0,
+                "damage_maximum": 0,
+                "damage_at_slot_level": 0,
+                "damage_at_character_level": 0,
+            }
+        ]
 
 
 @dataclass
