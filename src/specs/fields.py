@@ -1,13 +1,13 @@
-from dataclasses import dataclass
 import re
+from dataclasses import dataclass
 
 import src.specs.units as units
 import src.specs.regex as regex
-from src.specs.schema import DerivedField
+from src.specs.schema import TagField
 
 
 @dataclass
-class UpcastableField(DerivedField):
+class UpcastableField(TagField):
     patterns = regex.UPCAST_PATTERNS
 
     compiled_patterns = [
@@ -23,7 +23,7 @@ class UpcastableField(DerivedField):
 
 
 @dataclass
-class DamageField(DerivedField):
+class DamageField(TagField):
     compiled_patterns = re.compile(regex.DAMAGE_PATTERNS, flags=re.IGNORECASE)
 
     def process_patterns(self, source_text):
@@ -68,7 +68,7 @@ class DamageField(DerivedField):
 
 
 @dataclass
-class GpCostField(DerivedField):
+class GpCostField(TagField):
     compiled_patterns = re.compile(pattern=regex.GP_COST_PATTERNS, flags=re.IGNORECASE)
 
     def process_patterns(self, source_text):
@@ -90,7 +90,7 @@ class GpCostField(DerivedField):
 
 
 @dataclass
-class RangeField(DerivedField):
+class RangeField(TagField):
     patterns = regex.RANGE_PATTERNS
 
     compiled_patterns = [
@@ -124,7 +124,7 @@ class RangeField(DerivedField):
 
 
 @dataclass
-class DurationField(DerivedField):
+class DurationField(TagField):
     patterns = regex.DURATION_PATTERNS
 
     compiled_patterns = [
@@ -158,7 +158,7 @@ class DurationField(DerivedField):
 
 
 @dataclass
-class CastingTimeField(DerivedField):
+class CastingTimeField(TagField):
     compiled_patterns = re.compile(regex.CASTING_TIME_PATTERNS, flags=re.IGNORECASE)
 
     def process_patterns(self, source_text):
@@ -180,7 +180,7 @@ class CastingTimeField(DerivedField):
 
 
 @dataclass
-class AreaOfEffectField(DerivedField):
+class AreaOfEffectField(TagField):
     patterns = regex.AOE_PATTERNS
 
     compiled_patterns = [

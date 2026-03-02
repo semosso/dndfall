@@ -2,7 +2,7 @@ import json
 from src.specs import DERIVED_FIELDS
 
 
-## source materials and helper functions
+## helper functions
 
 spell_schools = {
     school[0]: school
@@ -35,6 +35,7 @@ def flatten_classes(spell: dict, class_source=class_source) -> set:
     return ", ".join(classes_)
 
 
+# description extraction
 def flatten_description(spell):
     description = []
     for item in spell.get("entries"):
@@ -47,6 +48,7 @@ def flatten_description(spell):
     return description
 
 
+# components extractions
 def flatten_components(spell):
     if isinstance(spell["components"], dict):
         components: str = ", ".join(spell["components"].keys())
@@ -60,8 +62,6 @@ def flatten_components(spell):
 
 
 ## SRD JSON handling
-
-
 # first pass, normalizing SRD json from raw, no tag addition yet
 def normalizing_SRD_json(database: list):
     SRD_list = []
@@ -115,8 +115,6 @@ with open(file="src/data/NORMALIZED_srd_spells.json", mode="w") as normalized_SR
 
 
 ## non-SRD JSON handling
-
-
 # removing SRD spells from non-SRD spell normalization process
 def eliminating_SRD_duplicates():
     with open(file="src/data/RAW_non_srd_spells.json", mode="r") as non_SRD_source:
@@ -184,15 +182,17 @@ with open(
 
 
 ## tagging
-
-
 def extract_tags(
     spell: dict, derived_f: list = DERIVED_FIELDS
 ) -> dict[str, list[str] | bool]:
     tags: dict[str, list[str] | bool] = {}
     for field in derived_f:
         matches: list = []
-        matches.extend(field.derive_tags(spell))
+        source = spell.get(field.source, None)
+        if source is None:
+            return None
+        source_text = (" ".join(source)) if isinstance(source, list) else source
+        matches.extend(field.process_patterns(source_text))
         tags[field.name] = matches
     return tags
 

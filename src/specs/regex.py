@@ -42,12 +42,15 @@ UPCAST_PATTERNS = patterns = {
     r"\bat higher levels",
 }
 
-DAMAGE_PATTERNS = rf"""(?x)
+DAMAGE_PATTERNS = (
+    rf"""(?x)
         \b(?P<number>[0-9]+)
         (?P<die>d[0-9]+).\s*
         (?:\+\s*
         (?P<fixed>[0-9]+).)?\s*
-        (?P<type>{"|".join(units.DAMAGE_TYPES)})\s*damage"""
+        (?P<type>{"|".join(units.DAMAGE_TYPES)})\s*damage""",
+    rf"\btake(s)? {'|'.join(units.DAMAGE_TYPES)} damage\b",  # figure out this 2nd case
+)
 
 GP_COST_PATTERNS = rf"""(?x)
     \b(?P<number>[0-9,]+)\s*
@@ -132,11 +135,6 @@ AOE_PATTERNS = {
     (?:\s+long)?
         """,
 }
-
-# DAMAGE_TYPE_PATTERNS = {
-#     r"\b[0-9]+\s?d\s?[0-9]+.\s?(\+\s?[0-9]+.)?\s?{value} damage\b",
-#     r"\btake(s)? {value} damage\b",
-# }
 
 SAVING_THROW_PATTERNS = {
     r"\b(make(s)?|succeed(s)? on|fail(s)?)\s+(?!all\s).*?\b{value} saving throw(s)?",

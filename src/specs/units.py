@@ -101,24 +101,24 @@ CURRENCY_UNIT: dict = {
     },
 }
 
-DICE_UNITS: dict = {
-    "d4": {"average": 2.5, "max": 4},
-    "d6": {"average": 3.5, "max": 6},
-    "d8": {"average": 4.5, "max": 8},
-    "d10": {"average": 5.5, "max": 10},
-    "d12": {"average": 6.5, "max": 12},
-    "d20": {"average": 10.5, "max": 20},
-}
-
 
 class DiceRoll:
-    @staticmethod
-    def avg_roll(number, die):
-        return DICE_UNITS[die]["average"] * int(number)
+    DICE_UNITS: dict = {
+        "d4": {"average": 2.5, "max": 4},
+        "d6": {"average": 3.5, "max": 6},
+        "d8": {"average": 4.5, "max": 8},
+        "d10": {"average": 5.5, "max": 10},
+        "d12": {"average": 6.5, "max": 12},
+        "d20": {"average": 10.5, "max": 20},
+    }
 
     @staticmethod
-    def max_roll(number, die):
-        return DICE_UNITS[die]["max"] * int(number)
+    def avg_roll(cls, number, die):
+        return cls.DICE_UNITS[die]["average"] * int(number)
+
+    @staticmethod
+    def max_roll(cls, number, die):
+        return cls.DICE_UNITS[die]["max"] * int(number)
 
 
 def find_ratio(value, categories):
