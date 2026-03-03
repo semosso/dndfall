@@ -10,24 +10,26 @@ class NormalizedSpell:
     concentration: bool
     ritual: bool
     school: str
-    range_: str
+    range: str
     components: str
     duration: str
     casting_time: str
     classes: list[str]
     higher_level: str | bool
+    higher_description: str | bool
     description: list
     url: str
     srd_flag: bool
-    tags: dict[str, list[str] | bool] = field(init=False)
+    tags: dict[str, list[str] | bool]
 
 
 # field structure
 @dataclass(kw_only=True)
 class TagField:
-    source: str | None
-    patterns: set[str] = field(default_factory=set)
-    values: set[str | bool] | range = field(default_factory=set)
+    name: str
+    source: str
+    patterns: str | set[str] = field(default_factory=set)
+    values: set[str | bool] = field(default_factory=set)
 
     def process_patterns(self, source_text):
         compiled_patterns: list = [
@@ -46,7 +48,7 @@ class TagField:
         for value, regex in compiled_patterns:
             if regex.search(string=source_text):
                 matches.append(value)
-        return matches
+        return matches if matches else [None]
 
     def get_values(self, *args, **kwargs):
         pass

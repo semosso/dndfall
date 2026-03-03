@@ -9,7 +9,6 @@ text_length_aliases = "|".join(
     units.LENGTH_UNIT["self"]["aliases"] + units.LENGTH_UNIT["touch"]["aliases"]
 )
 shapes = "|".join(units.SHAPE_UNIT["aliases"])
-
 time_aliases = "|".join(
     sorted(
         units.TIME_UNIT["second"]["aliases"]
@@ -36,21 +35,13 @@ currency_aliases = "|".join(
 )
 
 ## regex patterns for each field
-UPCAST_PATTERNS = patterns = {
-    r"\bwhen you reach \w+\s+level(s)?",
-    r"\busing a spell slot of \w+ level or higher",
-    r"\bat higher levels",
-}
 
-DAMAGE_PATTERNS = (
-    rf"""(?x)
+DAMAGE_PATTERNS = rf"""(?x)
         \b(?P<number>[0-9]+)
         (?P<die>d[0-9]+).\s*
         (?:\+\s*
         (?P<fixed>[0-9]+).)?\s*
-        (?P<type>{"|".join(units.DAMAGE_TYPES)})\s*damage""",
-    rf"\btake(s)? {'|'.join(units.DAMAGE_TYPES)} damage\b",  # figure out this 2nd case
-)
+        (?P<type>{"|".join(units.DAMAGE_TYPES)})\s*damage"""
 
 GP_COST_PATTERNS = rf"""(?x)
     \b(?P<number>[0-9,]+)\s*
@@ -142,7 +133,3 @@ SAVING_THROW_PATTERNS = {
 }
 
 CONDITION_PATTERNS = {r"\b{value}\b"}
-
-CLASS_PATTERNS = {r"\b{value}\b"}
-
-SCHOOL_PATTERNS = {r"\b{value}\b"}

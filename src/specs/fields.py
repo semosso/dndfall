@@ -7,27 +7,11 @@ from src.specs.schema import TagField
 
 
 @dataclass
-class UpcastableField(TagField):
-    patterns = regex.UPCAST_PATTERNS
-
-    compiled_patterns = [
-        re.compile(pattern, flags=re.IGNORECASE) for pattern in patterns
-    ]
-
-    def process_patterns(self, source_text):
-        for pattern in self.compiled_patterns:
-            result = pattern.search(source_text)
-            if result:
-                return True
-        return False
-
-
-@dataclass
 class DamageField(TagField):
     compiled_patterns = re.compile(regex.DAMAGE_PATTERNS, flags=re.IGNORECASE)
 
     def process_patterns(self, source_text):
-        self.damage_results = []
+        self.results = []
         for match in self.compiled_patterns.finditer(string=source_text):
             groups = match.groupdict()
             result = {
@@ -36,35 +20,32 @@ class DamageField(TagField):
                 "fixed": groups.get("fixed") or 0,
                 "type": groups.get("type") or None,
             }
-            self.damage_results.append(result)
+            self.results.append(result)
         return self.get_values()
 
     def get_values(self):
         values = []
-        if self.damage_results:
-            for result in self.damage_results:
+        if self.results:
+            for result in self.results:
                 value = {
                     "damage_type": result["type"],
-                    "damage_amount": units.DiceRoll.avg_roll(
-                        result["number"], result["die"]
+                    "damage_average": units.DiceRoll.avg_roll(
+                        units.DiceRoll, result["number"], result["die"]
                     )
                     + int(result["fixed"]),
                     "damage_maximum": units.DiceRoll.max_roll(
-                        result["number"], result["die"]
+                        units.DiceRoll, result["number"], result["die"]
                     )
                     + int(result["fixed"]),
                 }
                 values.append(value)
+            # return values[0] if len(values) == 1 else values
             return values
-        return [
-            {
-                "damage_type": None,
-                "damage_amount": 0,
-                "damage_maximum": 0,
-                "damage_at_slot_level": 0,
-                "damage_at_character_level": 0,
-            }
-        ]
+        return {
+            "damage_instances": [None],
+            "damage_at_slot_level": None,
+            "damage_at_character_level": None,
+        }
 
 
 @dataclass
@@ -79,7 +60,8 @@ class GpCostField(TagField):
             if "number" in groups:
                 self.number = groups.get("number").replace(",", "") or 0
                 self.unit = groups.get("unit") or ""
-        return self.get_values()
+            return self.get_values()
+        return None
 
     def get_values(self):
         unit_ratio = units.find_ratio(
@@ -121,6 +103,7 @@ class RangeField(TagField):
             return int(self.number) * text_ratio
         if self.text:
             return text_ratio
+        return None
 
 
 @dataclass
@@ -155,6 +138,7 @@ class DurationField(TagField):
             return int(self.number) * text_ratio
         if self.text:
             return text_ratio
+        return None
 
 
 @dataclass
@@ -167,7 +151,8 @@ class CastingTimeField(TagField):
         if result:
             self.number = result.group(1)
             self.unit = result.group(2)
-        return self.get_values()
+            return self.get_values()
+        return None
 
     def get_values(self):
         if not self.number:
@@ -181,45 +166,43 @@ class CastingTimeField(TagField):
 
 @dataclass
 class AreaOfEffectField(TagField):
-    patterns = regex.AOE_PATTERNS
-
     compiled_patterns = [
-        re.compile(pattern, flags=re.IGNORECASE) for pattern in patterns
+        re.compile(pattern, flags=re.IGNORECASE) for pattern in regex.AOE_PATTERNS
     ]
 
     def process_patterns(self, source_text):
-        self.number, self.unit, self.rad_diam, self.shape = "", "", "", ""
-
+        self.results = []
         for pattern in self.compiled_patterns:
-            result = re.search(pattern=pattern, string=source_text)
-            if result:
-                groups = result.groupdict()
-                self.number = groups.get("number") or ""
-                self.number2 = groups.get("number2") or ""
-                self.unit = groups.get("unit") or ""
-                self.rad_diam = groups.get("rad_diam") or ""
-                self.shape = groups.get("shape") or ""
-                break
+            matches = pattern.finditer(string=source_text)
+            for match in matches:
+                groups = match.groupdict()
+                result = {
+                    "number": groups.get("number") or "",
+                    "number2": groups.get("number2") or "1",
+                    "unit": groups.get("unit") or "",
+                    "rad_diam": groups.get("rad_diam") or "",
+                    "shape": groups.get("shape") or "",
+                }
+                self.results.append(result)
         return self.get_values()
 
     def get_values(self):
-        if not self.number:
-            return None
-        if self.modifier:
-            if self.shape == "wall":
-                return "line"
-            return self.shape
-        else:
-            unit_ratio = units.find_ratio(self.unit, ["foot", "mile"])
-            rad_diam_ratio = (
-                units.find_ratio(self.rad_diam, ["rad", "diam"])
-                if self.rad_diam
-                else 1.0
-            )
-
-            # for calculating X by X blocks or areas
-            if self.number2:
-                area = int(self.number) * int(self.number2)
-                return area * unit_ratio * rad_diam_ratio
-
-            return int(self.number) * unit_ratio * rad_diam_ratio
+        values = []
+        if self.results:
+            for result in self.results:
+                value = {
+                    "aoe_size": int(result["number"])
+                    * int(result["number2"])
+                    * units.find_ratio(result["unit"], ["foot", "mile"])
+                    if result["unit"]
+                    else 1 * units.find_ratio(result["rad_diam"], ["rad", "diam"])
+                    if result["rad_diam"]
+                    else 1,
+                    "aoe_shape": "line"
+                    if result.get("shape") == "wall"
+                    else result.get("shape", None),
+                }
+                values.append(value)
+            # return values[0] if len(values) == 1 else values
+            return values
+        return [{"aoe_size": None, "aoe_shape": None}]

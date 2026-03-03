@@ -61,6 +61,22 @@ def flatten_components(spell):
     return components.upper() + m_text
 
 
+def flatten_higher_level(spell):
+    top_level_sources = {
+        "higher_level",
+        "entriesHigherLevel",
+        "scalingLevelDice",
+    }
+    for source in top_level_sources:
+        if spell.get(source):
+            return True
+    nested_sources = {"damage_at_slot_level", "damage_at_character_level"}
+    for source in nested_sources:
+        if spell.get("damage", {}).get(source):
+            return True
+    return False
+
+
 ## SRD JSON handling
 # first pass, normalizing SRD json from raw, no tag addition yet
 def normalizing_SRD_json(database: list):
@@ -77,13 +93,13 @@ def normalizing_SRD_json(database: list):
             if isinstance(SRD_sp["school"], dict)
             else SRD_sp["school"],
             "range": SRD_sp["range"],
-            # I don´t think there are any components not in list format
             "components": flatten_components(SRD_sp),
             "duration": SRD_sp["duration"],
             "casting_time": SRD_sp["casting_time"],
             "classes": flatten_classes(SRD_sp),
-            "higher_level": f"**At Higher Levels:** {' '.join(' '.join(SRD_sp['higher_level']).split())}"
-            if isinstance(SRD_sp["higher_level"], list) and SRD_sp["higher_level"]
+            "higher_level": flatten_higher_level(SRD_sp),
+            "higher_description": " ".join(" ".join(SRD_sp["higher_level"]).split())
+            if SRD_sp.get("higher_level")
             else False,
             "description": SRD_sp["desc"],
             "url": "https://www.dnd5eapi.co" + SRD_sp["url"],
@@ -92,10 +108,15 @@ def normalizing_SRD_json(database: list):
                 "damage": {
                     "damage_at_slot_level": SRD_sp.get("damage", {}).get(
                         "damage_at_slot_level", {}
-                    ),
+                    )
+                    if SRD_sp.get("damage", {}).get("damage_at_slot_level", {})
+                    else None,
                     "damage_at_character_level": SRD_sp.get("damage", {}).get(
                         "damage_at_character_level", {}
-                    ),
+                    )
+                    if SRD_sp.get("damage", {}).get("damage_at_character_level", {})
+                    else None,
+                    "damage_instances": [],
                 }
             },
         }
@@ -108,10 +129,6 @@ with open(file="src/data/RAW_srd_spells.json", mode="r") as SRD_source:
     raw_SRD: list[dict] = json.load(SRD_source)
 
 SRD_spell_list = normalizing_SRD_json(raw_SRD)
-
-# writing the normalized SRD JSON
-with open(file="src/data/NORMALIZED_srd_spells.json", mode="w") as normalized_SRD:
-    json.dump(SRD_spell_list, fp=normalized_SRD, indent=2)
 
 
 ## non-SRD JSON handling
@@ -133,8 +150,6 @@ def normalizing_non_SRD_json(database: list):
     non_SRD_spell = {}
 
     for non_SRD_sp in database:
-        # m = non_SRD_sp["components"].get("m", "")
-        # m_text = f". {m.get('text', '')}" if isinstance(m, dict) else ""
         non_SRD_spell = {
             "name": non_SRD_sp["name"],
             "level": non_SRD_sp["level"],
@@ -146,7 +161,6 @@ def normalizing_non_SRD_json(database: list):
             "range": str(non_SRD_sp["range"]["distance"].get("amount", ""))
             + " "
             + non_SRD_sp["range"]["distance"].get("type", ""),
-            # "components": ", ".join(non_SRD_sp["components"].keys()) + m_text,
             "components": flatten_components(non_SRD_sp),
             "duration": "Instantaneous"
             if non_SRD_sp["duration"][0]["type"] == "instant"
@@ -157,7 +171,8 @@ def normalizing_non_SRD_json(database: list):
             + " "
             + non_SRD_sp["time"][0].get("unit", ""),
             "classes": flatten_classes(non_SRD_sp),
-            "higher_level": " ".join(
+            "higher_level": flatten_higher_level(non_SRD_sp),
+            "higher_description": " ".join(
                 non_SRD_sp["entriesHigherLevel"][0]["entries"]
             ).strip()
             if non_SRD_sp.get("entriesHigherLevel")
@@ -165,7 +180,17 @@ def normalizing_non_SRD_json(database: list):
             "description": flatten_description(non_SRD_sp),
             "url": f"https://www.dndbeyond.com/spells?filter-search={'+'.join(non_SRD_sp['name'].lower().split())}",
             "srd_flag": False,
-            "tags": {"damage": non_SRD_sp.get("damage", {})},
+            "tags": {
+                "damage": {
+                    "damage_at_slot_level": "TBD"
+                    if non_SRD_sp.get("entriesHigherLevel")
+                    else None,
+                    "damage_at_character_level": non_SRD_sp.get("scalingLevelDice", {})
+                    if non_SRD_sp.get("scalingLevelDice")
+                    else None,
+                    "damage_instances": [],
+                }
+            },
         }
         non_SRD_list.append(non_SRD_spell)
 
@@ -174,46 +199,26 @@ def normalizing_non_SRD_json(database: list):
 
 non_SRD_spell_list = normalizing_non_SRD_json(eliminating_SRD_duplicates())
 
-# writing the normalized non-SRD JSON
-with open(
-    file="src/data/NORMALIZED_non_srd_spells.json", mode="w"
-) as normalized_non_SRD:
-    json.dump(non_SRD_spell_list, fp=normalized_non_SRD, indent=2)
-
 
 ## tagging
 def extract_tags(
     spell: dict, derived_f: list = DERIVED_FIELDS
-) -> dict[str, list[str] | bool]:
-    tags: dict[str, list[str] | bool] = {}
+) -> dict[str, dict | list | float | None]:
+    tags: dict[str, dict | list | float | None] = {}
     for field in derived_f:
-        matches: list = []
         source = spell.get(field.source, None)
-        if source is None:
-            return None
         source_text = (" ".join(source)) if isinstance(source, list) else source
-        matches.extend(field.process_patterns(source_text))
-        tags[field.name] = matches
+        result = field.process_patterns(source_text)
+        tags[field.name] = result
     return tags
 
 
 def add_tags_to_JSON(spell, spell_tags):
-    # k, v = spell_tags.items()
     for k, v in spell_tags.items():
         if k == "damage":
-            spell["tags"]["damage"][k] = v
+            spell["tags"]["damage"]["damage_instances"] = spell_tags[k]
         else:
             spell["tags"][k] = v
-        if k in {
-            "gp_cost",
-            "range",
-            "duration",
-            "casting_time",
-        }:
-            spell["tags"][k] = v[0] if len(v) == 1 else 0.0
-            # upcastabl
-        if k in {"school", "aoe_size", "aoe_shape", "upcastable"}:
-            spell["tags"][k] = v[0] if len(v) == 1 else None
 
 
 spells = SRD_spell_list + non_SRD_spell_list
@@ -221,6 +226,8 @@ sorted_list = sorted(spells, key=lambda x: x["name"])
 
 for spell in sorted_list:
     add_tags_to_JSON(spell, extract_tags(spell))
+
+## writing to the final normalized and tagged JSON
 
 # writing the curated and consolidated JSON, with tags
 with open(file="src/data/TAGGED_spells.json", mode="w") as tagged_spells:
