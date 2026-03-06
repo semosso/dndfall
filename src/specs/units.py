@@ -68,10 +68,11 @@ TIME_UNIT: dict = {
         "aliases": ["action", "bonus", "reaction"],
         "ratio": 6.0,
     },
+    "until_dispelled": {"aliases": ["until dispelled"], "ratio": 1000000000.0},
 }
 
 SHAPE_UNIT: dict = {
-    "aliases": ["cone", "cube", "cylinder", "line", "sphere"],
+    "aliases": {"cone", "cube", "cylinder", "line", "sphere"},
 }
 
 SIZE_UNIT: dict = {
@@ -114,11 +115,11 @@ class DiceRoll:
 
     @staticmethod
     def avg_roll(cls, number, die):
-        return cls.DICE_UNITS[die]["average"] * int(number)
+        return cls.DICE_UNITS[die]["average"] * float(number)
 
     @staticmethod
     def max_roll(cls, number, die):
-        return cls.DICE_UNITS[die]["max"] * int(number)
+        return cls.DICE_UNITS[die]["max"] * float(number)
 
 
 def find_ratio(value, categories):

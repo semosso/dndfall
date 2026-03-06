@@ -1,5 +1,8 @@
 import json
-from src.specs import DERIVED_FIELDS
+import re
+
+from src.specs import TAG_FIELDS
+import src.specs.units as units
 
 
 ## helper functions
@@ -61,6 +64,7 @@ def flatten_components(spell):
     return components.upper() + m_text
 
 
+# higher level extraction and calculation
 def flatten_higher_level(spell):
     top_level_sources = {
         "higher_level",
@@ -70,11 +74,49 @@ def flatten_higher_level(spell):
     for source in top_level_sources:
         if spell.get(source):
             return True
-    nested_sources = {"damage_at_slot_level", "damage_at_character_level"}
+    nested_sources = {"damage_at_slot", "damage_at_level"}
     for source in nested_sources:
-        if spell.get("damage", {}).get(source):
+        if (
+            spell.get("damage", {}).get(source)
+            and len(spell.get("damage", {}).get(source)) > 1
+        ):
             return True
     return False
+
+
+def higher_level_roll(scale_dict):
+
+    roll_dict = {}
+
+    pattern = r"""(?x)
+    \b(?P<number>[0-9]+)
+    (?P<die>d[0-9]+)\s*
+    (?:\+\s*
+    (?P<fixed>[0-9]+)(?!d))?\s*"""
+
+    compiled_pattern = re.compile(pattern, flags=re.IGNORECASE)
+
+    for level, amount in scale_dict.items():
+        avg_roll_sum = 0
+        max_roll_sum = 0
+        fixed = 0
+        results = compiled_pattern.finditer(string=amount)
+        for result in results:
+            match = result.groupdict()
+            number = match.get("number")
+            die = match.get("die")
+            fixed = match.get("fixed") or 0.0
+            avg_roll_sum += units.DiceRoll.avg_roll(
+                units.DiceRoll, number=number, die=die
+            )
+            max_roll_sum += units.DiceRoll.max_roll(
+                units.DiceRoll, number=number, die=die
+            )
+        roll_dict[level] = {
+            "damage_average": avg_roll_sum + float(fixed),
+            "damage_maximum": max_roll_sum + float(fixed),
+        }
+    return roll_dict
 
 
 ## SRD JSON handling
@@ -106,17 +148,17 @@ def normalizing_SRD_json(database: list):
             "srd_flag": True,
             "tags": {
                 "damage": {
-                    "damage_at_slot_level": SRD_sp.get("damage", {}).get(
-                        "damage_at_slot_level", {}
+                    "damage_at_slot": higher_level_roll(
+                        SRD_sp.get("damage", {}).get("damage_at_slot_level", {})
                     )
                     if SRD_sp.get("damage", {}).get("damage_at_slot_level", {})
                     else None,
-                    "damage_at_character_level": SRD_sp.get("damage", {}).get(
-                        "damage_at_character_level", {}
+                    "damage_at_level": higher_level_roll(
+                        SRD_sp.get("damage", {}).get("damage_at_character_level", {})
                     )
                     if SRD_sp.get("damage", {}).get("damage_at_character_level", {})
                     else None,
-                    "damage_instances": [],
+                    "base_damage": [],
                 }
             },
         }
@@ -182,13 +224,13 @@ def normalizing_non_SRD_json(database: list):
             "srd_flag": False,
             "tags": {
                 "damage": {
-                    "damage_at_slot_level": "TBD"
+                    "damage_at_slot": "TBD"
                     if non_SRD_sp.get("entriesHigherLevel")
                     else None,
-                    "damage_at_character_level": non_SRD_sp.get("scalingLevelDice", {})
+                    "damage_at_level": non_SRD_sp.get("scalingLevelDice", {})
                     if non_SRD_sp.get("scalingLevelDice")
                     else None,
-                    "damage_instances": [],
+                    "base_damage": [],
                 }
             },
         }
@@ -201,8 +243,8 @@ non_SRD_spell_list = normalizing_non_SRD_json(eliminating_SRD_duplicates())
 
 
 ## tagging
-def extract_tags(
-    spell: dict, derived_f: list = DERIVED_FIELDS
+def generate_tags(
+    spell: dict, derived_f: list = TAG_FIELDS
 ) -> dict[str, dict | list | float | None]:
     tags: dict[str, dict | list | float | None] = {}
     for field in derived_f:
@@ -216,7 +258,7 @@ def extract_tags(
 def add_tags_to_JSON(spell, spell_tags):
     for k, v in spell_tags.items():
         if k == "damage":
-            spell["tags"]["damage"]["damage_instances"] = spell_tags[k]
+            spell["tags"]["damage"]["base_damage"] = spell_tags[k]
         else:
             spell["tags"][k] = v
 
@@ -225,7 +267,89 @@ spells = SRD_spell_list + non_SRD_spell_list
 sorted_list = sorted(spells, key=lambda x: x["name"])
 
 for spell in sorted_list:
-    add_tags_to_JSON(spell, extract_tags(spell))
+    add_tags_to_JSON(spell, generate_tags(spell))
+
+
+## handling edge cases before writing the finalized and tagged JSON
+sorted_dict = {spell["name"]: spell for spell in sorted_list}
+
+# multiple alternative (i.e., not summed) damage types and "invisible" catch
+sorted_dict["Glyph of Warding"]["tags"]["damage"]["base_damage"] = [
+    {
+        "damage_type": [
+            type for type in ["acid", "cold", "fire", "lightning", "thunder"]
+        ],
+        "damage_average": 22.5,
+        "damage_maximum": 40.0,
+    }
+]
+sorted_dict["Glyph of Warding"]["tags"]["conditions"] = []
+
+sorted_dict["Spirit Guardians"]["tags"]["damage"]["base_damage"] = [
+    {
+        "damage_type": [type for type in ["radiant", "necrotic"]],
+        "damage_average": 22.5,
+        "damage_maximum": 40.0,
+    }
+]
+
+# non-standard base damage calculation
+sorted_dict["Magic Missile"]["tags"]["damage"]["base_damage"] = [
+    {"damage_type": "force", "damage_average": 10.5, "damage_maximum": 15.0}
+]
+
+sorted_dict["Scorching Ray"]["tags"]["damage"]["base_damage"] = [
+    {"damage_type": "fire", "damage_average": 21.0, "damage_maximum": 36.0}
+]
+
+sorted_dict["Blade of Disaster"]["tags"]["damage"]["base_damage"] = [
+    {"damage_type": "force", "damage_average": 52.0, "damage_maximum": 288.0},
+]
+
+# sorted_dict["Booming Blade"]["tags"]["damage"]["damage_at_level"] =
+
+# AOE shapes and sizes
+sorted_dict["Blade Barrier"]["tags"]["aoe"] = [
+    {"aoe_size": 100.0, "aoe_shape": "line"},
+    {"aoe_size": 60.0, "aoe_shape": "sphere"},
+]
+
+sorted_dict["Tsunami"]["tags"]["aoe"] = [
+    {"aoe_size": 300.0, "aoe_shape": "line"},
+]
+
+sorted_dict["Wall of Fire"]["tags"]["aoe"] = (
+    {"aoe_size": 60.0, "aoe_shape": "line"},
+    {"aoe_size": 20.0, "aoe_shape": "sphere"},
+)
+
+sorted_dict["Wall of Force"]["tags"]["aoe"] = [
+    {"aoe_size": 20.0, "aoe_shape": "sphere"},
+    {"aoe_size": 100.0, "aoe_shape": "line"},
+]
+
+sorted_dict["Wall of Ice"]["tags"]["aoe"] = [
+    {"aoe_size": 20.0, "aoe_shape": "sphere"},
+    {"aoe_size": 100.0, "aoe_shape": "line"},
+]
+
+sorted_dict["Wall of Light"]["tags"]["aoe"] = [
+    {"aoe_size": 60.0, "aoe_shape": "line"},
+]
+
+sorted_dict["Wall of Stone"]["tags"]["aoe"] = [
+    {"aoe_size": 200.0, "aoe_shape": "line"},
+]
+
+sorted_dict["Wall of Thorns"]["tags"]["aoe"] = [
+    {"aoe_size": 60.0, "aoe_shape": "line"},
+    {"aoe_size": 20.0, "aoe_shape": "sphere"},
+]
+
+sorted_dict["Wall of Water"]["tags"]["aoe"] = [
+    {"aoe_size": 30.0, "aoe_shape": "line"},
+    {"aoe_size": 20.0, "aoe_shape": "sphere"},
+]
 
 ## writing to the final normalized and tagged JSON
 

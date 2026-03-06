@@ -15,9 +15,9 @@ class DamageField(TagField):
         for match in self.compiled_patterns.finditer(string=source_text):
             groups = match.groupdict()
             result = {
-                "number": groups.get("number") or 0,
-                "die": groups.get("die") or 0,
-                "fixed": groups.get("fixed") or 0,
+                "number": groups.get("number") or 0.0,
+                "die": groups.get("die") or 0.0,
+                "fixed": groups.get("fixed") or 0.0,
                 "type": groups.get("type") or None,
             }
             self.results.append(result)
@@ -32,20 +32,16 @@ class DamageField(TagField):
                     "damage_average": units.DiceRoll.avg_roll(
                         units.DiceRoll, result["number"], result["die"]
                     )
-                    + int(result["fixed"]),
+                    + float(result["fixed"]),
                     "damage_maximum": units.DiceRoll.max_roll(
                         units.DiceRoll, result["number"], result["die"]
                     )
-                    + int(result["fixed"]),
+                    + float(result["fixed"]),
                 }
                 values.append(value)
             # return values[0] if len(values) == 1 else values
             return values
-        return {
-            "damage_instances": [None],
-            "damage_at_slot_level": None,
-            "damage_at_character_level": None,
-        }
+        return [None]
 
 
 @dataclass
@@ -53,22 +49,22 @@ class GpCostField(TagField):
     compiled_patterns = re.compile(pattern=regex.GP_COST_PATTERNS, flags=re.IGNORECASE)
 
     def process_patterns(self, source_text):
-        self.number, self.unit = 0, "gold"
+        self.number, self.unit = 0.0, "gold"
         result = self.compiled_patterns.search(string=source_text)
         if result:
             groups = result.groupdict()
             if "number" in groups:
-                self.number = groups.get("number").replace(",", "") or 0
+                self.number = groups.get("number").replace(",", "") or 0.0
                 self.unit = groups.get("unit") or ""
             return self.get_values()
-        return None
+        return 0.0
 
     def get_values(self):
         unit_ratio = units.find_ratio(
             value=self.unit,
             categories=["gold", "platinum", "electrum", "silver", "copper"],
         )
-        return int(self.number) * unit_ratio
+        return float(self.number) * unit_ratio
 
 
 @dataclass
@@ -86,7 +82,7 @@ class RangeField(TagField):
             if result:
                 groups = result.groupdict()
                 if "number" in groups:
-                    self.number = groups.get("number") or ""
+                    self.number = groups.get("number") or 0.0
                     self.unit = groups.get("unit") or ""
                 if "text" in groups:
                     self.text = groups.get("text") or ""
@@ -100,7 +96,7 @@ class RangeField(TagField):
             value=text_value, categories=["self", "touch", "foot", "mile"]
         )
         if self.number:
-            return int(self.number) * text_ratio
+            return float(self.number) * text_ratio
         if self.text:
             return text_ratio
         return None
@@ -120,10 +116,10 @@ class DurationField(TagField):
             result = pattern.search(string=source_text)
             if result:
                 groups = result.groupdict()
-                if "number" in groups:
-                    self.number = groups.get("number") or ""
+                if groups.get("number") is not None:
+                    self.number = groups.get("number") or 0.0
                     self.unit = groups.get("unit") or ""
-                if "text" in groups:
+                if groups.get("text") is not None:
                     self.text = groups.get("text") or ""
                 break
         return self.get_values()
@@ -132,10 +128,10 @@ class DurationField(TagField):
         text_value = self.unit if self.unit else self.text
         text_ratio = units.find_ratio(
             value=text_value,
-            categories=["instantaneous", "second", "minute", "hour", "day", "year"],
+            categories=[category for category in units.TIME_UNIT],
         )
         if self.number:
-            return int(self.number) * text_ratio
+            return float(self.number) * text_ratio
         if self.text:
             return text_ratio
         return None
@@ -161,7 +157,7 @@ class CastingTimeField(TagField):
             value=self.unit,
             categories=["second", "minute", "hour", "day", "year", "dnd_economy"],
         )
-        return int(self.number) * text_ratio
+        return float(self.number) * text_ratio
 
 
 @dataclass
@@ -177,8 +173,8 @@ class AreaOfEffectField(TagField):
             for match in matches:
                 groups = match.groupdict()
                 result = {
-                    "number": groups.get("number") or "",
-                    "number2": groups.get("number2") or "1",
+                    "number": groups.get("number") or 0.0,
+                    "number2": groups.get("number2") or 1.0,
                     "unit": groups.get("unit") or "",
                     "rad_diam": groups.get("rad_diam") or "",
                     "shape": groups.get("shape") or "",
@@ -191,13 +187,13 @@ class AreaOfEffectField(TagField):
         if self.results:
             for result in self.results:
                 value = {
-                    "aoe_size": int(result["number"])
-                    * int(result["number2"])
+                    "aoe_size": float(result["number"])
+                    * float(result["number2"])
                     * units.find_ratio(result["unit"], ["foot", "mile"])
                     if result["unit"]
-                    else 1 * units.find_ratio(result["rad_diam"], ["rad", "diam"])
+                    else 1.0 * units.find_ratio(result["rad_diam"], ["rad", "diam"])
                     if result["rad_diam"]
-                    else 1,
+                    else 1.0,
                     "aoe_shape": "line"
                     if result.get("shape") == "wall"
                     else result.get("shape", None),

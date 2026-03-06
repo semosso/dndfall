@@ -21,7 +21,11 @@ time_aliases = "|".join(
         reverse=True,
     )
 )
-text_time_aliases = "|".join(units.TIME_UNIT["instantaneous"]["aliases"])
+
+text_time_aliases = "|".join(
+    units.TIME_UNIT["until_dispelled"]["aliases"]
+    + units.TIME_UNIT["instantaneous"]["aliases"]
+)
 currency_aliases = "|".join(
     sorted(
         units.CURRENCY_UNIT["gold"]["aliases"]
@@ -61,8 +65,7 @@ DURATION_PATTERNS = {
     \b(?P<number>[0-9]+)\s*
     (?P<unit>{time_aliases})\b
     """,
-    rf"""(?x)
-    \b(?P<text>{text_time_aliases})\b""",
+    rf"\b(?P<text>{text_time_aliases})\b",
 }
 
 CASTING_TIME_PATTERNS = rf"""(?x)

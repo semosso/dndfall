@@ -1,45 +1,45 @@
 from src.specs.schema import TagField
 import src.specs.regex as regex
 import src.specs.units as units
-import src.specs.fields as fields
+import src.specs.tag_fields as tag_fields
 
 
 CONDITION: TagField = TagField(
-    name="conditions",
+    name="condition",
     values=units.CONDITIONS,
     source="description",
     patterns=regex.CONDITION_PATTERNS,
 )
 
-DAMAGE: fields.DamageField = fields.DamageField(
+DAMAGE: tag_fields.DamageField = tag_fields.DamageField(
     name="damage",
     values=set(),
     source="description",
     patterns=regex.DAMAGE_PATTERNS,
 )
 
-MATERIAL_GP_COST: fields.GpCostField = fields.GpCostField(
+MATERIAL_GP_COST: tag_fields.GpCostField = tag_fields.GpCostField(
     name="material_cost",
     values=set(),
     source="components",
     patterns=regex.GP_COST_PATTERNS,
 )
 
-RANGE: fields.RangeField = fields.RangeField(
+RANGE: tag_fields.RangeField = tag_fields.RangeField(
     name="range",
     values=set(),
     source="range",
     patterns=regex.RANGE_PATTERNS,
 )
 
-DURATION: fields.DurationField = fields.DurationField(
+DURATION: tag_fields.DurationField = tag_fields.DurationField(
     name="duration",
     values=set(),
     source="duration",
     patterns=regex.DURATION_PATTERNS,
 )
 
-CASTING_TIME: fields.CastingTimeField = fields.CastingTimeField(
+CASTING_TIME: tag_fields.CastingTimeField = tag_fields.CastingTimeField(
     name="casting_time",
     values=set(),
     source="casting_time",
@@ -53,14 +53,14 @@ SAVING_THROW: TagField = TagField(
     patterns=regex.SAVING_THROW_PATTERNS,
 )
 
-AOE: fields.AreaOfEffectField = fields.AreaOfEffectField(
+AOE: tag_fields.AreaOfEffectField = tag_fields.AreaOfEffectField(
     name="aoe",
     values=set(),
     source="description",
     patterns=regex.AOE_PATTERNS,
 )
 
-DERIVED_FIELDS: list = [
+TAG_FIELDS: list = [
     CONDITION,
     DAMAGE,
     SAVING_THROW,

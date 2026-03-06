@@ -3,7 +3,7 @@ import json
 from collections import defaultdict
 
 from src.specs.schema import NormalizedSpell
-from src.specs import DERIVED_FIELDS, SCALAR_FIELDS
+from src.search import SEARCH_FIELDS
 
 
 with open(file="src/data/TAGGED_spells.json", mode="r") as spell_JSON:
@@ -58,65 +58,46 @@ def spell_objects_from_JSON(database: list = spell_source):
 
 
 # very inefficient, I can change this later; fine for cached indices
-def create_indices(indices: dict, spell: NormalizedSpell):
-    """Creates reverse indices from spell attributes, including tags.
-    Input: a NormalizedSpell object, lists of spell attributes (scalar and derived).
+def create_indices(spells: dict):
+    """Creates reverse indices from JSON fields, including tags.
+    Input: indices schema, plus a NormalizedSpell object which mirrors a JSON.
     Return: reverse lookup indices dictionary"""
-    for k, v in spell.tags:
-        if isinstance(v, dict):
-            for nested_k, nested_v in v.items():
-                if isinstance(nested_v, list) and nested_v is not None:
-                    for instance in nested_v:
-                        if isinstance(instance, dict):
-                            for ik, iv in instance.items():
-                                if iv is not None:
-                                    indices[ik][iv].add(spell.name)
-                elif nested_v is not None:
-                    indices[nested_k][nested_v].add(spell.name)
-        elif isinstance(v, list):
+    indices: dict = {field.name: defaultdict(set) for field in SEARCH_FIELDS}
+    for spell in spells:
+        index_tags = spells[spell].flatten_tags()
+        for k, v in index_tags.items():
             for value in v:
-                if isinstance(value, dict):
-                    for key, val in value.items():
-                        if val is not None:
-                            indices[key][val].add(spell.name)
-                elif value is not None:
-                    indices[k][value].add(spell.name)
-        elif v is not None:
-            indices[k][v].add(spell.name)
-
-    # return indices
+                indices[k][value].add(spell)
+    #     if isinstance(v, dict):
+    #         for nested_k, nested_v in v.items():
+    #             if isinstance(nested_v, list) and nested_v is not None:
+    #                 for instance in nested_v:
+    #                     if isinstance(instance, dict):
+    #                         for ik, iv in instance.items():
+    #                             if iv is not None:
+    #                                 indices[ik][iv].add(spell.name)
+    #             elif nested_v is not None:
+    #                 indices[nested_k][nested_v].add(spell.name)
+    #     elif isinstance(v, list):
+    #         for value in v:
+    #             if isinstance(value, dict):
+    #                 for key, val in value.items():
+    #                     if val is not None:
+    #                         indices[key][val].add(spell.name)
+    #             elif value is not None:
+    #                 indices[k][value].add(spell.name)
+    #     elif v is not None:
+    #         indices[k][v].add(spell.name)
+    return indices
 
 
 SPELLS = spell_objects_from_JSON()
 # temporary for testing
-commands = [
-    "damage_type",
-    "damage_average",
-    "damage_maximum",
-    "damage_at_slot_level",
-    "damage_at_character_level",
-    "conditions",
-    "saving_throw",
-    "material_cost",
-    "aoe_size",
-    "aoe_shape",
-    "range",
-    "duration",
-    "casting_time",
-]
-INDICES: dict = (
-    {field: defaultdict(set) for field in SCALAR_FIELDS}
-    | {
-        field: defaultdict(set)
-        for field in commands
-        # if field.name != "spell_name"
-    }
-    # | {"spell_name": set()}
-)
-for spell in SPELLS:
-    create_indices(INDICES, SPELLS[spell])
+
+
+# | {"spell_name": set()}
 
 
 # # testing
 # print(SPELLS["Fireball"])
-# rich.print(INDICES)
+rich.print(create_indices(SPELLS))
