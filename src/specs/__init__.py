@@ -18,8 +18,8 @@ DAMAGE: tag_fields.DamageField = tag_fields.DamageField(
     patterns=regex.DAMAGE_PATTERNS,
 )
 
-MATERIAL_GP_COST: tag_fields.GpCostField = tag_fields.GpCostField(
-    name="material_cost",
+GP_COST: tag_fields.GpCostField = tag_fields.GpCostField(
+    name="gp_cost",
     values=set(),
     source="components",
     patterns=regex.GP_COST_PATTERNS,
@@ -60,17 +60,4 @@ AOE: tag_fields.AreaOfEffectField = tag_fields.AreaOfEffectField(
     patterns=regex.AOE_PATTERNS,
 )
 
-TAG_FIELDS: list = [
-    CONDITION,
-    DAMAGE,
-    SAVING_THROW,
-    MATERIAL_GP_COST,
-    AOE,
-    RANGE,
-    DURATION,
-    CASTING_TIME,
-]
-
-SCALAR_FIELDS: list = ["name", "level", "concentration", "ritual", "school", "classes"]
-
-NOT_ANY_FIELDS: list = [CONDITION, SAVING_THROW]  # DAMAGE_TYPE
+TAG_FIELDS = [f_ for f_ in globals().values() if isinstance(f_, TagField)]

@@ -131,7 +131,7 @@ AOE_PATTERNS = {
 }
 
 SAVING_THROW_PATTERNS = {
-    r"\b(make(s)?|succeed(s)? on|fail(s)?)\s+(?!all\s).*?\b{value} saving throw(s)?",
+    r"\b(make(s)?|succeed(s)? on|fail(s)?)\s+(?!all\s)(?:(?!\bsaving throw\b).)*?{value} saving throw(s)?",
     r"\bsaving throw of {value}\b",
 }
 

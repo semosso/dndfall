@@ -23,12 +23,41 @@ class NormalizedSpell:
     srd_flag: bool
     tags: dict[str, dict | list[str] | bool]
 
-    def flatten_tags(self):
-        flattened = {
+    def extract_index_info(self):
+        index_info = {
+            "level": {self.level},
+            "concentration": {self.concentration if True else None},
+            "ritual": {self.ritual if True else None},
+            "school": {self.school},
+            "range": {self.tags["range"]},
+            "gp_cost": {self.tags["gp_cost"]},
+            "duration": {self.tags["duration"]},
+            "casting_time": {self.tags["casting_time"]},
+            # should I just plit classes, instead of creating a dedicated tag?
+            "classes": {value.strip() for value in self.classes.split(",")},
+            "upcast": {self.higher_level},
+            "condition": {
+                value for value in self.tags["condition"] if value is not None
+            },
+            "saving_throw": {
+                value for value in self.tags["saving_throw"] if value is not None
+            },
+            "aoe_size": {
+                area["aoe_size"]
+                for area in self.tags["aoe"]
+                if area["aoe_size"] is not None
+            },
+            "aoe_shape": {
+                area["aoe_shape"]
+                for area in self.tags["aoe"]
+                if area["aoe_shape"] is not None
+            },
             "damage_type": {
                 value
                 for dt in self.tags["damage"]["base_damage"]
                 if dt is not None
+                # to avoid double counting alternative damage types
+                # i.e., alt dt are stored as base_damage: [alt1, alt2]
                 for value in (
                     dt["damage_type"]
                     if isinstance(dt["damage_type"], list)
@@ -49,31 +78,8 @@ class NormalizedSpell:
                     if value is not None
                 )
             },
-            # "damage_at_slot": {
-            #     slot: {
-            #         "damage_average": value["damage_average"],
-            #         "damage_maximum": value["damage_maximum"],
-            #     }
-            #     for slot, value in (self.tags["damage"]["damage_at_slot"] or {}).items()
-            # }
-            # if isinstance(self.tags["damage"]["damage_at_slot"], dict)
-            # else {},
-            "condition": {
-                value for value in self.tags["condition"] if value is not None
-            },
         }
-        # for k, v in self.tags.items():
-        #     if isinstance(v, dict):
-        #         pass
-        #     if isinstance(v, list) and v is not None:
-        #         flattened[k][v] = set()
-        #         for element in v:
-        #             if isinstance(element, dict):
-        #                 flattened[v]
-        #             flattened[k][v].add(element)
-        #     if isinstance(v, float):
-        #         flattened[k] = v
-        return flattened
+        return index_info
 
 
 # taggable field structure

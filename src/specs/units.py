@@ -142,7 +142,7 @@ def find_ratio(value, categories):
         return False
 
 
-# field values
+# used in/by field values
 CONDITIONS = {
     "blinded",
     "charmed",
