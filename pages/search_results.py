@@ -2,9 +2,9 @@ import streamlit as st
 import pandas as pd
 import uuid
 
-from pages.cached_data import SPELLS
-from data.JSON_normalizing import SRD_spells
-from src.searching import orchestrate_search
+from src.data.JSON_normalizing import non_duplicats_non_SRD
+from src.orchestration import orchestrate_search
+from pages.cached_data import SPELLS, INDICES
 from pages.analytics import (
     track_page_view,
     track_search,
@@ -52,7 +52,7 @@ input_query = st.text_input(
 
 if query:
     try:
-        results: set = orchestrate_search(query)
+        results: set = orchestrate_search(query, SPELLS, INDICES)
     except Exception as e:
         st.error(f"An error occurred: {type(e).__name__}: {str(e)}")
     else:
@@ -74,7 +74,7 @@ def display_handler(spell):
     **Concentration:** {spell.concentration}  
     **Classes:** {spell.classes}  
     **Url:** {spell.url}""")
-    if spell.name.lower() in SRD_spells:
+    if spell.name.lower() in non_duplicats_non_SRD:
         with st.expander("Description"):
             track_result_click(
                 item_type="spell",

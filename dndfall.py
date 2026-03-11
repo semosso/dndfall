@@ -9,7 +9,7 @@ from pages.analytics import initialize_tracking
 initialize_tracking()
 
 st.set_page_config(
-    page_title="dndfall | an advanced D&D search tool",
+    page_title="dndfall | an advanced search tool for D&D",
     page_icon="🔎",
 )
 

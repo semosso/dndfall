@@ -1,13 +1,14 @@
 from enum import StrEnum
 from dataclasses import dataclass, field
 
-from src.specs.schema import SearchField
 import src.specs.units as units
-from src.search.query_parser import ParsedQuery
+from src.search import FIELD_BY_ALIAS, NAME, DESCRIPTION
+from src.search.query_handler import ParsedQuery
+from src.specs.schema import SearchField
 
 
 @dataclass
-class ValidatedCommand:
+class SearchCommand:
     field: str
     operator: str
     values: set
@@ -16,16 +17,20 @@ class ValidatedCommand:
 
 
 class CommandValidation:
-    def __init__(
-        self,
-        pq: ParsedQuery,
-        field_rules: SearchField,
-    ):
-        self.field: str = pq.field
-        self.operator: StrEnum = pq.operator
-        self.values: list = pq.values
-        self.field_rules: SearchField = field_rules
-        self.modifier: str | None = pq.modifier
+    def __init__(self, parsed_query: ParsedQuery):
+        self.field: str = parsed_query.field
+        self.operator: StrEnum = parsed_query.operator
+        self.values: list = parsed_query.values
+        self.modifier: str | None = parsed_query.modifier
+
+        if self.field == "spell_name":
+            self.field_rules = NAME
+        elif self.field in FIELD_BY_ALIAS:
+            self.field_rules = FIELD_BY_ALIAS[self.field]
+        elif self.field in ["description", "desc"]:
+            self.field_rules = DESCRIPTION
+        else:
+            raise ValueError(f"'{self.field}' is not a valid search field")
 
     def validate_operator(self):
         try:
@@ -91,7 +96,7 @@ class CommandValidation:
     def compose_command(self):
         valid_values: set = self.validate_values()
         self.validate_operator()
-        return ValidatedCommand(
+        return SearchCommand(
             field=self.field_rules.name.lower(),
             operator=self.operator,
             values=valid_values,

@@ -1,7 +1,7 @@
 import json
 
 from src.specs import TAG_FIELDS
-from data.JSON_helpers import (
+from src.data.JSON_helpers import (
     flatten_classes,
     flatten_components,
     flatten_description,
@@ -9,7 +9,7 @@ from data.JSON_helpers import (
     higher_level_roll,
     spell_schools,
 )
-from data.manual_corrections import hard_coded_corrections
+from src.data.manual_corrections import hard_coded_corrections
 
 
 ## SRD JSON handling
@@ -63,7 +63,7 @@ def normalizing_SRD_json(database: list):
 with open(file="src/data/RAW_srd_spells.json", mode="r") as SRD_source:
     raw_SRD: list[dict] = json.load(SRD_source)
 
-SRD_spell_list = normalizing_SRD_json(raw_SRD)
+non_duplicats_non_SRD: list[dict] = normalizing_SRD_json(raw_SRD)
 
 
 ## non-SRD JSON handling
@@ -71,7 +71,7 @@ SRD_spell_list = normalizing_SRD_json(raw_SRD)
 def eliminating_SRD_duplicates():
     with open(file="src/data/RAW_non_srd_spells.json", mode="r") as non_SRD_source:
         non_SRD_spells: list[dict] = json.load(non_SRD_source)
-    srd_names = {s["name"].lower() for s in SRD_spell_list}
+    srd_names = {s["name"].lower() for s in non_duplicats_non_SRD}
     non_duplicates = []
     for spell in non_SRD_spells:
         if spell["name"].lower() not in srd_names:
@@ -132,15 +132,17 @@ def normalizing_non_SRD_json(database: list):
     return non_SRD_list
 
 
-non_SRD_spell_list = normalizing_non_SRD_json(eliminating_SRD_duplicates())
+non_duplicates_NON_SRD = eliminating_SRD_duplicates()
+
+non_SRD_spell_list = normalizing_non_SRD_json(non_duplicates_NON_SRD)
 
 
 ## tagging
 def generate_tags(
-    spell: dict, derived_f: list = TAG_FIELDS
+    spell: dict, tag_field: list = TAG_FIELDS
 ) -> dict[str, dict | list | float | None]:
     tags: dict[str, dict | list | float | None] = {}
-    for field in derived_f:
+    for field in tag_field:
         source = spell.get(field.source, None)
         source_text = (" ".join(source)) if isinstance(source, list) else source
         result = field.process_patterns(source_text)
@@ -156,7 +158,7 @@ def add_tags_to_JSON(spell, spell_tags):
             spell["tags"][k] = v
 
 
-spells = SRD_spell_list + non_SRD_spell_list
+spells = non_duplicats_non_SRD + non_SRD_spell_list
 sorted_list = sorted(spells, key=lambda x: x["name"])
 
 for spell in sorted_list:

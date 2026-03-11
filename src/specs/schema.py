@@ -56,8 +56,7 @@ class NormalizedSpell:
                 value
                 for dt in self.tags["damage"]["base_damage"]
                 if dt is not None
-                # to avoid double counting alternative damage types
-                # i.e., alt dt are stored as base_damage: [alt1, alt2]
+                # avoid double counting alternative damage types (stored as base_damage: [alt1, alt2])
                 for value in (
                     dt["damage_type"]
                     if isinstance(dt["damage_type"], list)

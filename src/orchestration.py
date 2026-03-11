@@ -1,8 +1,13 @@
 import json
 from collections import defaultdict
 
+# initializes spell objects and indices
 from src.specs.schema import NormalizedSpell
 from src.search import SEARCH_FIELDS
+
+from src.search.query_handler import ParsedQuery, QueryParsing
+from src.search.command_handler import CommandValidation, SearchCommand
+from src.search.search_handler import SearchExecution
 
 
 with open(file="src/data/TAGGED_spells.json", mode="r") as spell_JSON:
@@ -10,11 +15,7 @@ with open(file="src/data/TAGGED_spells.json", mode="r") as spell_JSON:
 
 
 def spell_objects_from_JSON(database: list = spell_source):
-    """Casts spells from JSON into NormalizedSpell instances.
-    Input: list of spells, each a dictionary.
-    Return: dicionary of spell names and spells (as NormalizedSpell instances)."""
     spells: dict[str, NormalizedSpell] = {}
-
     for sp in database:
         spell: NormalizedSpell = NormalizedSpell(
             name=sp["name"],
@@ -35,14 +36,10 @@ def spell_objects_from_JSON(database: list = spell_source):
             tags=sp["tags"],
         )
         spells[spell.name] = spell
-
     return spells
 
 
 def create_indices(spells: dict):
-    """Creates reverse indices from JSON fields, including tags.
-    Input: indices schema, plus a NormalizedSpell object which mirrors a JSON.
-    Return: reverse lookup indices dictionary"""
     indices: dict = {
         field.name: defaultdict(set)
         for field in SEARCH_FIELDS
@@ -57,13 +54,17 @@ def create_indices(spells: dict):
     return indices
 
 
-# testing
-# SPELLS = spell_objects_from_JSON()
-# INDICES = create_indices(SPELLS)
-# with open(file="tests/INDICES.json", mode="w") as test_index:
-#     json.dump(
-#         INDICES,
-#         test_index,
-#         indent=2,
-#         default=lambda o: list(o) if isinstance(o, set) else o,
-#     )
+# search engine
+def orchestrate_search(query: str, spells: dict, indices: dict):
+    parsed_queries: list[ParsedQuery] = QueryParsing(query).parse_query()
+    if not parsed_queries:
+        raise ValueError(
+            f"Could not parse query: '{query}'. Please review our syntax guide!"
+        )
+    results: list = []
+    for p_q in parsed_queries:
+        command: SearchCommand = CommandValidation(parsed_query=p_q).compose_command()
+        execution_process: SearchExecution = SearchExecution(command, spells, indices)
+        pre_result: set = execution_process.execute()
+        results.append(execution_process.applying_NOT_ANY_modifier(pre_result))
+    return set.intersection(*results)

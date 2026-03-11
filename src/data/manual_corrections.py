@@ -24,18 +24,16 @@ def hard_coded_corrections(sorted_dict):
     sorted_dict["Chaos Bolt"]["tags"]["damage"]["base_damage"] = [
         {
             "damage_type": [
-                [
-                    type
-                    for type in [
-                        "acid",
-                        "cold",
-                        "fire",
-                        "force",
-                        "lightning",
-                        "poison",
-                        "psychic",
-                        "thunder",
-                    ]
+                type
+                for type in [
+                    "acid",
+                    "cold",
+                    "fire",
+                    "force",
+                    "lightning",
+                    "poison",
+                    "psychic",
+                    "thunder",
                 ]
             ],
             "damage_average": 12.5,
@@ -46,16 +44,14 @@ def hard_coded_corrections(sorted_dict):
     sorted_dict["Chromatic Orb"]["tags"]["damage"]["base_damage"] = [
         {
             "damage_type": [
-                [
-                    type
-                    for type in [
-                        "acid",
-                        "cold",
-                        "fire",
-                        "lightning",
-                        "poison",
-                        "thunder",
-                    ]
+                type
+                for type in [
+                    "acid",
+                    "cold",
+                    "fire",
+                    "lightning",
+                    "poison",
+                    "thunder",
                 ]
             ],
             "damage_average": 13.5,
