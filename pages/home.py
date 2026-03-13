@@ -1,10 +1,7 @@
 import streamlit as st
-from pages.analytics import track_page_view, track_search
+from pages.analytics import track_search
 
 st.set_page_config(layout="centered")
-
-if st.session_state.get("current_page") != "search_results":
-    track_page_view("Home", "/")
 
 if "latest_update" not in st.session_state:
     st.toast(

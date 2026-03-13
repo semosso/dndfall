@@ -63,7 +63,7 @@ def normalizing_SRD_json(database: list):
 with open(file="src/data/RAW_srd_spells.json", mode="r") as SRD_source:
     raw_SRD: list[dict] = json.load(SRD_source)
 
-non_duplicats_non_SRD: list[dict] = normalizing_SRD_json(raw_SRD)
+SRD_spell_list: list[dict] = normalizing_SRD_json(raw_SRD)
 
 
 ## non-SRD JSON handling
@@ -71,12 +71,12 @@ non_duplicats_non_SRD: list[dict] = normalizing_SRD_json(raw_SRD)
 def eliminating_SRD_duplicates():
     with open(file="src/data/RAW_non_srd_spells.json", mode="r") as non_SRD_source:
         non_SRD_spells: list[dict] = json.load(non_SRD_source)
-    srd_names = {s["name"].lower() for s in non_duplicats_non_SRD}
-    non_duplicates = []
+    srd_names = {s["name"].lower() for s in SRD_spell_list}
+    non_SRD_non_duplicates = []
     for spell in non_SRD_spells:
         if spell["name"].lower() not in srd_names:
-            non_duplicates.append(spell)
-    return non_duplicates
+            non_SRD_non_duplicates.append(spell)
+    return non_SRD_non_duplicates
 
 
 # first pass, normalizing non-SRD json from raw, no tag addition yet
@@ -135,9 +135,9 @@ def normalizing_non_SRD_json(database: list):
     return non_SRD_list
 
 
-non_duplicates_NON_SRD = eliminating_SRD_duplicates()
+non_SRD_non_duplicates = eliminating_SRD_duplicates()
 
-non_SRD_spell_list = normalizing_non_SRD_json(non_duplicates_NON_SRD)
+non_SRD_spell_list = normalizing_non_SRD_json(non_SRD_non_duplicates)
 
 
 ## tagging
@@ -161,7 +161,7 @@ def add_tags_to_JSON(spell, spell_tags):
             spell["tags"][k] = v
 
 
-spells = non_duplicats_non_SRD + non_SRD_spell_list
+spells = SRD_spell_list + non_SRD_spell_list
 sorted_list = sorted(spells, key=lambda x: x["name"])
 
 for spell in sorted_list:

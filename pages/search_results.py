@@ -2,11 +2,10 @@ import streamlit as st
 import pandas as pd
 import uuid
 
-from src.data.JSON_normalizing import non_duplicats_non_SRD
+from src.data.JSON_normalizing import non_SRD_non_duplicates
 from src.orchestration import orchestrate_search
 from pages.cached_data import SPELLS, INDICES
 from pages.analytics import (
-    track_page_view,
     track_search,
     track_result_click,
     track_feature_usage,
@@ -15,9 +14,6 @@ from pages.analytics import (
 # st.set_page_config(layout="wide")
 
 ## initialization
-
-if st.session_state.get("current_page") != "search_results":
-    track_page_view("search_results", "/search_results")
 
 # for tracking purposes
 if "client_id" not in st.session_state:
@@ -77,7 +73,7 @@ def display_handler(spell):
     **Concentration:** {spell.concentration}  
     **Classes:** {spell.classes}  
     **Url:** {spell.url}""")
-    if spell.name.lower() in non_duplicats_non_SRD:
+    if spell.srd_flag:
         with st.expander("Description"):
             track_result_click(
                 item_type="spell",
