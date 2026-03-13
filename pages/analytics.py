@@ -66,57 +66,6 @@ def _send_ga4_event(event_name: str, params: Dict[str, Any]):
         print(f"GA Tracking Error: {e}")
 
 
-def track_page_view(page_name: str, page_path: Optional[str] = None):
-    """
-    Track when user views a page.
-
-    Args:
-        page_name: Human-readable page name (e.g., "Syntax Guide", "Search Results")
-        page_path: Optional URL path (e.g., "/syntax-guide")
-
-    Example:
-        track_page_view("Syntax Guide", "/syntax-guide")
-    """
-    # Track exit from previous page first
-    if (
-        st.session_state.current_page is not None
-        and st.session_state.current_page != page_name
-    ):
-        track_page_exit()
-
-    # Update current page tracking
-    st.session_state.current_page = page_name
-    st.session_state.page_start_time = time.time()
-
-    params = {
-        "page_title": page_name,
-        "page_location": f"https://dndfall.com{page_path or '/' + page_name.lower().replace(' ', '-')}",
-    }
-
-    _send_ga4_event("page_view", params)
-
-
-def track_page_exit():
-    """
-    Track when user exits current page (automatically called by track_page_view).
-    Calculates time spent on page.
-    """
-    if (
-        "page_start_time" not in st.session_state
-        or "current_page" not in st.session_state
-    ):
-        return
-
-    time_spent_ms = int((time.time() - st.session_state.page_start_time) * 1000)
-
-    params = {
-        "page_title": st.session_state.current_page,
-        "engagement_time_msec": str(time_spent_ms),
-    }
-
-    _send_ga4_event("page_exit", params)
-
-
 def track_search(
     query: str,
     result_count: Optional[int] = None,

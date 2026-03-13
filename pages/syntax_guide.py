@@ -1,9 +1,7 @@
 import streamlit as st
-from pages.analytics import track_page_view, track_feature_usage
+from pages.analytics import track_feature_usage
 
 st.set_page_config(layout="centered")
-
-track_page_view("syntax_guide", "/syntax_guide")
 
 
 def clickables(badges, comment=None):
@@ -12,7 +10,7 @@ def clickables(badges, comment=None):
     query = " ".join(term for _, term in badges)
     label = " ".join(f":{color}-badge[{term}]" for color, term in badges)
 
-    if st.button(label, use_container_width=True):
+    if st.button(label, width="stretch"):
         st.session_state.query = query
         track_feature_usage("syntax_guide_example", query)
         st.switch_page("pages/search_results.py")
@@ -124,7 +122,7 @@ st.markdown("""While this second one isn't, since the values don't match the fie
 try it and you'll get an error message:""")
 if st.button(
     ":green-badge[saving_throw:]:orange-badge[cold] :grey-badge[condition:]:green-badge[dexterity]",
-    use_container_width=True,
+    width="stretch",
 ):
     st.session_state.query = "saving_throw:cold condition:dexterity"
     st.switch_page("pages/search_results.py")

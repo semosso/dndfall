@@ -2,21 +2,18 @@ import streamlit as st
 import pandas as pd
 import uuid
 
-from pages.cached_data import SPELLS
-from src.data.non_SRD_handlers import SRD_spells
-from src.searching import orchestrate_search
+from src.data.JSON_normalizing import non_SRD_non_duplicates
+from src.orchestration import orchestrate_search
+from pages.cached_data import SPELLS, INDICES
 from pages.analytics import (
-    track_page_view,
     track_search,
     track_result_click,
     track_feature_usage,
 )
 
-st.set_page_config(layout="wide")
+# st.set_page_config(layout="wide")
 
 ## initialization
-
-track_page_view("search_results", "/search_results")
 
 # for tracking purposes
 if "client_id" not in st.session_state:
@@ -29,37 +26,39 @@ if "view_mode" not in st.session_state:
     st.session_state.view_mode = "grid"
 
 st.title("search results")
-query = st.session_state.get("query")
 
 ## searching functions
 
+# query sync
+nav_query = st.session_state.pop("query", None)
 
-def execute_search():
-    query = st.session_state.search_input_widget
-    st.session_state.query = query
+if nav_query is not None:
+    st.session_state["search_input_widget"] = nav_query
 
 
-input_query = st.text_input(
+st.text_input(
     "Search",
     placeholder="e.g., level:3 dt:fire",
     label_visibility="hidden",
-    value=query,
     key="search_input_widget",
-    on_change=execute_search,
 )
 
+query = st.session_state.get("search_input_widget", "")
+
 ## search processing
+results = set()
+df = pd.DataFrame()
 
 if query:
     try:
-        results: set = orchestrate_search(query)
+        results: set = orchestrate_search(query, SPELLS, INDICES)
     except Exception as e:
         st.error(f"An error occurred: {type(e).__name__}: {str(e)}")
     else:
         if results:
             track_search(query, result_count=len(results))
-            data: list = [SPELLS[name].__dict__ for name in results]
-            df = pd.DataFrame(data=data, columns=["name", "level", "school", "url"])
+        data: list = [SPELLS[name].__dict__ for name in results]
+        df = pd.DataFrame(data=data, columns=["name", "level", "school"])
 
 
 ## display helpers
@@ -74,7 +73,7 @@ def display_handler(spell):
     **Concentration:** {spell.concentration}  
     **Classes:** {spell.classes}  
     **Url:** {spell.url}""")
-    if spell.name.lower() in SRD_spells:
+    if spell.srd_flag:
         with st.expander("Description"):
             track_result_click(
                 item_type="spell",
@@ -86,8 +85,8 @@ def display_handler(spell):
             if spell.higher_level:
                 st.markdown(spell.higher_level)
     else:
-        st.markdown("""**Since this spell is not in the SRD, we can't display its full
-        content. You can find it at the official D&D Beyond search link above!**""")
+        st.markdown("""**This spell is not in the SRD, so we can't display its full
+        content. You can find it at the D&D Beyond search link above!**""")
 
 
 ## display logic
@@ -111,7 +110,7 @@ if table_view:
             df,
             hide_index=True,
             key="spell_table",
-            use_container_width=True,
+            width="stretch",
             on_select="rerun",
             selection_mode="multi-row",
         )
