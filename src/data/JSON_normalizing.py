@@ -93,9 +93,12 @@ def normalizing_non_SRD_json(database: list):
             else False,
             "ritual": True if "ritual" in non_SRD_sp.get("meta", "") else False,
             "school": spell_schools[non_SRD_sp["school"]],
-            "range": str(non_SRD_sp["range"]["distance"].get("amount", ""))
-            + " "
-            + non_SRD_sp["range"]["distance"].get("type", ""),
+            "range": f"{
+                non_SRD_sp['range']['distance'].get('amount')
+                if non_SRD_sp['range']['distance'].get('amount')
+                else ''
+            }"
+            + non_SRD_sp["range"]["distance"].get("type", "").capitalize(),
             "components": flatten_components(non_SRD_sp),
             "duration": "Instantaneous"
             if non_SRD_sp["duration"][0]["type"] == "instant"

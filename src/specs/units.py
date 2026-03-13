@@ -32,6 +32,7 @@ LENGTH_UNIT: dict = {
     },
     "touch": {"aliases": ["touch"], "ratio": 5.0},
     "self": {"aliases": ["self"], "ratio": 1.0},
+    "sight": {"aliases": ["sight"], "ratio": 0.5},
     "rad": {
         "aliases": ["radius"],
         "ratio": 2.0,

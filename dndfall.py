@@ -3,6 +3,10 @@ import os
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
+import src.specs.schema
+import src.specs
+import src.search
+
 import streamlit as st
 from pages.analytics import initialize_tracking
 

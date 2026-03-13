@@ -28,13 +28,13 @@ class NormalizedSpell:
             "level": {self.level},
             "concentration": {self.concentration if True else None},
             "ritual": {self.ritual if True else None},
-            "school": {self.school},
+            "school": {self.school.lower()},
             "range": {self.tags["range"]},
             "gp_cost": {self.tags["gp_cost"]},
             "duration": {self.tags["duration"]},
             "casting_time": {self.tags["casting_time"]},
             # should I just plit classes, instead of creating a dedicated tag?
-            "classes": {value.strip() for value in self.classes.split(",")},
+            "classes": {value.lower().strip() for value in self.classes.split(",")},
             "upcast": {self.higher_level},
             "condition": {
                 value for value in self.tags["condition"] if value is not None

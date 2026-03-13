@@ -12,11 +12,12 @@ from pages.analytics import (
     track_feature_usage,
 )
 
-st.set_page_config(layout="wide")
+# st.set_page_config(layout="wide")
 
 ## initialization
 
-track_page_view("search_results", "/search_results")
+if st.session_state.get("current_page") != "search_results":
+    track_page_view("search_results", "/search_results")
 
 # for tracking purposes
 if "client_id" not in st.session_state:
@@ -29,26 +30,28 @@ if "view_mode" not in st.session_state:
     st.session_state.view_mode = "grid"
 
 st.title("search results")
-query = st.session_state.get("query")
 
 ## searching functions
 
+# query sync
+nav_query = st.session_state.pop("query", None)
 
-def execute_search():
-    query = st.session_state.search_input_widget
-    st.session_state.query = query
+if nav_query is not None:
+    st.session_state["search_input_widget"] = nav_query
 
 
-input_query = st.text_input(
+st.text_input(
     "Search",
     placeholder="e.g., level:3 dt:fire",
     label_visibility="hidden",
-    value=query,
     key="search_input_widget",
-    on_change=execute_search,
 )
 
+query = st.session_state.get("search_input_widget", "")
+
 ## search processing
+results = set()
+df = pd.DataFrame()
 
 if query:
     try:
@@ -58,8 +61,8 @@ if query:
     else:
         if results:
             track_search(query, result_count=len(results))
-            data: list = [SPELLS[name].__dict__ for name in results]
-            df = pd.DataFrame(data=data, columns=["name", "level", "school", "url"])
+        data: list = [SPELLS[name].__dict__ for name in results]
+        df = pd.DataFrame(data=data, columns=["name", "level", "school"])
 
 
 ## display helpers
@@ -86,8 +89,8 @@ def display_handler(spell):
             if spell.higher_level:
                 st.markdown(spell.higher_level)
     else:
-        st.markdown("""**Since this spell is not in the SRD, we can't display its full
-        content. You can find it at the official D&D Beyond search link above!**""")
+        st.markdown("""**This spell is not in the SRD, so we can't display its full
+        content. You can find it at the D&D Beyond search link above!**""")
 
 
 ## display logic
@@ -111,7 +114,7 @@ if table_view:
             df,
             hide_index=True,
             key="spell_table",
-            use_container_width=True,
+            width="stretch",
             on_select="rerun",
             selection_mode="multi-row",
         )

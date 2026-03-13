@@ -3,13 +3,13 @@ from pages.analytics import track_page_view, track_search
 
 st.set_page_config(layout="centered")
 
-track_page_view("Home", "/")
+if st.session_state.get("current_page") != "search_results":
+    track_page_view("Home", "/")
 
 if "latest_update" not in st.session_state:
     st.toast(
-        """Feb 26: Added support to ~200 non-SRD spells, plus table visualization
-        for search results!""",
-        icon="🔥",
+        """Mar 13: Initialization is now much faster!""",
+        icon="🚀",
     )
     st.session_state.msg_shown = True
 
@@ -50,10 +50,17 @@ and quickly find what they need. This is a personal project inspired by the amaz
 
 #### what's new?
 
-**v. 0.2 (beta):** currently supports all [SRD 5.1](https://www.dndbeyond.com/srd) spells, plus
+**v. 0.2 (beta):** currently supports 499 spells: all from the [SRD 5.1](https://www.dndbeyond.com/srd), plus
 ~200 spells from the PHB, TCE, XGE and Strixhaven, under Wizards' Fan Content Policy.
 """
 )
+with st.expander("_**03/13/2026:** much much faster initialization_"):
+    st.markdown("""
+    Not a D&D content change, but I reshaped the entire backend so that the initialiation is
+    A TON faster than before. Instead of using a messy source JSON and shaping it into normalized
+    data objects, I now normalize the JSON pre-deploy, so the initial build of data objects from it
+    is lighting fast!
+    """)
 with st.expander(
     "_**02/26/2026:** added ~200 non-SRD spells, plus table visualization_"
 ):

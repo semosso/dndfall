@@ -55,7 +55,11 @@ class SearchExecution:
             for v in self.command.values
         }
         return set().union(
-            *(self.indices[self.command.field][v] for v in matches),
+            *(
+                self.indices[self.command.field][v]
+                for v in matches
+                if v in self.indices[self.command.field]
+            ),
         )
 
     def range_lookup(self):
@@ -81,7 +85,13 @@ class SearchExecution:
             except (ValueError, TypeError):
                 pass
 
-        return set().union(*(self.indices[self.command.field][k] for k in match_keys))
+        return set().union(
+            *(
+                self.indices[self.command.field][k]
+                for k in match_keys
+                if k in self.indices[self.command.field]
+            )
+        )
 
     def _extract_ratio(self, value):
         value_lower = value.lower()

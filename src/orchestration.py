@@ -10,11 +10,7 @@ from src.search.command_handler import CommandValidation, SearchCommand
 from src.search.search_handler import SearchExecution
 
 
-with open(file="src/data/TAGGED_spells.json", mode="r") as spell_JSON:
-    spell_source = json.load(spell_JSON)
-
-
-def spell_objects_from_JSON(database: list = spell_source):
+def spell_objects_from_JSON(database: list):
     spells: dict[str, NormalizedSpell] = {}
     for sp in database:
         spell: NormalizedSpell = NormalizedSpell(

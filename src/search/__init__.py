@@ -63,7 +63,7 @@ CASTING_TIME: SearchField = SearchField(
 
 CLASSES: SearchField = SearchField(
     name="classes",
-    aliases={"classes", "cls"},
+    aliases={"classes", "cls", "class"},
     operator=units.TextOp,
     values=units.CLASSES,
     scalar=True,
