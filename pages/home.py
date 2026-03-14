@@ -8,15 +8,32 @@ if "latest_update" not in st.session_state:
         """Mar 13: Initialization is now much faster!""",
         icon="🚀",
     )
-    st.session_state.msg_shown = True
+    st.session_state.latest_update = True
 
 st.title("dndfall", text_alignment="center")
 st.subheader("an advanced search tool for D&D", text_alignment="center", anchor=False)
+
+# query = st.text_input(
+#     "Search",
+#     placeholder="level:3 dt:fire",
+#     label_visibility="hidden",
+# )
+
+
+def handle_search():
+    val = st.session_state.homepage_search
+    if val:
+        track_search(val)
+        st.session_state.query = val
+        st.switch_page("pages/search_results.py")
+
 
 query = st.text_input(
     "Search",
     placeholder="level:3 dt:fire",
     label_visibility="hidden",
+    key="homepage_search",
+    on_change=handle_search,  # Trigger navigation here
 )
 
 col_guide, col_feedback, col_github = st.columns(

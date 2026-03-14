@@ -2,7 +2,6 @@ import streamlit as st
 import pandas as pd
 import uuid
 
-from src.data.JSON_normalizing import non_SRD_non_duplicates
 from src.orchestration import orchestrate_search
 from pages.cached_data import SPELLS, INDICES
 from pages.analytics import (
@@ -30,10 +29,14 @@ st.title("search results")
 ## searching functions
 
 # query sync
-nav_query = st.session_state.pop("query", None)
+# nav_query = st.session_state.pop("query", None)
 
-if nav_query is not None:
-    st.session_state["search_input_widget"] = nav_query
+# if nav_query is not None:
+#     st.session_state["search_input_widget"] = nav_query
+
+if "query" in st.session_state:
+    st.session_state["search_input_widget"] = st.session_state.query
+    del st.session_state["query"]  # Delete it after assignment
 
 
 st.text_input(
