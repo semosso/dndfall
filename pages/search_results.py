@@ -83,7 +83,7 @@ def display_handler(spell):
             for string in spell.description:
                 st.write(string)
             if spell.higher_level:
-                st.markdown(spell.higher_level)
+                st.markdown(f"""**At higher levels:** {spell.higher_description}""")
     else:
         st.markdown("""**This spell is not in the SRD, so we can't display its full
         content. You can find it at the D&D Beyond search link above!**""")
