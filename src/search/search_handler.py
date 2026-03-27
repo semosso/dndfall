@@ -124,7 +124,7 @@ class SearchExecution:
                 return set(self.spells.keys()) - all_field_values
             return set(self.spells.keys()) - pre_result
         if self.command.modifier == "ANY":
-            if self.command.field in ["condition", "saving_throw", "damage_type"]:
+            if self.command.rules.not_any:
                 return set().union(*(self.indices[self.command.field].values()))
             else:
                 raise ValueError(

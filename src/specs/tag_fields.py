@@ -39,7 +39,6 @@ class DamageField(TagField):
                     + float(result["fixed"]),
                 }
                 values.append(value)
-            # return values[0] if len(values) == 1 else values
             return values
         return [None]
 
@@ -70,7 +69,6 @@ class GpCostField(TagField):
 @dataclass
 class RangeField(TagField):
     patterns = regex.RANGE_PATTERNS
-
     compiled_patterns = [
         re.compile(pattern, flags=re.IGNORECASE) for pattern in patterns
     ]
@@ -105,7 +103,6 @@ class RangeField(TagField):
 @dataclass
 class DurationField(TagField):
     patterns = regex.DURATION_PATTERNS
-
     compiled_patterns = [
         re.compile(pattern, flags=re.IGNORECASE) for pattern in patterns
     ]
@@ -199,6 +196,5 @@ class AreaOfEffectField(TagField):
                     else result.get("shape", None),
                 }
                 values.append(value)
-            # return values[0] if len(values) == 1 else values
             return values
         return [{"aoe_size": None, "aoe_shape": None}]

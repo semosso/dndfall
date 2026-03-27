@@ -3,5 +3,5 @@ __pycache__/
 .venv/
 src/data/RAW_non_srd_spells.json
 src/data/RAW_srd_spells.json
-src/data/TAGGED_spells.json
+src/data/FINAL_spells.json
 src/data/class_sources.json

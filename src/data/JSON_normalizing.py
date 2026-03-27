@@ -172,5 +172,5 @@ sorted_dict = {spell["name"]: spell for spell in sorted_list}
 hard_coded_corrections(sorted_dict)
 
 # writing the curated and consolidated JSON, with tags
-with open(file="src/data/TAGGED_spells.json", mode="w") as tagged_spells:
-    json.dump(sorted_list, fp=tagged_spells, indent=2)
+with open(file="src/data/FINAL_spells.json", mode="w") as final_spells:
+    json.dump(sorted_list, fp=final_spells, indent=2)

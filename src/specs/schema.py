@@ -33,7 +33,6 @@ class NormalizedSpell:
             "gp_cost": {self.tags["gp_cost"]},
             "duration": {self.tags["duration"]},
             "casting_time": {self.tags["casting_time"]},
-            # should I just plit classes, instead of creating a dedicated tag?
             "classes": {value.lower().strip() for value in self.classes.split(",")},
             "upcast": {self.higher_level},
             "condition": {
@@ -81,7 +80,36 @@ class NormalizedSpell:
         return index_info
 
 
-# taggable field structure
+@dataclass
+class NormalizedMonster:
+    name: str
+    type: dict  # k: type, subtype; v: fiend, quasit; humanoid, goblin
+    size: str  # must be comparable, "get_ratio"
+    alignment: str
+    armor_class: int  # natural and other, wtf?
+    hp: int
+    hit_dice: str  # maybe
+    speed: list[dict]  # type and value; both here and in tags?
+    abilities: dict[str, int]
+    proficiencies: list[dict]  # skills and ST; both here and in tags?
+    damage_vulnerabilities: set
+    damage_resistances: set
+    damage_immunities: set
+    condition_immunities: set
+    senses: list[dict]
+    languages: set
+    challenge_rating: float
+    xp: int
+    special_abilities: list[dict]
+    actions: list[dict]
+    legendary_actions: list[dict]
+    url: str
+    srd_flag: bool
+    tags: dict[str, dict | list[str] | bool]
+
+
+# tag field structure, based on pre-set values or custom extraction
+# spell only or adaptable?
 @dataclass(kw_only=True)
 class TagField:
     name: str

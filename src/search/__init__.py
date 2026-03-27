@@ -151,7 +151,6 @@ DAMAGE_MAXIMUM: SearchField = SearchField(
 
 
 SEARCH_FIELDS: list = [f_ for f_ in globals().values() if isinstance(f_, SearchField)]
-# SCALAR_FIELDS: list = [f_ for f_ in SEARCH_FIELDS if f_.scalar is True]
 NOT_ANY_FIELDS: list = [f_ for f_ in SEARCH_FIELDS if f_.not_any is True]
 
 
